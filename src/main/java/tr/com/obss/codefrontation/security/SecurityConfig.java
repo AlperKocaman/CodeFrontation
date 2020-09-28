@@ -1,6 +1,16 @@
 package tr.com.obss.codefrontation.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,16 +27,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import tr.com.obss.codefrontation.security.models.SecurityProperties;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tr.com.obss.codefrontation.security.models.SecurityProperties;
 
 @Configuration
 @EnableWebSecurity
@@ -64,9 +68,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(restSecProps.getAllowedOrigins());
+		// TODO kaan.uyar : This commented option has to be got from yml
+		configuration.setAllowedOrigins(Collections.singletonList("*")/* restSecProps.getAllowedOrigins() */);
 		configuration.setAllowedMethods(restSecProps.getAllowedMethods());
-		configuration.setAllowedHeaders(restSecProps.getAllowedHeaders());
+		// TODO kaan.uyar : This commented option has to be got from yml
+		configuration.setAllowedHeaders(Collections.singletonList("*")/* restSecProps.getAllowedHeaders() */);
 		configuration.setAllowCredentials(restSecProps.isAllowCredentials());
 		configuration.setExposedHeaders(restSecProps.getExposedHeaders());
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
