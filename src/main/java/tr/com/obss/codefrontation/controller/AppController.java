@@ -2,9 +2,7 @@ package tr.com.obss.codefrontation.controller;
 
 import java.util.Map;
 
-import org.joor.Reflect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,50 +20,45 @@ import com.google.firebase.auth.FirebaseToken;
 import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDto;
 import tr.com.obss.codefrontation.dto.TestDto;
+import tr.com.obss.codefrontation.service.ICompilerService;
 
 @Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping("/main")
 public class AppController {
-	private Logger logger = LoggerFactory.getLogger(AppController.class);
 
-	// private IAppService appService;
-//
-	// @Autowired
-	// public AppController(IAppService appService) {
-	// this.appService = appService;
-	// }
+    private ICompilerService compilerService;
 
-	@ResponseBody
-	@PostMapping(path = "/checkToken", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public TestDto checkToken(@RequestBody AuthDto authDto) {
-		try {
-			FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(authDto.getToken());
-		} catch (FirebaseAuthException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @Autowired
+    public AppController(ICompilerService compilerService) {
+        this.compilerService = compilerService;
+    }
 
-	@GetMapping()
-	public String test() {
-		return "Code Frontation 2020";
-	}
+    @ResponseBody
+    @PostMapping(path = "/checkToken", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public TestDto checkToken(@RequestBody AuthDto authDto) {
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(authDto.getToken());
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	@PostMapping("/evaluate")
-	public String compileAndRun(@RequestBody Object codeMap) {
-		@SuppressWarnings("rawtypes")
-		Map map = (Map) codeMap;
-		String codeString = (String) map.get("code");
-		try {
-			Reflect supp = Reflect.compile("Solution", codeString).create();
-			return "" + supp.call("solution");
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			return "Error Occured When tring to run code!";
-		}
+    @GetMapping()
+    public String test() {
+        return "Code Frontation 2020";
+    }
 
-	}
+    @PostMapping("/evaluate")
+    public String compileAndRun(@RequestBody Object codeMap) {
+        @SuppressWarnings("rawtypes")
+        Map map = (Map) codeMap;
+        String code = (String) map.get("code");
+        //TODO will take lang parameter as Java, Python etc.
+        String result = compilerService.javaCompileAndRun(code);
+        return result;
+    }
 
 }

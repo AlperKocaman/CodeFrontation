@@ -26,6 +26,11 @@
             padding-left: 0;
 
         }
+        .option {
+            background: #4CAF50;
+            color: white;
+            margin-bottom: 5px;
+        }
     </style>
     <link rel="stylesheet" href="bootstrap-4.5.2-dist/css/bootstrap.min.css">
     <script src="jquery-3.5.1.min.js"></script>
@@ -38,6 +43,10 @@
 
     <div class="container">
         <h1>We Are The Champions!</h1>
+        <select id="langOption" class="option" onchange="optionChanged()">
+            <option value="java">Java</option>
+            <option value="python">Python</option>
+        </select>
 
         <div class="row">
             <div class="col-sm-12" id="htmPane">
@@ -58,6 +67,14 @@
 
 
     <script>
+        function optionChanged(requestData) {
+            var lang = document.getElementById("langOption").value;
+            if(lang=="java"){
+                initJavaEditor()
+            }else if(lang=="python"){
+                initPythonEditor()
+            }
+        }
 
         function sendCode(requestData) {
 
@@ -83,35 +100,70 @@
             var htmEditor = ace.edit("htmEditor");
             sendCode("" + htmEditor.getValue());
         }
+
+        function initEditor(){
+            var javaBegin =
+                "public class Solution {\n\n" +
+                "   public String solution(){\n" +
+                "       // calculate factorial :) \n" +
+                '       return "HELLO WORLD!!";\n' +
+                "   }" +
+                "\n}\n";
+
+            ace.require("ace/ext/language_tools");
+
+            var htmEditor = ace.edit("htmEditor");
+            htmEditor.getSession().setMode("ace/mode/java");
+            htmEditor.setTheme("ace/theme/monokai");
+            htmEditor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true
+            });
+            htmEditor.setFontSize(23);
+
+            //htmEditor.session.insert(0, javaBegin);//htmEditor.getCursorPosition()
+            htmEditor.setValue(javaBegin);
+            htmEditor.setShowPrintMargin(false);
+            htmEditor.setHighlightActiveLine(false);
+        }
+
+        function initJavaEditor(){
+            var javaBegin =
+                "public class Solution {\n\n" +
+                "   public String solution(){\n" +
+                "       // calculate factorial :) \n" +
+                '       return "HELLO WORLD!!";\n' +
+                "   }" +
+                "\n}\n";
+            ace.require("ace/ext/language_tools");
+
+            var htmEditor = ace.edit("htmEditor");
+            htmEditor.getSession().setMode("ace/mode/java");
+
+            htmEditor.setValue(javaBegin);
+
+        }
+
+        function initPythonEditor(){
+            var pythonBegin =
+                "class Solution :\n\n" +
+                "   def __init__(self,value):\n" +
+                '       self.value = value \n' +
+                "   def solution(self):\n" +
+                "       # calculate factorial :) \n" +
+                '       return "HELLO WORLD!!"\n' +
+                "\n}\n";
+            ace.require("ace/ext/language_tools");
+
+            var htmEditor = ace.edit("htmEditor");
+            htmEditor.getSession().setMode("ace/mode/python");
+
+            htmEditor.setValue(pythonBegin);
+
+        }
+        initEditor()
     </script>
 
-
-    <script>
-
-        var javaBegin =
-            "public class Solution {\n\n" +
-            "   public String solution(){\n" +
-            "       // calculate factorial :) \n" +
-            '       return "HELLO WORLD!!";\n' +
-            "   }" +
-            "\n}\n";
-
-        ace.require("ace/ext/language_tools");
-
-        var htmEditor = ace.edit("htmEditor");
-        htmEditor.getSession().setMode("ace/mode/java");
-        htmEditor.setTheme("ace/theme/monokai");
-        htmEditor.setOptions({
-            enableBasicAutocompletion: true,
-            enableSnippets: true
-        });
-        htmEditor.setFontSize(23);
-
-        //htmEditor.session.insert(0, javaBegin);//htmEditor.getCursorPosition()
-        htmEditor.setValue(javaBegin);
-        htmEditor.setShowPrintMargin(false);
-        htmEditor.setHighlightActiveLine(false);
-    </script>
 
 
 </body>
