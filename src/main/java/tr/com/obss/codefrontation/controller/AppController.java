@@ -56,8 +56,15 @@ public class AppController {
         @SuppressWarnings("rawtypes")
         Map map = (Map) codeMap;
         String code = (String) map.get("code");
+        String lang = (String) map.get("lang");
         //TODO will take lang parameter as Java, Python etc.
-        String result = compilerService.javaCompileAndRun(code);
+        String result="";
+        if(lang.equals("java")){
+            result = compilerService.javaCompileAndRun(code);
+        }else{
+            result = "Please select Java theme, other themes are not supported yet";
+        }
+
         return result;
     }
 

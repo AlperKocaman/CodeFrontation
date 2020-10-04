@@ -67,8 +67,9 @@
 
 
     <script>
+        var lang="java"
         function optionChanged(requestData) {
-            var lang = document.getElementById("langOption").value;
+            lang = document.getElementById("langOption").value;
             if(lang=="java"){
                 initJavaEditor()
             }else if(lang=="python"){
@@ -76,7 +77,7 @@
             }
         }
 
-        function sendCode(requestData) {
+        function sendCode(requestData,lang) {
 
             var resultArea = document.getElementById("resultArea");
 
@@ -92,13 +93,13 @@
                     resultArea.innerHTML = resultString.replace(/\n/g, "<br />");
                 }
             };
-            var data = JSON.stringify({ "code": requestData });
+            var data = JSON.stringify({ "code": requestData, "lang":lang });
             xhr.send(data);
         }
 
         function executeCode() {
             var htmEditor = ace.edit("htmEditor");
-            sendCode("" + htmEditor.getValue());
+            sendCode("" + htmEditor.getValue(),lang);
         }
 
         function initEditor(){
