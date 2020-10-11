@@ -1,10 +1,8 @@
-BE PART
+##BE PART
 
 http://localhost:8080/main ==> Code Frontation 2020
 
-FE PART
-
-# install node to pc
+##FE PART
 
 https://nodejs.org/en/download/
 
