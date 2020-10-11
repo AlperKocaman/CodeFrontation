@@ -8,6 +8,5 @@ FE PART
 https://nodejs.org/en/download/
 
 cd *******/fe_src
-npm install
-##### npm i ace-builds
+npm install                (if not exist ace) npm i ace-builds
 npm start (localhost:3000)
