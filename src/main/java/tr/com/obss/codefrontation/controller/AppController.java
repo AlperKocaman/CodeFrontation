@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseToken;
 import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDto;
 import tr.com.obss.codefrontation.dto.TestDto;
+import tr.com.obss.codefrontation.entity.JavaTestEntity;
+import tr.com.obss.codefrontation.runner.JavaCodeRunnerHandlerClient;
 import tr.com.obss.codefrontation.service.ICompilerService;
 
 @Slf4j
@@ -28,44 +30,53 @@ import tr.com.obss.codefrontation.service.ICompilerService;
 @RequestMapping("/main")
 public class AppController {
 
-    private ICompilerService compilerService;
+	private ICompilerService compilerService;
+	private JavaCodeRunnerHandlerClient javaCodeRunnerHandlerClient;
 
-    @Autowired
-    public AppController(ICompilerService compilerService) {
-        this.compilerService = compilerService;
-    }
+	@Autowired
+	public AppController(ICompilerService compilerService, JavaCodeRunnerHandlerClient javaCodeRunnerHandlerClient) {
+		this.compilerService = compilerService;
+		this.javaCodeRunnerHandlerClient = javaCodeRunnerHandlerClient;
+	}
 
-    @ResponseBody
-    @PostMapping(path = "/checkToken", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TestDto checkToken(@RequestBody AuthDto authDto) {
-        try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(authDto.getToken());
-        } catch (FirebaseAuthException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	@ResponseBody
+	@PostMapping(path = "/checkToken", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public TestDto checkToken(@RequestBody AuthDto authDto) {
+		try {
+			FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(authDto.getToken());
+		} catch (FirebaseAuthException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    @GetMapping()
-    public String test() {
-        return "Code Frontation 2020";
-    }
+	@GetMapping()
+	public String test() {
+		return "Code Frontation 2020";
+	}
 
-    @PostMapping("/evaluate")
-    public String compileAndRun(@RequestBody Object codeMap) {
-        @SuppressWarnings("rawtypes")
-        Map map = (Map) codeMap;
-        String code = (String) map.get("code");
-        String lang = (String) map.get("lang");
-        //TODO will take lang parameter as Java, Python etc.
-        String result="";
-        if(lang.equals("java")){
-            result = compilerService.javaCompileAndRun(code);
-        }else{
-            result = "Please select Java theme, other themes are not supported yet";
-        }
+	@PostMapping("/evaluate")
+	public String compileAndRun(@RequestBody Object codeMap) {
+		@SuppressWarnings("rawtypes")
+		Map map = (Map) codeMap;
+		String code = (String) map.get("code");
+		String lang = (String) map.get("lang");
+		// TODO will take lang parameter as Java, Python etc.
+		String result = "";
+		if (lang.equals("java")) {
+			JavaTestEntity t1 = new JavaTestEntity("solution");
 
-        return result;
-    }
+			String[] results = javaCodeRunnerHandlerClient.handleCode(code, "codeONE123", new JavaTestEntity[] { t1 });
+			StringBuilder sb = new StringBuilder();
+			for (String r : results) {
+				sb.append(r).append("\n");
+			}
+			return sb.toString();
+		} else {
+			result = "Please select Java theme, other themes are not supported yet";
+		}
+
+		return result;
+	}
 
 }
