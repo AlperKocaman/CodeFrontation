@@ -1,7 +1,9 @@
 import React from 'react'
+import {auth} from "./Firebase";
 
 const Compiler = () => {
-    var lang="java"
+    let displayOfSignOutButton='None'; //TODO for signout burasının değiştirilmesi gerekiyor
+    let lang="java";
     let ace = require('ace-builds/src-noconflict/ace');
     let mode_java = require('ace-builds/src-noconflict/mode-java');//TODO if mode_java is not required, error is ocurred in htmEditor.getSession().setMode("ace/mode/java");
     let theme_monokai = require('ace-builds/src-noconflict/theme-monokai'); //TODO if theme-monokai is not required, error is ocurred in htmEditor.setTheme("ace/theme/monokai");
@@ -118,13 +120,15 @@ const Compiler = () => {
               </div>
 
           </div>
-          <button id="executeButton" type="button" className="btn btn-dark" onClick={() => executeCode()}>Execute</button>
+          <button id="executeButton" type="button" className="btn btn-dark" style={{background: '#4CAF50',
+              color: 'white'}} onClick={() => executeCode()}>Execute</button>
 
           <br></br>
           <h3>Result:</h3>
           <div id="resultArea" style={{background: 'honeydew'}}>
 
           </div>
+          <button className = "w-full py-3 bg-red-600 mt-4 text-white" style={{display: displayOfSignOutButton}} onClick = {() => {auth.signOut()}}>Sign out</button>
 
       </div>
   )
