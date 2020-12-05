@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ProblemTestCaseDto {
-	private String input;
-	private String output;
-	private Double point;
+  private String input;
+  private String output;
+  private Double point;
 }
