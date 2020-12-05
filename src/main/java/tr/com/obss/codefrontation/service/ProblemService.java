@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -25,24 +26,25 @@ import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
 import tr.com.obss.codefrontation.dto.problem.ProblemInfoDto;
 import tr.com.obss.codefrontation.dto.problem.ProblemTestCaseDto;
 import tr.com.obss.codefrontation.dto.problem.ProblemTestCaseInfoDto;
+import tr.com.obss.codefrontation.security.models.DmojProperties;
 
 @Slf4j
 @Service
 public class ProblemService {
 
-	// TODO kaan.uyar : will be read from .yml later
-	private static final String USER_NAME = System.getProperty("user.name");
-	// for Linux systems
-	private static final String PROBLEM_DIRECTORY = "/home/" + USER_NAME + "/sync/problems";
+	private DmojProperties dmojProperties;
 
-	private static final Path PROBLEMS_PATH = Paths.get(PROBLEM_DIRECTORY);
+	@Autowired
+	public ProblemService(DmojProperties dmojProperties) {
 
-	public ProblemService() {
+		this.dmojProperties = dmojProperties;
 
-		boolean isDirectoryCreated = PROBLEMS_PATH.toFile().isDirectory();
+		Path problemPath = Paths.get(dmojProperties.getProblemsPath());
+
+		boolean isDirectoryCreated = problemPath.toFile().isDirectory();
 		if (!isDirectoryCreated) {
 			try {
-				Files.createDirectory(PROBLEMS_PATH);
+				Files.createDirectories(problemPath);
 			} catch (IOException e) {
 				log.error(e.getLocalizedMessage(), e);
 			}
@@ -51,7 +53,7 @@ public class ProblemService {
 
 	public void createNewProblem(ProblemEveluationDto problemEvaluation) {
 		try {
-			Path problemDir = PROBLEMS_PATH.resolve(problemEvaluation.getName());
+			Path problemDir = Paths.get(dmojProperties.getProblemsPath()).resolve(problemEvaluation.getName());
 			if (!problemDir.toFile().isDirectory()) {
 				Files.createDirectory(problemDir);
 			}

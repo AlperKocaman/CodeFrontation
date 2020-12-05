@@ -18,6 +18,8 @@ spring:
   #  hibernate:
   #    ddl-auto: update
 
+dmoj:
+  problems-path: src/main/resources/problems
 
 security:
   firebase-props:

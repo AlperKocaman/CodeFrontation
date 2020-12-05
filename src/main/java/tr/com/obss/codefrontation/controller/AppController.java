@@ -1,6 +1,5 @@
 package tr.com.obss.codefrontation.controller;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDto;
 import tr.com.obss.codefrontation.dto.TestDto;
 import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
-import tr.com.obss.codefrontation.dto.problem.ProblemTestCaseDto;
 import tr.com.obss.codefrontation.service.ICompilerService;
 import tr.com.obss.codefrontation.service.ProblemService;
 
@@ -55,34 +53,6 @@ public class AppController {
 
 	@GetMapping()
 	public String test() {
-
-		ProblemEveluationDto problemEvaluation = new ProblemEveluationDto();
-		problemEvaluation.setName("factorial");
-
-		ProblemTestCaseDto t1 = new ProblemTestCaseDto();
-		ProblemTestCaseDto t2 = new ProblemTestCaseDto();
-		ProblemTestCaseDto t3 = new ProblemTestCaseDto();
-		ProblemTestCaseDto t4 = new ProblemTestCaseDto();
-
-		t1.setInput("1");
-		t1.setOutput("1");
-		t1.setPoint(12.0);
-
-		t2.setInput("7");
-		t2.setOutput("5040");
-		t2.setPoint(35.0);
-
-		t3.setInput("5");
-		t3.setOutput("120");
-		t3.setPoint(13.0);
-
-		t4.setInput("3");
-		t4.setOutput("6");
-		t4.setPoint(40.0);
-
-		problemEvaluation.setTestCases(Arrays.asList(t1, t2, t3, t4));
-		problemService.createNewProblem(problemEvaluation);
-
 		return "Code Frontation 2020";
 	}
 
