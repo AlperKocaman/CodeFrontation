@@ -11,9 +11,7 @@ public class SonarConstants {
 	public static final String HTTP_CONN_ERROR = "Seems like you can't access the SonarQube server.\nPlease check your internet connection and try again.";
 	public static final String HTTP_500 = "Something went wrong on server";
 
-	public static final String JAVA_COMPILE_COMMAND = "javac ./%s/*.java\n " +
-			"mkdir ./%s/target\n" +
-			"mv ./%s/*.class ./%s/target";
+	public static final String JAVA_COMPILE_COMMAND = "javac ./%s/*.java";
 
 	public static final String CPP_COMPILE_COMMAND = "";
 	public static final String C_COMPILE_COMMAND = "";

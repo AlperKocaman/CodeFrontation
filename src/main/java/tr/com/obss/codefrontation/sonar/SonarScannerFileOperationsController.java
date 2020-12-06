@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,13 +70,20 @@ public class SonarScannerFileOperationsController {
 		}
 	}
 
-	public void compileCodeFiles(){
-		String compileCommand =
-				ProgrammingLanguage.findCompileCommandByProgrammingLanguage(sonarScannerApplication.getProgrammingLanguage());
-		if(compileCommand != null){
-			runProcess("javac ./deneme/MyFirstJavaProgram.java");
-			runProcess("mkdir " + "\"" +"./deneme/target"+"\"");
-			runProcess("mv ./deneme/MyFirstJavaProgram.class ./deneme/target");
+    public void compileCodeFiles(List<String> firstFiles,  List<String> secondFiles) {
+        String compileCommand =
+                ProgrammingLanguage.findCompileCommandByProgrammingLanguage(sonarScannerApplication.getProgrammingLanguage());
+        if (compileCommand != null) {
+            try {
+                runProcess(String.format(compileCommand, sonarScannerApplication.getId()));
+               // runProcess("javac ./deneme/MyFirstJavaProgram.java");
+                new File("./deneme/target/").mkdir();
+                createFolder();
+                Files.move(Paths.get("./deneme/MyFirstJavaProgram.class"), Paths.get("./deneme/target"), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 			/*runProcess(String.format(compileCommand,
 					sonarScannerApplication.getId(),
 					sonarScannerApplication.getId(),
