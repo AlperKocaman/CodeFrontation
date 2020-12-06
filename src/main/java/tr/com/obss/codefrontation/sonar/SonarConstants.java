@@ -7,7 +7,7 @@ public class SonarConstants {
 	public static final String CLIENT_ERROR = "Something went wrong on client";
 	public static final String HTTP_400 = "Request failed - BAD REQUEST";
 	public static final String HTTP_401 = "Invalid username or password - UNAUTHORIZED";
-	public static final String HTTP_404 = "Requested data is not found on the game server.";
+	public static final String HTTP_404 = "Requested data is not found on the application server.";
 	public static final String HTTP_CONN_ERROR = "Seems like you can't access the SonarQube server.\nPlease check your internet connection and try again.";
 	public static final String HTTP_500 = "Something went wrong on server";
 

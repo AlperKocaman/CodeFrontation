@@ -70,7 +70,7 @@ public class SonarScannerFileOperationsController {
 		}
 	}
 
-    public void compileCodeFiles(List<String> firstFiles,  List<String> secondFiles) {
+    public void compileCodeFiles() {
         String compileCommand =
                 ProgrammingLanguage.findCompileCommandByProgrammingLanguage(sonarScannerApplication.getProgrammingLanguage());
         if (compileCommand != null) {
