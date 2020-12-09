@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class CompilerService implements ICompilerService {
+public class CompilerService {
 
     private static final Gson gson = new GsonBuilder().create();
 
