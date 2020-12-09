@@ -11,3 +11,7 @@ cd *******/fe_src
 npm install
 
 npm start
+
+http://localhost:3000/   ==> Admin Dashboard Page
+
+http://localhost:3000/admin/users  ==> Admin User list Page
