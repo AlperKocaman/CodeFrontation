@@ -27,7 +27,7 @@ public class SonarScannerFileOperationsController {
 
 	public SonarScannerFileOperationsController(SonarScannerApplication sonarScannerApplication) {
 		this.sonarScannerApplication = sonarScannerApplication;
-		folderPath = System.getProperty("user.dir") + "/" + sonarScannerApplication.getId();
+		folderPath = System.getProperty("user.dir") + "/Submissions/" + sonarScannerApplication.getId();
 	}
 
 	public String getFolderPath(){
@@ -47,7 +47,7 @@ public class SonarScannerFileOperationsController {
 	public void createFolder(){
 		try {
 			Path path = Paths.get(folderPath);
-			Files.createDirectory(path);
+			Files.createDirectories(path);
 		}
 		catch (IOException ioException){
 			LOGGER.log(Level.SEVERE, String.format("Directory cannot be created at path %s", folderPath));
@@ -70,54 +70,12 @@ public class SonarScannerFileOperationsController {
 		}
 	}
 
-    public void compileCodeFiles() {
-        String compileCommand =
-                ProgrammingLanguage.findCompileCommandByProgrammingLanguage(sonarScannerApplication.getProgrammingLanguage());
-        if (compileCommand != null) {
-            try {
-                runProcess(String.format(compileCommand, sonarScannerApplication.getId()));
-               // runProcess("javac ./deneme/MyFirstJavaProgram.java");
-                new File("./deneme/target/").mkdir();
-                createFolder();
-                Files.move(Paths.get("./deneme/MyFirstJavaProgram.class"), Paths.get("./deneme/target"), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+	public void compileCodeFiles(){
+		String compileCommand =
+				ProgrammingLanguage.findCompileCommandByProgrammingLanguage(sonarScannerApplication.getProgrammingLanguage());
+		if(compileCommand != null){
+			SonarUtils.runProcess(String.format(compileCommand, folderPath));
 
-			/*runProcess(String.format(compileCommand,
-					sonarScannerApplication.getId(),
-					sonarScannerApplication.getId(),
-					sonarScannerApplication.getId(),
-					sonarScannerApplication.getId()));
-
-			 */
-			//runProcess("ls");
-		}
-	}
-
-	private void runProcess(String command) {
-		try {
-			Process process = Runtime.getRuntime().exec(command);
-			printLines(command + " stdout:", process.getInputStream());
-			printLines(command + " stderr:", process.getErrorStream());
-			process.waitFor();
-		} catch (InterruptedException interruptedException) {
-			interruptedException.printStackTrace();
-			Thread.currentThread().interrupt();
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		LOGGER.log(Level.INFO, String.format("The command %s is applied.", command));
-	}
-
-	private static void printLines(String cmd, InputStream ins) throws Exception {
-		String line = null;
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(ins));
-		while ((line = in.readLine()) != null) {
-			System.out.println(cmd + " " + line);
 		}
 	}
 }
