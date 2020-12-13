@@ -1,284 +1,378 @@
-import React, {Component} from 'react'
-import MaterialTable from "material-table";
-import {forwardRef} from 'react';
+import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.css';
+import 'primeflex/primeflex.css';
+import './indexTable.css';
 
-import AddBox from '@material-ui/icons/AddBox';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import Check from '@material-ui/icons/Check';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import Clear from '@material-ui/icons/Clear';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Edit from '@material-ui/icons/Edit';
-import FilterList from '@material-ui/icons/FilterList';
-import FirstPage from '@material-ui/icons/FirstPage';
-import LastPage from '@material-ui/icons/LastPage';
-import Remove from '@material-ui/icons/Remove';
-import SaveAlt from '@material-ui/icons/SaveAlt';
-import Search from '@material-ui/icons/Search';
-import ViewColumn from '@material-ui/icons/ViewColumn';
-import {Link} from "@reach/router";
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import UserService from '../service/UserService';
+import { Toast } from 'primereact/toast';
+import { Button } from 'primereact/button';
+import { FileUpload } from 'primereact/fileupload';
+import { Toolbar } from 'primereact/toolbar';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import './UserList.css';
+import uuid from 'uuid-random';
+export class UserList extends Component {
 
-const tableIcons = {
-    Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
-    Check: forwardRef((props, ref) => <Check {...props} ref={ref}/>),
-    Clear: forwardRef((props, ref) => <Clear {...props} ref={ref}/>),
-    Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref}/>),
-    DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref}/>),
-    Edit: forwardRef((props, ref) => <Edit {...props} ref={ref}/>),
-    Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref}/>),
-    Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref}/>),
-    FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref}/>),
-    LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref}/>),
-    NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref}/>),
-    PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref}/>),
-    ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref}/>),
-    Search: forwardRef((props, ref) => <Search {...props} ref={ref}/>),
-    SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref}/>),
-    ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref}/>),
-    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref}/>)
-};
+    emptyUser = {
+        id: null,
+        firstName: '',
+        lastName: '',
+        email: '',
+        isAdmin: false,
+        targetRole: '',
+        targetProject: '',
+        skills: ''
+    };
 
-class UserList extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
-            selectedUser: null,
-            userList: [],
-            redirect: false,
-            path: ""
+            users: [],
+            userDialog: false,
+            deleteUserDialog: false,
+            deleteUsersDialog: false,
+            user: this.emptyUser,
+            selectedUsers: null,
+            submitted: false,
+            globalFilter: null
         };
+
+        this.userService = new UserService();
+        this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
+        this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
+        this.statusBodyTemplate = this.statusBodyTemplate.bind(this);
+        this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
+
+        this.openNew = this.openNew.bind(this);
+        this.hideDialog = this.hideDialog.bind(this);
+        this.saveUser = this.saveUser.bind(this);
+        this.editUser = this.editUser.bind(this);
+        this.confirmDeleteUser = this.confirmDeleteUser.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+        this.exportCSV = this.exportCSV.bind(this);
+        this.confirmDeleteSelected = this.confirmDeleteSelected.bind(this);
+        this.deleteSelectedUsers = this.deleteSelectedUsers.bind(this);
+        this.onInputChange = this.onInputChange.bind(this);
+        this.onInputNumberChange = this.onInputNumberChange.bind(this);
+        this.hideDeleteUserDialog = this.hideDeleteUserDialog.bind(this);
+        this.hideDeleteUsersDialog = this.hideDeleteUsersDialog.bind(this);
     }
 
+    componentDidMount() {
+        this.userService.getUsers().then(res => {
+            this.setState({users: res.data});
+        });
+    }
 
-    componentDidMount = () => {
-        fetch('http://localhost:8080/main/users')
-            .then(async response => {
-                const data = await response.json();
-                //check for error response
-                if (!response.ok) {
-                    // get error message from body or default to response status
-                    const error = (data && data.message) || response.status;
-                    return Promise.reject(error);
-                }
-                //this.setState({ postId: data.id })
-            })
-            .catch(error => {
-                this.setState({ errorMessage: error.toString() });
-                console.error('There was an error!', error);
+    openNew() {
+        this.setState({
+            user: this.emptyUser,
+            submitted: false,
+            userDialog: true
+        });
+    }
+
+    hideDialog() {
+        this.setState({
+            submitted: false,
+            userDialog: false
+        });
+    }
+
+    hideDeleteUserDialog() {
+        this.setState({ deleteUserDialog: false });
+    }
+
+    hideDeleteUsersDialog() {
+        this.setState({ deleteUsersDialog: false });
+    }
+
+    saveUser() {
+
+
+        if (this.state.user.username.trim()) {
+
+            if (this.state.user.id) {
+                this.userService.updateUser(this.state.user).then(data => {
+                    const index = this.findIndexById(this.state.user.id);
+                    let state = { submitted: true };
+                    let users = [...this.state.users];
+                    let user = {...this.state.user};
+                    users[index] = user;
+                    state = {
+                        ...state,
+                        users,
+                        userDialog: false,
+                        user: this.emptyUser
+                    };
+                    this.setState(state);
+                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
+                }).catch(error => {
+                    console.error('There was an error!', error);
+                });
+            }
+            else {
+                this.userService.addUser(this.state.user).then(data => {
+                    let state = { submitted: true };
+                    let users = [...this.state.users];
+                    let user = {...this.state.user};
+                    user.id = data.data.id;
+                    users.push(user);
+
+                    state = {
+                        ...state,
+                        users,
+                        userDialog: false,
+                        user: this.emptyUser
+                    };
+                    this.setState(state);
+                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'User Created', life: 3000 });
+                }).catch(error => {
+                    console.error('There was an error!', error);
+                });
+            }
+
+        }
+
+
+    }
+
+    deleteUser() {
+        this.userService.deleteUser(this.state.user).then(data => {
+            let users = this.state.users.filter(val => val.id !== this.state.user.id);
+            this.setState({
+                users,
+                deleteUserDialog: false,
+                user: this.emptyUser
             });
-    };
-    //const requestOptions = {
-    //    method: 'POST',
-    //    headers: { 'Content-Type': 'application/json' },
-    //    body: JSON.stringify({ title: 'React POST Request Example' })
-    //};
-    //fetch('https://jsonplaceholder.typicode.com/invalid-url', requestOptions)
-    //    .then(async response => {
-    //        const data = await response.json();
-//
-    //        // check for error response
-    //        if (!response.ok) {
-    //            // get error message from body or default to response status
-    //            const error = (data && data.message) || response.status;
-    //            return Promise.reject(error);
-    //        }
-//
-    //        this.setState({ postId: data.id })
-    //    })
-    //    .catch(error => {
-    //        this.setState({ errorMessage: error.toString() });
-    //        console.error('There was an error!', error);
-    //    });
-//
+            this.toast.show({ severity: 'success', summary: 'Successful', detail: 'User Deleted', life: 3000 });
+        }).catch(error => {
+            console.error('There was an error!', error);
+        });
+    }
 
-onCellEditApproved = (newValue, oldValue, rowData, columnDef) => {
-    console.log('onCellEditApproved newValue: ' + JSON.stringify(newValue));
-    console.log('onCellEditApproved oldValue: ' + JSON.stringify(oldValue));
-    console.log('onCellEditApproved rowData: ' + JSON.stringify(rowData));
-    console.log('onCellEditApproved columnDef: ' + JSON.stringify(columnDef));
-};
+    deleteSelectedUsers() {
+        this.userService.deleteUsers(this.state.selectedUsers).then(data => {
+            let users = this.state.users.filter(val => !this.state.selectedUsers.includes(val));
+            this.setState({
+                users,
+                deleteUsersDialog: false,
+                selectedUsers: null
+            });
+            this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Users Deleted', life: 3000 });
+        }).catch(error => {
+            console.error('There was an error!', error);
+        });
+    }
 
-onRowAddCancelled = (rowData) => {
-    console.log('onRowAddCancelled rowData: ' + JSON.stringify(rowData));
-};
+    editUser(user) {
+        this.setState({
+            user: { ...user },
+            userDialog: true
+        });
+    }
 
-onRowUpdateCancelled = (rowData) => {
-    console.log('onRowUpdateCancelled rowData: ' + JSON.stringify(rowData));
-};
+    confirmDeleteUser(user) {
+        this.setState({
+            user,
+            deleteUserDialog: true
+        });
+    }
 
-onRowAdd = (newData) => {
-    console.log('onRowAdd newData: ' + JSON.stringify(newData));
-    //onRowAdd newData: {"id":"3434","username":"bpitt","first_name":"brad","last_name":"pitt","email":"pbitt@gmail.com","is_admin":"false","target_role":"devops","target_project":"IHTAR","skills":"java"}
+    findIndexById(id) {
+        let index = -1;
+        for (let i = 0; i < this.state.users.length; i++) {
+            if (this.state.users[i].id === id) {
+                index = i;
+                break;
+            }
+        }
 
-};
+        return index;
+    }
 
-onRowUpdate = (newData, oldData) => {
-    console.log('onRowUpdate newData: ' + JSON.stringify(newData));
-    //onRowUpdate newData: {"id":"124345","username":"mduzgun","first_name":"Mehmet","last_name":"Düzgün","email":"memetduzgun@gmail.com","is_admin":true,"target_role":"junior developer","target_project":"IHTAR","skills":"java, python"}
-    console.log('onRowUpdate oldData: ' + JSON.stringify(oldData));
-    //onRowUpdate oldData: {"id":"1243","username":"mduzgun","first_name":"Mehmet","last_name":"Düzgün","email":"memetduzgun@gmail.com","is_admin":true,"target_role":"junior developer","target_project":"IHTAR","skills":"java, python","tableData":{"id":0,"editing":"update"}}
-};
+    createId() {
+        return uuid();
+    }
 
-onRowDelete = (oldData) => {
-    console.log('onRowDelete oldData: ' + JSON.stringify(oldData));
-    //onRowDelete oldData: {"id":"1243","username":"mduzgun","first_name":"Mehmet","last_name":"Düzgün","email":"memetduzgun@gmail.com","is_admin":true,"target_role":"junior developer","target_project":"IHTAR","skills":"java, python","tableData":{"id":0,"editing":"delete"}}
-};
+    exportCSV() {
+        this.dt.exportCSV();
+    }
 
-onClickUsername = (event) => {
-    console.log('onClickUsername : ' + event.target.text);
-    window.location.assign("/");//FIXME redirect /user/mduzgun
-};
+    confirmDeleteSelected() {
+        this.setState({ deleteUsersDialog: true });
+    }
 
-render()
-{
+    onInputChange(e, name) {
+        const val = (e.target && e.target.value) || '';
+        let user = {...this.state.user};
+        user[`${name}`] = val;
 
-    return (
+        this.setState({ user });
+    }
 
-        <div className="container">
-            <div style={{maxWidth: "100%"}}>
-                <MaterialTable
+    onInputNumberChange(e, name) {
+        const val = e.value || 0;
+        let user = {...this.state.user};
+        user[`${name}`] = val;
 
-                    //cellEditable={{
-                    //    cellStyle: {},
-                    //    onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
-                    //
-                    //        return new Promise((resolve, reject) => {
-                    //            this.onCellEditApproved(newValue, oldValue, rowData, columnDef);
-                    //            setTimeout(resolve, 1000);
-                    //        });
-                    //    }
-                    //}}
-                    editable={{
-                        //isEditable: rowData => rowData.name === 'a', // only name(a) rows would be editable
-                        //isEditHidden: rowData => rowData.name === 'x',
-                        //isDeletable: rowData => rowData.name === 'b', // only name(b) rows would be deletable,
-                        //isDeleteHidden: rowData => rowData.name === 'y',
-                        //onBulkUpdate: changes => {
-                        //    return new Promise((resolve, reject) => {
-                        //        console.log('changes: ' + changes);
-                        //        setTimeout(resolve, 4000);
-                        //    });
-                        //},
+        this.setState({ user });
+    }
 
-                        //new Promise((resolve, reject) => {
-                        //    setTimeout(() => {
-                        //        /* setData([...data, newData]); */
-//
-                        //        resolve();
-                        //    }, 1000);
-                        //}),
-                        onRowAddCancelled: rowData => {
-                            return new Promise((resolve, reject) => {
-                                this.onRowAddCancelled(rowData);
-                                setTimeout(resolve, 1000);
-                            });
-                        },
-                        //console.log('Row adding cancelled'),
-                        onRowUpdateCancelled: rowData => {
-                            return new Promise((resolve, reject) => {
-                                this.onRowUpdateCancelled(rowData);
-                                setTimeout(resolve, 1000);
-                            });
-                        },
-                        //console.log('Row editing cancelled'),
-                        onRowAdd: newData => {
-                            return new Promise((resolve, reject) => {
-                                this.onRowAdd(newData);
-                                setTimeout(resolve, 1000);
-                            });
-                        },
-                        //new Promise((resolve, reject) => {
-                        //    setTimeout(() => {
-                        //        /* setData([...data, newData]); */
-//
-                        //        resolve();
-                        //    }, 1000);
-                        //}),
-                        onRowUpdate: (newData, oldData) => {
-                            return new Promise((resolve, reject) => {
-                                this.onRowUpdate(newData, oldData);
-                                setTimeout(resolve, 1000);
-                            });
-                        },
-                        //new Promise((resolve, reject) => {
-                        //    setTimeout(() => {
-                        //        const dataUpdate = [...data];
-                        //        const index = oldData.tableData.id;
-                        //        dataUpdate[index] = newData;
-                        //        setData([...dataUpdate]);
-//
-                        //        resolve();
-                        //    }, 1000);
-                        //}),
-                        onRowDelete: oldData => {
-                            return new Promise((resolve, reject) => {
-                                this.onRowDelete(oldData);
-                                setTimeout(resolve, 1000);
-                            });
-                        }
-                        //new Promise((resolve, reject) => {
-                        //    setTimeout(() => {
-                        //        const dataDelete = [...data];
-                        //        const index = oldData.tableData.id;
-                        //        dataDelete.splice(index, 1);
-                        //        setData([...dataDelete]);
-//
-                        //        resolve();
-                        //    }, 1000);
-                        //})
-                    }}
-                    icons={tableIcons}
-                    options={{
-                        search: true,
-                        //filtering: true,
-                        exportButton: true,
-                        grouping: true,
-                        //selection: true
-                    }}
+    leftToolbarTemplate() {
+        return (
+            <React.Fragment>
+                <Button label="New" icon="pi pi-plus" className="p-button-success p-mr-2" onClick={this.openNew} />
+                <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={this.confirmDeleteSelected} disabled={!this.state.selectedUsers || !this.state.selectedUsers.length} />
+            </React.Fragment>
+        )
+    }
 
-                    columns={[
-                        {title: "Id", field: "id"},
-                        {
-                            field: 'username',
-                            title: 'Kullanıcı Adı',
-                            render: rowData => <a style={{cursor: 'pointer', textDecoration: 'underline'}}
-                                                  onClick={this.onClickUsername}>{rowData.username}</a>
-                        },
-                        //{title: "Kullanıcı Adı", field: "username"},
-                        {title: "Adı", field: "firstName"},
-                        {title: "Soyadı", field: "lastName"},
-                        {title: "Email", field: "email"},
-                        {title: "Yönetici", field: "isAdmin", type: "boolean"}, //FIXME fix later?
-                        {title: "Hedef Rol", field: "targetRole"},
-                        {title: "Hedef Proje", field: "targetProject"},
-                        {title: "Yetenekler", field: "skills"}
+    rightToolbarTemplate() {
+        return (
+            <React.Fragment>
+                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} label="Import" chooseLabel="Import" className="p-mr-2 p-d-inline-block" />
+                <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={this.exportCSV} />
+            </React.Fragment>
+        )
+    }
 
-                        //{title: "Doğum Yılı", field: "birthYear", type: "numeric"},
-                        //{
-                        //    title: "Doğum Yeri",
-                        //    field: "birthCity",
-                        //    lookup: {6: "Ankara", 40: "Kırşehir"},
-                        //},
-                    ]}
-                    data={[
-                        {
-                            id: "1243",
-                            username: "mduzgun",
-                            firstName: "Mehmet",
-                            lastName: "Düzgün",
-                            email: "memetduzgun@gmail.com",
-                            isAdmin: true,
-                            targetRole: "junior developer",
-                            targetProject: "IHTAR",
-                            skills: "java, python"
-                        },
-                    ]}
-                    title="Kullanıcı Listesi"
-                />
+    statusBodyTemplate(rowData) {
+        return <span className={`user-badge status-${rowData.isAdmin ?  'admin' :'user'}`}>{rowData.isAdmin ?  'ADMIN' :'USER'}</span>;
+    }
+    actionBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => this.editUser(rowData)} />
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => this.confirmDeleteUser(rowData)} />
+            </React.Fragment>
+        );
+    }
+
+    render() {
+        const header = (
+            <div className="table-header">
+                <h5 className="p-m-0">Manage Users</h5>
+                <span className="p-input-icon-left">
+                    <i className="pi pi-search" />
+                    <InputText type="search" onInput={(e) => this.setState({ globalFilter: e.target.value })} placeholder="Search..." />
+                </span>
             </div>
-        </div>
-    );
+        );
+        const userDialogFooter = (
+            <React.Fragment>
+                <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={this.hideDialog} />
+                <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={this.saveUser} />
+            </React.Fragment>
+        );
+        const deleteUserDialogFooter = (
+            <React.Fragment>
+                <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteUserDialog} />
+                <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteUser} />
+            </React.Fragment>
+        );
+        const deleteUsersDialogFooter = (
+            <React.Fragment>
+                <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteUsersDialog} />
+                <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSelectedUsers} />
+            </React.Fragment>
+        );
+
+        return (
+            <div className="datatable-crud-demo">
+                <Toast ref={(el) => this.toast = el} />
+
+                <div className="card">
+                    <Toolbar className="p-mb-4" left={this.leftToolbarTemplate} right={this.rightToolbarTemplate}></Toolbar>
+
+                    <DataTable ref={(el) => this.dt = el} value={this.state.users} selection={this.state.selectedUsers} onSelectionChange={(e) => this.setState({ selectedUsers: e.value })}
+                               dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                               paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+                               globalFilter={this.state.globalFilter}
+                               header={header}>
+
+                        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
+                        <Column field="username" header="Username" sortable></Column>
+                        <Column field="firstName" header="First Name" sortable></Column>
+                        <Column field="lastName" header="Last Name" sortable></Column>
+
+                        <Column field="email" header="E-mail" sortable></Column>
+                        <Column field="isAdmin" header="Admin Status" body={this.statusBodyTemplate} sortable></Column>
+                        <Column field="targetRole" header="Target Role" sortable></Column>
+                        <Column field="targetProject" header="Target Project" sortable></Column>
+                        <Column field="skills" header="Skills" sortable></Column>
+
+                        <Column body={this.actionBodyTemplate}></Column>
+                    </DataTable>
+                </div>
+
+                <Dialog visible={this.state.userDialog} style={{ width: '450px' }} header="User Details" modal className="p-fluid" footer={userDialogFooter} onHide={this.hideDialog}>
+                    <div className="p-field">
+                        <label htmlFor="username">Username</label>
+                        <InputText id="username" value={this.state.user.username} onChange={(e) => this.onInputChange(e, 'username')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.username })} />
+                        {this.state.submitted && !this.state.user.username && <small className="p-invalid">Username is required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="firstName">First Name</label>
+                        <InputText id="firstName" value={this.state.user.firstName} onChange={(e) => this.onInputChange(e, 'firstName')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.firstName })} />
+                        {this.state.submitted && !this.state.user.firstName && <small className="p-invalid">First Name is required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="lastName">Last Name</label>
+                        <InputText id="lastName" value={this.state.user.lastName} onChange={(e) => this.onInputChange(e, 'lastName')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.lastName })} />
+                        {this.state.submitted && !this.state.user.lastName && <small className="p-invalid">Last Name is required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="email">E-mail</label>
+                        <InputText id="email" value={this.state.user.email} onChange={(e) => this.onInputChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.email })} />
+                        {this.state.submitted && !this.state.user.email && <small className="p-invalid">E-mail is required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="isAdmin">Admin Status</label>
+                        <InputText id="isAdmin" value={this.state.user.isAdmin} onChange={(e) => this.onInputChange(e, 'isAdmin')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.isAdmin })} />
+                        {this.state.submitted && !this.state.user.isAdmin && <small className="p-invalid">Admin Status is required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="targetRole">Target Role</label>
+                        <InputText id="targetRole" value={this.state.user.targetRole} onChange={(e) => this.onInputChange(e, 'targetRole')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.targetRole })} />
+                        {this.state.submitted && !this.state.user.targetRole && <small className="p-invalid">Target Role is required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="targetProject">Target Project</label>
+                        <InputText id="targetProject" value={this.state.user.targetProject} onChange={(e) => this.onInputChange(e, 'targetProject')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.targetProject })} />
+                        {this.state.submitted && !this.state.user.targetProject && <small className="p-invalid">Target Project is required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="skills">Skills</label>
+                        <InputText id="skills" value={this.state.user.skills} onChange={(e) => this.onInputChange(e, 'skills')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.skills })} />
+                        {this.state.submitted && !this.state.user.skills && <small className="p-invalid">Skills is required.</small>}
+                    </div>
+                </Dialog>
+
+                <Dialog visible={this.state.deleteUserDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteUserDialogFooter} onHide={this.hideDeleteUserDialog}>
+                    <div className="confirmation-content">
+                        <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem'}} />
+                        {this.state.user && <span>Are you sure you want to delete <b>{this.state.user.username}</b>?</span>}
+                    </div>
+                </Dialog>
+
+                <Dialog visible={this.state.deleteUsersDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteUsersDialogFooter} onHide={this.hideDeleteUsersDialog}>
+                    <div className="confirmation-content">
+                        <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem'}} />
+                        {this.state.user && <span>Are you sure you want to delete the selected users?</span>}
+                    </div>
+                </Dialog>
+            </div>
+        );
+    }
 }
-}
+
 export default UserList;

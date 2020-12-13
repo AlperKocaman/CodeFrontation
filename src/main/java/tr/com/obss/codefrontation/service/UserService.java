@@ -1,7 +1,7 @@
 package tr.com.obss.codefrontation.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tr.com.obss.codefrontation.dto.UserDTO;
 import tr.com.obss.codefrontation.entity.User;
@@ -11,38 +11,33 @@ import tr.com.obss.codefrontation.repository.UserRepository;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserService {
-    Mapper mapper;
-    UserRepository repository;
-
-    @Autowired
-    private UserService(UserRepository userRepository) {
-        this.repository = userRepository;
-    }
+    private final Mapper mapper;
+    private final UserRepository repository;
 
     public UserDTO addUser(UserDTO dto) {
         User user = mapper.toUserEntity(dto);
-        repository.save(user);
+        User entity=repository.save(user);
         log.info("UserList created: {}", user.toString());
 
-        return dto;
+        return mapper.toUserDTO(entity);
     }
 
     public UserDTO updateUser(UserDTO dto) throws Exception {
 
-        User origEntity =repository.findById(dto.getId()).orElseThrow(Exception::new);
+        User origEntity = repository.findById(dto.getId()).orElseThrow(Exception::new);
         mapper.updateEntity(dto, origEntity);
-        User user = mapper.toUserEntity(dto);
-        repository.save(user);
+        repository.save(origEntity);
         log.info("UserList updated: {}", origEntity.toString());
 
         return dto;
     }
 
     public UserDTO getUserByUsername(String username) throws Exception {
-        User entity =repository.findByUsername(username).orElseThrow(Exception::new);
+        User entity = repository.findByUsername(username).orElseThrow(Exception::new);
         UserDTO dto = mapper.toUserDTO(entity);
         log.info("UserList retrieved: {}", entity.toString());
 
@@ -50,7 +45,7 @@ public class UserService {
     }
 
     public UserDTO getUser(UUID id) throws Exception {
-        User origEntity =repository.findById(id).orElseThrow(Exception::new);
+        User origEntity = repository.findById(id).orElseThrow(Exception::new);
         log.info("UserList retrieved: {}", origEntity.toString());
 
         UserDTO dto = mapper.toUserDTO(origEntity);
@@ -58,28 +53,34 @@ public class UserService {
     }
 
     public List<UserDTO> getAllUser() {
-        List<User> userList= repository.findAll();
+        List<User> userList = repository.findAll();
         log.info("UserList list retrieved: {}", userList.toString());
         return mapper.toDTOList(userList);
     }
 
     public UUID deleteUser(UUID id) throws Exception {
-        if (repository.existsById(id)){
+        if (repository.existsById(id)) {
             repository.deleteById(id);
-            log.info("UserList deleted: {}",id.toString());
+            log.info("User deleted: {}", id.toString());
 
-        }else {
+        } else {
             throw new Exception();
         }
         return id;
     }
 
-    public String deleteUserByUsername(String username) throws Exception {
-        if (repository.existsByUsername(username)){
-            repository.deleteByUsername(username);
-            log.info("UserList deleted: {}",username);
+    public List<UserDTO> deleteUsers(List<UserDTO> users) {
+        repository.deleteAll(mapper.toEntityList(users));
+        log.info("UserList deleted: {}", users.toString());
+        return users;
+    }
 
-        }else {
+    public String deleteUserByUsername(String username) throws Exception {
+        if (repository.existsByUsername(username)) {
+            repository.deleteByUsername(username);
+            log.info("UserList deleted: {}", username);
+
+        } else {
             throw new Exception();
         }
         return username;

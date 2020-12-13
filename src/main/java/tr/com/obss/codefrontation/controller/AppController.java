@@ -7,15 +7,9 @@ import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -25,26 +19,19 @@ import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
 import tr.com.obss.codefrontation.service.CompilerService;
-//import tr.com.obss.codefrontation.service.UserService;
+import tr.com.obss.codefrontation.service.UserService;
 
 @Slf4j
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 @RequestMapping("/main")
 public class AppController {
 
-    private CompilerService compilerService;
-    //private UserService userService;
+    private final CompilerService compilerService;
+    private final UserService userService;
 
     private static final Gson gson = new GsonBuilder().create();
-
-    @Autowired
-    public AppController(CompilerService compilerService
-                         //,UserService userService
-    ) {
-        this.compilerService = compilerService;
-        //this.userService = userService;
-    }
 
     @ResponseBody
     @PostMapping(path = "/checkToken", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -63,21 +50,28 @@ public class AppController {
     }
 
     @GetMapping("/users")
-    public List<UserDTO> userList() {
-        UserDTO dto= new UserDTO();
-        dto.setId(UUID.randomUUID());
-        dto.setUsername("mduzgun");
-        dto.setFirstName("Mehmet");
-        dto.setLastName("Düzgün");
-        dto.setEmail("memetduzgun@gmail.com");
-        dto.setIsAdmin(false);
-        dto.setTargetRole("junior developer");
-        dto.setTargetProject("IHTAR");
-        dto.setSkills("java, python");
-        List<UserDTO> userList=new ArrayList<>();
-        userList.add(dto);
-        return userList;
-        //return userService.getAllUser();
+    public List<UserDTO> getUserList() {
+        return userService.getAllUser();
+    }
+
+    @PostMapping("/users/delete-users")
+    public List<UserDTO> deleteUserList(@RequestBody List<UserDTO> users) {
+        return userService.deleteUsers(users);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public UUID deleteUser(@PathVariable UUID id) throws Exception {
+        return userService.deleteUser(id);
+    }
+
+    @PostMapping("/user")
+    public UserDTO addUser(@RequestBody UserDTO user) throws Exception {
+        return userService.addUser(user);
+    }
+
+    @PutMapping("/users/{id}")
+    public UserDTO updateUser(@PathVariable UUID id, @RequestBody UserDTO user) throws Exception {
+        return userService.updateUser(user);
     }
 
 
