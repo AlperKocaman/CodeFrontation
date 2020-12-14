@@ -5,12 +5,14 @@ import SubmissionList from "./SubmissionList";
 import Dashboard from "./Dashboard";
 import UserList from "./UserList";
 import DataTableCrudDemo from "../Demo/DataTableCrudDemo";
+import Compiler from "./Compiler";
 
 function Pages() {
     return (
 
         <Router>
-            <Dashboard path="/"/>
+            <Compiler path="/"/>
+            <Dashboard path="admin"/>
             <UserList path="users"/>
             <DataTableCrudDemo path="test"/>
             <ProblemList path="admin/problems"/>
