@@ -64,6 +64,8 @@ security:
     - /public/*
     - /main/*
     - /main
+    - /registerSonar
+    - /getSonarMetrics/*
   exposed-headers:
     - X-Xsrf-Token
 
