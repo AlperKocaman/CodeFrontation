@@ -43,7 +43,7 @@ export class Problems extends Component {
             problemDialog: false, // FIXME : ne iş yapmakta ?
             deleteProblemDialog: false,
             deleteProblemsDialog: false,
-            problem: this.emptyUser,
+            problem: this.emptyProblem,
             selectedProblems: null,
             submitted: false, // FIXME : ne iş yapmakta ?
             globalFilter: null // FIXME : ne iş yapmakta ?
