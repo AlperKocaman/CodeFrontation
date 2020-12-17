@@ -22,8 +22,8 @@ export default class SubmissionService{
         }
     }
 
-    async getUsers() {
-        const url = "http://localhost:8080/main/users";
+    async getSubmissions() {
+        const url = "http://localhost:8080/main/submissions";
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;

@@ -17,8 +17,10 @@ import com.google.firebase.auth.FirebaseToken;
 
 import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDTO;
+import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
 import tr.com.obss.codefrontation.service.CompilerService;
+import tr.com.obss.codefrontation.service.SubmissionService;
 import tr.com.obss.codefrontation.service.UserService;
 
 @Slf4j
@@ -30,6 +32,7 @@ public class AppController {
 
     private final CompilerService compilerService;
     private final UserService userService;
+    private final SubmissionService submissionService;
 
     private static final Gson gson = new GsonBuilder().create();
 
@@ -52,6 +55,10 @@ public class AppController {
     @GetMapping("/users")
     public List<UserDTO> getUserList() {
         return userService.getAllUser();
+    }
+    @GetMapping("/submissions")
+    public List<SubmissionDTO> getSubmissionList() {
+        return submissionService.getAllSubmissions();
     }
 
     @PostMapping("/users/delete-users")
