@@ -12,7 +12,7 @@ public class ProblemDTO {
 	private UUID id;
 	private String name;
 	private String code;
-	private List<String> creators;
+	private String creators;
 	private String type;
 	private String category;
 	private int difficultyLevel;
@@ -20,6 +20,6 @@ public class ProblemDTO {
 	private int point;
 	private long timeLimit;
 	private long memoryLimit;
-	private List<String> allowedLanguages;
+	private String allowedLanguages;
 
 }

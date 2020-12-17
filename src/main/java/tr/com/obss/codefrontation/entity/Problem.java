@@ -23,7 +23,6 @@ public class Problem {
 	private UUID id;
 	private String name;
 	private String code;
-	// FIXME : Creators type should be List<String>
 	private String creators;
 	private String type;
 	private String category;
@@ -32,7 +31,6 @@ public class Problem {
 	private int point;
 	private long timeLimit;
 	private long memoryLimit;
-	// FIXME : AllowedLanguages type should be List<String>
 	private String allowedLanguages;
 	private Timestamp createdDate;  //FIXME time should be added in service or entity
 	private Timestamp updatedDate;   //FIXME time should be added in service or entity

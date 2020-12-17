@@ -10,9 +10,9 @@ import java.util.UUID;
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, UUID> {
 
-	Optional<Problem> findByProblemName(String problemName);
+	Optional<Problem> findByName(String problemName);
 
-	void deleteByProblemName(String problemName);
+	void deleteByName(String problemName);
 
-	boolean existsByProblemName(String problemName);
+	boolean existsByName(String problemName);
 }
