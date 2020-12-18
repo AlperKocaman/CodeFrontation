@@ -25,12 +25,11 @@ export class ProblemList extends Component {
         id: null,
         name: '',
         code: '',
-        creator: '',
+        author: '',
         type: '',
         category: '',
         difficultyLevel: 0,
         bestCode: '',
-        point: 0, // FIXME : all questions should be 100 ??
         timeLimit: 0,
         memoryLimit: '',
         allowedLanguages: ''
@@ -47,7 +46,6 @@ export class ProblemList extends Component {
             problem: this.emptyProblem,
             selectedProblems: null,
             submitted: false,
-            allowedLanguagesList:null,
             globalFilter: null
         };
 
@@ -325,7 +323,7 @@ export class ProblemList extends Component {
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column field="code" header="Problem Code" sortable></Column>
                         <Column field="name" header="Problem Name" sortable></Column>
-                        <Column field="creator" header="Author" sortable></Column>
+                        <Column field="author" header="Author" sortable></Column>
                         <Column field="type" header="Problem Type" sortable></Column>
                         <Column field="category" header="Category" sortable></Column>
                         <Column field="difficultyLevel" header="Difficulty" sortable></Column>
@@ -348,9 +346,9 @@ export class ProblemList extends Component {
                         {this.state.submitted && !this.state.problem.name && <small className="p-invalid">Problem name is required.</small>}
                     </div>
                     <div className="p-field">
-                        <label htmlFor="creator">Authors</label>
-                        <InputText id="creator" value={this.state.problem.creator} onChange={(e) => this.onInputChange(e, 'creator')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.creator })} />
-                        {this.state.submitted && !this.state.problem.creator && <small className="p-invalid">Authors are required.</small>}
+                        <label htmlFor="author">Authors</label>
+                        <InputText id="author" value={this.state.problem.author} onChange={(e) => this.onInputChange(e, 'author')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.author })} />
+                        {this.state.submitted && !this.state.problem.author && <small className="p-invalid">Authors are required.</small>}
                     </div>
                     <div className="p-field">
                         <label htmlFor="type">Problem Type</label>
@@ -368,11 +366,6 @@ export class ProblemList extends Component {
                         {this.state.submitted && !this.state.problem.difficultyLevel && <small className="p-invalid">Problem difficulty level is required.</small>}
                     </div>
                     <div className="p-field">
-                        <label htmlFor="bestCode">Best Code</label>
-                        <InputText id="bestCode" value={this.state.problem.bestCode} onChange={(e) => this.onInputChange(e, 'bestCode')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.bestCode })} />
-                        {this.state.submitted && !this.state.problem.bestCode && <small className="p-invalid">Problem best code is required.</small>}
-                    </div>
-                    <div className="p-field">
                         <label htmlFor="timeLimit">Time Limit</label>
                         <InputText id="timeLimit" value={this.state.problem.timeLimit} onChange={(e) => this.onInputChange(e, 'timeLimit')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.timeLimit })} />
                         {this.state.submitted && !this.state.problem.timeLimit && <small className="p-invalid">Problem time limit is required.</small>}
@@ -384,7 +377,8 @@ export class ProblemList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="allowedLanguages">Allowed Languages</label>
-                        <MultiSelect display="chip" placeholder="Select Language/s" optionLabel="language" value={this.state.allowedLanguagesList} options={this.languages} onChange={(e) => this.setState({ allowedLanguagesList: e.value })} />
+                        <MultiSelect id="allowedLanguages"  display="chip" placeholder="Select Language/s" optionLabel="language" value={this.state.problem.allowedLanguages} options={this.languages} onChange={(e) => this.onInputChange(e, 'allowedLanguages')}
+                                     className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.allowedLanguages })}/>
                         {this.state.submitted && !this.state.problem.allowedLanguages && <small className="p-invalid">Allowed languages is required.</small>}
                     </div>
                 </Dialog>
