@@ -64,6 +64,7 @@ security:
     - /public/*
     - /main/*
     - /main/users/*
+    - /main/problems/*
     - /main
   exposed-headers:
     - X-Xsrf-Token
