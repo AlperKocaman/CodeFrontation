@@ -74,6 +74,8 @@ export class ProblemList extends Component {
         this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
 
+        this.linkable = this.linkable.bind(this);
+        this.onClickProblemCode = this.onClickProblemCode.bind(this);
         this.openNew = this.openNew.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
         this.saveProblem = this.saveProblem.bind(this);
@@ -268,6 +270,16 @@ export class ProblemList extends Component {
         )
     }
 
+    linkable(rowData) {
+        return <a style={{cursor: 'pointer', textDecoration: 'underline'}}
+                  onClick={this.onClickProblemCode}>{rowData.code}</a>;
+    }
+
+    onClickProblemCode = (event) => {
+        console.log('onClickProblemCode : ' + event.target.text);
+        window.location.assign('problems/' + event.target.text);
+    };
+
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
@@ -321,7 +333,7 @@ export class ProblemList extends Component {
                                header={header}>
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                        <Column field="code" header="Problem Code" sortable></Column>
+                        <Column field="code" body={this.linkable} header="Problem Code" sortable></Column>
                         <Column field="name" header="Problem Name" sortable></Column>
                         <Column field="author" header="Author" sortable></Column>
                         <Column field="type" header="Problem Type" sortable></Column>
