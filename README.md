@@ -1,8 +1,8 @@
-##BE PART
+## BE PART
 
 http://localhost:8080/main ==> Code Frontation 2020
 
-##Postgres Install
+## Postgres Install
 
 https://www.postgresql.org/download/
 
@@ -11,7 +11,7 @@ sudo -u postgres psql
 ALTER USER postgres PASSWORD 'postgres';
 
 
-##FE PART
+## FE PART
 
 https://nodejs.org/en/download/
 

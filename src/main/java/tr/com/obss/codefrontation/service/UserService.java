@@ -21,7 +21,7 @@ public class UserService {
     public UserDTO addUser(UserDTO dto) {
         User user = mapper.toUserEntity(dto);
         User entity=repository.save(user);
-        log.info("UserList created: {}", user.toString());
+        log.info("User created: {}", user.toString());
 
         return mapper.toUserDTO(entity);
     }
@@ -31,7 +31,7 @@ public class UserService {
         User origEntity = repository.findById(dto.getId()).orElseThrow(Exception::new);
         mapper.updateEntity(dto, origEntity);
         repository.save(origEntity);
-        log.info("UserList updated: {}", origEntity.toString());
+        log.info("User updated: {}", origEntity.toString());
 
         return dto;
     }
@@ -48,8 +48,7 @@ public class UserService {
         User origEntity = repository.findById(id).orElseThrow(Exception::new);
         log.info("UserList retrieved: {}", origEntity.toString());
 
-        UserDTO dto = mapper.toUserDTO(origEntity);
-        return dto;
+        return mapper.toUserDTO(origEntity);
     }
 
     public List<UserDTO> getAllUser() {
