@@ -1,7 +1,7 @@
 package tr.com.obss.codefrontation.dto;
 
 import lombok.Data;
-import tr.com.obss.codefrontation.entity.Assignments;
+import tr.com.obss.codefrontation.entity.Assignment;
 import tr.com.obss.codefrontation.enums.Language;
 import tr.com.obss.codefrontation.enums.Result;
 import tr.com.obss.codefrontation.enums.Status;
@@ -15,7 +15,7 @@ public class  SubmissionDTO {
 
     private UUID id;
 
-    private Assignments assignmentId;
+    private Assignment assignmentId;
 
     private Double time;
 

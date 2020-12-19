@@ -5,7 +5,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "assignments")
-public class Assignments {
+public class Assignment {
 
     @Id
     @GeneratedValue
@@ -17,7 +17,7 @@ public class Assignments {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id")
-    private Problems problemId;
+    private Problem problemId;
 }
 
 

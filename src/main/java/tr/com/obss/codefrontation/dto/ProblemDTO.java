@@ -1,6 +1,7 @@
 package tr.com.obss.codefrontation.dto;
 
 import lombok.Data;
+import tr.com.obss.codefrontation.enums.Level;
 
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ public class ProblemDTO {
 	private String author;
 	private String type;
 	private String category;
-	private int difficultyLevel;
+	private Level difficultyLevel;
 	private String bestCode;
 	private int point;
 	private long timeLimit;

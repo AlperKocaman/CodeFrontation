@@ -21,7 +21,7 @@ public class Submission {
 
     @OneToOne
     @JoinColumn(name = "assignment_id")
-    private Assignments assignmentId;
+    private Assignment assignmentId;
 
     private Double time;
 
