@@ -26,7 +26,6 @@ export class ProblemList extends Component {
         name: '',
         code: '',
         author: '',
-        type: '',
         category: '',
         difficultyLevel: 0,
         bestCode: '',
@@ -336,7 +335,6 @@ export class ProblemList extends Component {
                         <Column field="code" body={this.linkable} header="Problem Code" sortable></Column>
                         <Column field="name" header="Problem Name" sortable></Column>
                         <Column field="author" header="Author" sortable></Column>
-                        <Column field="type" header="Problem Type" sortable></Column>
                         <Column field="category" header="Category" sortable></Column>
                         <Column field="difficultyLevel" header="Difficulty" sortable></Column>
                         <Column field="timeLimit" header="Time Limit" sortable></Column>
@@ -361,11 +359,6 @@ export class ProblemList extends Component {
                         <label htmlFor="author">Authors</label>
                         <InputText id="author" value={this.state.problem.author} onChange={(e) => this.onInputChange(e, 'author')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.author })} />
                         {this.state.submitted && !this.state.problem.author && <small className="p-invalid">Authors are required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="type">Problem Type</label>
-                        <InputText id="type" value={this.state.problem.type} onChange={(e) => this.onInputChange(e, 'type')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.type })} />
-                        {this.state.submitted && !this.state.problem.type && <small className="p-invalid">Problem type is required.</small>}
                     </div>
                     <div className="p-field">
                         <label htmlFor="category">Problem Category</label>
