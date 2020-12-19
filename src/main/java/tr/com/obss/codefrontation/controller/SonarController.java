@@ -1,38 +1,28 @@
 package tr.com.obss.codefrontation.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 import tr.com.obss.codefrontation.dto.SonarRegisterDTO;
 import tr.com.obss.codefrontation.sonar.SonarScannerApplication;
 import tr.com.obss.codefrontation.sonar.SonarScannerRequestService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
 public class SonarController {
 
-    private RestTemplate restTemplate = new RestTemplate();
-
+    /**
+     *  metricsOfProject contains 2 Json objects.
+     *      First one is the metrics of project
+     *      Second one is the issues(bugs/code smell/vulnerability) of the project.
+     */
     @GetMapping(path = "/getSonarMetrics/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public HttpEntity getSonarMetrics(@PathVariable String projectId) {
-        /**
-         *  metricsOfProject contains 2 Json objects.
-         *      First one is the metrics of project
-         *      Second one is the issues(bugs/code smell/vulnerability) of the project.
-         */
-        List<JSONObject> metricsOfProject = SonarScannerRequestService.makeBulkRequests(projectId);
-        System.out.println(metricsOfProject);
-        return null;
+    public List<JSONObject> getSonarMetrics(@PathVariable String projectId) {
+        return SonarScannerRequestService.makeBulkRequests(projectId);
     }
-
 
     @PostMapping(path = "/registerSonar", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity registerSonar(@RequestBody SonarRegisterDTO sonarRegisterDTO) {

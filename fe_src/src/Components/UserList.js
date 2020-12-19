@@ -51,6 +51,8 @@ export class UserList extends Component {
         this.statusBodyTemplate = this.statusBodyTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
 
+        this.linkable = this.linkable.bind(this);
+        this.onClickUsername = this.onClickUsername.bind(this);
         this.openNew = this.openNew.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
         this.saveUser = this.saveUser.bind(this);
@@ -248,6 +250,17 @@ export class UserList extends Component {
     statusBodyTemplate(rowData) {
         return <span className={`user-badge status-${rowData.isAdmin ?  'admin' :'user'}`}>{rowData.isAdmin ?  'ADMIN' :'USER'}</span>;
     }
+
+    linkable(rowData) {
+        return <a style={{cursor: 'pointer', textDecoration: 'underline'}}
+                  onClick={this.onClickUsername}>{rowData.username}</a>;
+    }
+
+    onClickUsername = (event) => {
+        console.log('onClickUsername : ' + event.target.text);
+        window.location.assign('users/' + event.target.text);
+    };
+
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
@@ -301,7 +314,7 @@ export class UserList extends Component {
                                header={header}>
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                        <Column field="username" header="Username" sortable></Column>
+                        <Column field="username" body={this.linkable} header="Username" sortable></Column>
                         <Column field="firstName" header="First Name" sortable></Column>
                         <Column field="lastName" header="Last Name" sortable></Column>
 
