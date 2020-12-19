@@ -2,7 +2,9 @@
 package tr.com.obss.codefrontation.sonar;
 
 import lombok.extern.slf4j.Slf4j;
-import com.squareup.okhttp.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
