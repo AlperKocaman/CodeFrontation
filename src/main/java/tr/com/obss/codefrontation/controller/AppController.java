@@ -1,27 +1,24 @@
 package tr.com.obss.codefrontation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import tr.com.obss.codefrontation.dto.AuthDTO;
 import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
 import tr.com.obss.codefrontation.service.CompilerService;
 import tr.com.obss.codefrontation.service.SubmissionService;
 import tr.com.obss.codefrontation.service.UserService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -56,9 +53,11 @@ public class AppController {
     public List<UserDTO> getUserList() {
         return userService.getAllUser();
     }
+
     @GetMapping("/submissions")
     public List<SubmissionDTO> getSubmissionList() {
-        return submissionService.getAllSubmissions();
+        List<SubmissionDTO> list =  submissionService.getAllSubmissions();
+        return list;
     }
 
     @PostMapping("/users/delete-users")

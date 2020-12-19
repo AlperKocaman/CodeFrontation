@@ -5,11 +5,9 @@ import tr.com.obss.codefrontation.enums.Language;
 import tr.com.obss.codefrontation.enums.Result;
 import tr.com.obss.codefrontation.enums.Status;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URL;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -20,15 +18,32 @@ public class Submission {
     @Id
     @GeneratedValue
     private UUID id;
-    private String problemCode;
-    private String name;
-    private String candidate;
+
+    @OneToOne
+    @JoinColumn(name = "assignment_id")
+    private Assignments assignmentId;
+
+    private Double time;
+
+    private Double memory;
+
+    private Integer point;
+
+    private String body;
+
     private Language language;
-    private String time;
-    private String memory;
-    private Integer points;
+
     private Status status;
+
     private Result result;
+
     private URL sonarUrl;
 
+    private String name;
+
+    private Date createdDate;
+
+    private Date updatedDate;
+
 }
+

@@ -29,31 +29,31 @@ export default class SubmissionService{
         return response;
     }
 
-    async deleteUsers(users){
-        const url="http://localhost:8080/main/users/delete-users";
+    async deleteSubmissions(submissions){
+        const url="http://localhost:8080/main/submissions/delete-submissions";
         const method='POST';
-        const response = await this.requestToServer(url, method, users);
+        const response = await this.requestToServer(url, method, submissions);
         return response;
     }
 
-    async deleteUser(user){
-        const url="http://localhost:8080/main/users/"+user.id;
+    async deleteSubmission(submission){
+        const url="http://localhost:8080/main/submissions/"+submission.id;
         const method='DELETE';
         const response = await this.requestToServer(url, method, {});
         return response;
     }
 
-    async addUser(user){
-        const url="http://localhost:8080/main/user";
+    async addSubmission(submission){
+        const url="http://localhost:8080/main/submission";
         const method='POST';
-        const response = await this.requestToServer(url, method, user);
+        const response = await this.requestToServer(url, method, submission);
         return response;
     }
 
-    async updateUser(user){
-        const url="http://localhost:8080/main/users/"+user.id;
+    async updateSubmission(submission){
+        const url="http://localhost:8080/main/submissions/"+submission.id;
         const method='PUT';
-        const response = await this.requestToServer(url, method, user);
+        const response = await this.requestToServer(url, method, submission);
         return response;
     }
 }

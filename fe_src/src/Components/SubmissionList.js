@@ -14,7 +14,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import './UserList.css';
+import './SubmissionList.css';
 import uuid from 'uuid-random';
 
 export class SubmissionList extends Component {
@@ -27,7 +27,10 @@ export class SubmissionList extends Component {
     language: false,
     time: '',
     memory: '',
-    points: ''
+    point: '',
+    status: '',
+    result: '',
+    sonar: ''
   };
 
   constructor(props) {
@@ -35,7 +38,7 @@ export class SubmissionList extends Component {
 
     this.state = {
       submissions: [],
-      userDialog: false,
+      submissionDialog: false,
       deleteSubmissionDialog: false,
       deleteSubmissionsDialog: false,
       submission: this.emptySubmission,
@@ -46,92 +49,91 @@ export class SubmissionList extends Component {
 
     this.submissionService = new SubmissionService();
     this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
-    this.statusBodyTemplate = this.statusBodyTemplate.bind(this);
     this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
 
     this.openNew = this.openNew.bind(this);
     this.hideDialog = this.hideDialog.bind(this);
-    this.editUser = this.editUser.bind(this);
-    this.confirmDeleteUser = this.confirmDeleteUser.bind(this);
-    this.deleteUser = this.deleteUser.bind(this);
+    this.editSubmission = this.editSubmission.bind(this);
+    this.confirmDeleteSubmission = this.confirmDeleteSubmission.bind(this);
+    this.deleteSubmission = this.deleteSubmission.bind(this);
     this.exportCSV = this.exportCSV.bind(this);
     this.confirmDeleteSelected = this.confirmDeleteSelected.bind(this);
-    this.deleteSelectedUsers = this.deleteSelectedUsers.bind(this);
+    this.deleteSelectedSubmissions = this.deleteSelectedSubmissions.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
     this.onInputNumberChange = this.onInputNumberChange.bind(this);
-    this.hideDeleteUserDialog = this.hideDeleteUserDialog.bind(this);
-    this.hideDeleteUsersDialog = this.hideDeleteUsersDialog.bind(this);
+    this.hideDeleteSubmissionDialog = this.hideDeleteSubmissionDialog.bind(this);
+    this.hideDeleteSubmissionsDialog = this.hideDeleteSubmissionsDialog.bind(this);
   }
 
   componentDidMount() {
     this.submissionService.getSubmissions().then(res => {
-      this.setState({ submissions: res.data });
+      this.setState(Object.assign(this.state.submissions, res.data));
     });
   }
 
   openNew() {
     this.setState({
-      user: this.emptySubmission,
+      submission: this.emptySubmission,
       submitted: false,
-      userDialog: true
+      submissionDialog: true
     });
   }
 
   hideDialog() {
     this.setState({
       submitted: false,
-      userDialog: false
+      submissionDialog: false
     });
   }
 
-  hideDeleteUserDialog() {
-    this.setState({ deleteUserDialog: false });
+  hideDeleteSubmissionDialog() {
+    this.setState({ deleteSubmissionDialog: false });
   }
 
-  hideDeleteUsersDialog() {
-    this.setState({ deleteUsersDialog: false });
+  hideDeleteSubmissionsDialog() {
+    this.setState({ deleteSubmissionsDialog: false });
   }
 
 
-  deleteUser() {
-    this.submissionService.deleteUser(this.state.submission).then(data => {
-      let users = this.state.submissions.filter(val => val.id !== this.state.submission.id);
+  deleteSubmission() {
+    this.submissionService.deleteSubmission(this.state.submission).then(data => {
+      let submissions = this.state.submissions.filter(val => val.id !== this.state.submission.id);
       this.setState({
-        users,
-        deleteUserDialog: false,
-        user: this.emptySubmission
+        submissions,
+        deleteSubmissionDialog: false,
+        submission: this.emptySubmission
       });
-      this.toast.show({ severity: 'success', summary: 'Successful', detail: 'User Deleted', life: 3000 });
+      this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Submission Deleted', life: 3000 });
     }).catch(error => {
       console.error('There was an error!', error);
     });
   }
 
-  deleteSelectedUsers() {
-    this.submissionService.deleteUsers(this.state.selectedSubmissions).then(data => {
-      let users = this.state.submissions.filter(val => !this.state.selectedSubmissions.includes(val));
+  deleteSelectedSubmissions() {
+    this.submissionService.deleteSubmissions(this.state.selectedSubmissions).then(data => {
+      let submissions = this.state.submissions.filter(val => !this.state.selectedSubmissions.includes(val));
       this.setState({
-        users,
-        deleteUsersDialog: false,
-        selectedUsers: null
+        submissions,
+        deleteSubmissionsDialog: false,
+        selectedSubmissions: null
       });
-      this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Users Deleted', life: 3000 });
+      this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Submissions Deleted', life: 3000 });
     }).catch(error => {
       console.error('There was an error!', error);
     });
   }
 
-  editUser(user) {
+  editSubmission(submission) {
     this.setState({
-      user: { ...user },
-      userDialog: true
+      submission: { ...submission },
+      submissionDialog: true
     });
   }
 
-  confirmDeleteUser(user) {
+  confirmDeleteSubmission(submission) {
     this.setState({
-      user,
-      deleteUserDialog: true
+      submission,
+      deleteSubmissionDialog: true
     });
   }
 
@@ -156,23 +158,23 @@ export class SubmissionList extends Component {
   }
 
   confirmDeleteSelected() {
-    this.setState({ deleteUsersDialog: true });
+    this.setState({ deleteSubmissionsDialog: true });
   }
 
   onInputChange(e, name) {
     const val = (e.target && e.target.value) || '';
-    let user = { ...this.state.submission };
-    user[`${name}`] = val;
+    let submission = { ...this.state.submission };
+    submission[`${name}`] = val;
 
-    this.setState({ user });
+    this.setState({ submission });
   }
 
   onInputNumberChange(e, name) {
     const val = e.value || 0;
-    let user = { ...this.state.submission };
-    user[`${name}`] = val;
+    let submission = { ...this.state.submission };
+    submission[`${name}`] = val;
 
-    this.setState({ user });
+    this.setState({ submission });
   }
 
   rightToolbarTemplate() {
@@ -184,14 +186,11 @@ export class SubmissionList extends Component {
     )
   }
 
-  statusBodyTemplate(rowData) {
-    return <span className={`user-badge status-${rowData.isAdmin ? 'admin' : 'user'}`}>{rowData.isAdmin ? 'ADMIN' : 'USER'}</span>;
-  }
   actionBodyTemplate(rowData) {
     return (
       <React.Fragment>
-        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => this.editUser(rowData)} />
-        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => this.confirmDeleteUser(rowData)} />
+        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => this.editSubmission(rowData)} />
+        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => this.confirmDeleteSubmission(rowData)} />
       </React.Fragment>
     );
   }
@@ -199,7 +198,7 @@ export class SubmissionList extends Component {
   render() {
     const header = (
       <div className="table-header">
-        <h5 className="p-m-0">Manage Users</h5>
+        <h5 className="p-m-0">Submissions</h5>
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText type="search" onInput={(e) => this.setState({ globalFilter: e.target.value })} placeholder="Search..." />
@@ -207,16 +206,16 @@ export class SubmissionList extends Component {
       </div>
     );
 
-    const deleteUserDialogFooter = (
+    const deleteSubmissionDialogFooter = (
       <React.Fragment>
-        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteUserDialog} />
-        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteUser} />
+        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteSubmissionDialog} />
+        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSubmission} />
       </React.Fragment>
     );
-    const deleteUsersDialogFooter = (
+    const deleteSubmissionsDialogFooter = (
       <React.Fragment>
-        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteUsersDialog} />
-        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSelectedUsers} />
+        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteSubmissionsDialog} />
+        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSelectedSubmissions} />
       </React.Fragment>
     );
 
@@ -227,10 +226,10 @@ export class SubmissionList extends Component {
         <div className="card">
           <Toolbar className="p-mb-4" right={this.rightToolbarTemplate}></Toolbar>
 
-          <DataTable ref={(el) => this.dt = el} value={this.state.submissions} selection={this.state.selectedSubmissions} onSelectionChange={(e) => this.setState({ selectedUsers: e.value })}
+          <DataTable ref={(el) => this.dt = el} value={this.state.submissions} selection={this.state.selectedSubmissions} onSelectionChange={(e) => this.setState({ selectedSubmissions: e.value })}
             dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} submissions"
             globalFilter={this.state.globalFilter}
             header={header}>
 
@@ -240,29 +239,29 @@ export class SubmissionList extends Component {
             <Column field="name" header="Name" sortable></Column>
 
             <Column field="user" header="User" sortable></Column>
-            <Column field="language" header="Language" body={this.statusBodyTemplate} sortable></Column>
+            <Column field="language" header="Language"sortable></Column>
             <Column field="time" header="Time" sortable></Column>
             <Column field="memory" header="Memory" sortable></Column>
-            <Column field="points" header="Points" sortable></Column>
+            <Column field="point" header="Point" sortable></Column>
             <Column field="status" header="Status" sortable></Column>
             <Column field="result" header="Result" sortable></Column>
-            <Column field="sonar" header="Sonar" sortable></Column>
+            <Column field="sonarUrl" header="Sonar" sortable></Column>
 
             <Column body={this.actionBodyTemplate}></Column>
           </DataTable>
         </div>
 
-        <Dialog visible={this.state.deleteSubmissionDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteUserDialogFooter} onHide={this.hideDeleteUserDialog}>
+        <Dialog visible={this.state.deleteSubmissionDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSubmissionDialogFooter} onHide={this.hideDeleteSubmissionDialog}>
           <div className="confirmation-content">
             <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
             {this.state.submission && <span>Are you sure you want to delete <b>{this.state.submission.id}</b>?</span>}
           </div>
         </Dialog>
 
-        <Dialog visible={this.state.deleteSubmissionsDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteUsersDialogFooter} onHide={this.hideDeleteUsersDialog}>
+        <Dialog visible={this.state.deleteSubmissionsDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSubmissionsDialogFooter} onHide={this.hideDeleteSubmissionsDialog}>
           <div className="confirmation-content">
             <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
-            {this.state.submission && <span>Are you sure you want to delete the selected users?</span>}
+            {this.state.submission && <span>Are you sure you want to delete the selected submissions?</span>}
           </div>
         </Dialog>
       </div>
