@@ -1,6 +1,8 @@
 package tr.com.obss.codefrontation.entity;
 
 import lombok.Data;
+import tr.com.obss.codefrontation.enums.Category;
+import tr.com.obss.codefrontation.enums.Level;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,9 +24,8 @@ public class Problem {
 	private String name;
 	private String code;
 	private String author;
-	private String type;
-	private String category;
-	private int difficultyLevel;
+	private Category category;
+	private Level difficultyLevel;
 	private String bestCode;
 	private int point;
 	private long timeLimit;
