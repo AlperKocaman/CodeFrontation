@@ -1,4 +1,4 @@
-##BE PART
+## BE PART
 
 http://localhost:8080/main ==> Code Frontation 2020
 
@@ -6,7 +6,7 @@ http://localhost:8080/main ==> Code Frontation 2020
 
 python_src/judge-server/dmoj/main.py   run etmek gerek    localhost:9999 portunu dinliyor (API için 8081 portunu dinliyor)
 
-##Postgres Install
+## Postgres Install
 
 https://www.postgresql.org/download/
 
@@ -15,7 +15,7 @@ sudo -u postgres psql
 ALTER USER postgres PASSWORD 'postgres';
 
 
-##FE PART
+## FE PART
 
 https://nodejs.org/en/download/
 

@@ -18,6 +18,8 @@ spring:
     hibernate:
       ddl-auto: update
 
+dmoj:
+  problems-path: src/main/resources/problems
 
 security:
   firebase-props:
@@ -64,7 +66,10 @@ security:
     - /public/*
     - /main/*
     - /main/users/*
+    - /main/problems/*
     - /main
+    - /registerSonar
+    - /getSonarMetrics/*
   exposed-headers:
     - X-Xsrf-Token
 

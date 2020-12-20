@@ -1,13 +1,12 @@
 package tr.com.obss.codefrontation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +16,19 @@ import com.google.firebase.auth.FirebaseToken;
 
 import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDTO;
+import tr.com.obss.codefrontation.dto.ProblemDTO;
+import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
+import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
 import tr.com.obss.codefrontation.service.CompilerService;
+import tr.com.obss.codefrontation.service.DmojProblemService;
+import tr.com.obss.codefrontation.service.ProblemService;
+import tr.com.obss.codefrontation.service.SubmissionService;
 import tr.com.obss.codefrontation.service.UserService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -30,6 +39,9 @@ public class AppController {
 
     private final CompilerService compilerService;
     private final UserService userService;
+    private final ProblemService problemService;
+    private final SubmissionService submissionService;
+    private final DmojProblemService dmojProblemService;
 
     private static final Gson gson = new GsonBuilder().create();
 
@@ -54,6 +66,12 @@ public class AppController {
         return userService.getAllUser();
     }
 
+    @GetMapping("/submissions")
+    public List<SubmissionDTO> getSubmissionList() {
+        List<SubmissionDTO> list =  submissionService.getAllSubmissions();
+        return list;
+    }
+
     @PostMapping("/users/delete-users")
     public List<UserDTO> deleteUserList(@RequestBody List<UserDTO> users) {
         return userService.deleteUsers(users);
@@ -74,6 +92,36 @@ public class AppController {
         return userService.updateUser(user);
     }
 
+    /* End of controller methods for Users */
+
+    /* Controller methods for problems page */
+
+    @GetMapping("/problems")
+    public List<ProblemDTO> getProblemList() {
+        return problemService.getAllProblems();
+    }
+
+    @PostMapping("/problems/delete-problems")
+    public List<ProblemDTO> deleteProblemList(@RequestBody List<ProblemDTO> problems) {
+        return problemService.deleteProblems(problems);
+    }
+
+    @DeleteMapping("/problems/{id}")
+    public UUID deleteProblem(@PathVariable UUID id) throws Exception {
+        return problemService.deleteProblem(id);
+    }
+
+    @PostMapping("/problem")
+    public ProblemDTO addProblem(@RequestBody ProblemDTO problem) throws Exception {
+        return problemService.addProblem(problem);
+    }
+
+    @PutMapping("/problems/{id}")
+    public ProblemDTO updateProblem(@PathVariable UUID id, @RequestBody ProblemDTO problem) throws Exception {
+        return problemService.updateProblem(problem);
+    }
+
+    /* End of controller methods for Problems */
 
     @PostMapping("/evaluate")
     public String compileAndRun(@RequestBody Object codeMap) {
@@ -91,5 +139,12 @@ public class AppController {
 
         return result;
     }
+    
+    @PostMapping("/createProblem")
+    public String createProblem(@RequestBody ProblemEveluationDto problem) {
+      dmojProblemService.createNewProblem(problem);
+      return "successfully created!!";
+    }
+
 
 }
