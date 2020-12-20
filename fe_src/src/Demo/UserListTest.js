@@ -39,7 +39,7 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref}/>)
 };
 
-class UserList extends Component {
+class UserListTest extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -127,7 +127,7 @@ onRowDelete = (oldData) => {
 
 onClickUsername = (event) => {
     console.log('onClickUsername : ' + event.target.text);
-    window.location.assign("/");//FIXME redirect /user/mduzgun
+    window.location.assign("/");//FIXME redirect /users/mduzgun
 };
 
 render()
@@ -281,4 +281,4 @@ render()
     );
 }
 }
-export default UserList;
+export default UserListTest;

@@ -202,7 +202,7 @@ var ApexHighlightRules = function() {
             token: "keyword",
             caseInsensitive: true
         }, {
-            regex: "(:?target_length|toLabel|convertCurrency|count|Contact|Account|UserList|FIELDS)\\b",
+            regex: "(:?target_length|toLabel|convertCurrency|count|Contact|Account|UserListTest|FIELDS)\\b",
             token: "support.function",
             caseInsensitive: true
         }, {
