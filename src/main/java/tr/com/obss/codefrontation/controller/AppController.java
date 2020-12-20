@@ -19,7 +19,9 @@ import tr.com.obss.codefrontation.dto.AuthDTO;
 import tr.com.obss.codefrontation.dto.ProblemDTO;
 import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
+import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
 import tr.com.obss.codefrontation.service.CompilerService;
+import tr.com.obss.codefrontation.service.DmojProblemService;
 import tr.com.obss.codefrontation.service.ProblemService;
 import tr.com.obss.codefrontation.service.SubmissionService;
 import tr.com.obss.codefrontation.service.UserService;
@@ -39,6 +41,7 @@ public class AppController {
     private final UserService userService;
     private final ProblemService problemService;
     private final SubmissionService submissionService;
+    private final DmojProblemService dmojProblemService;
 
     private static final Gson gson = new GsonBuilder().create();
 
@@ -136,5 +139,12 @@ public class AppController {
 
         return result;
     }
+    
+    @PostMapping("/createProblem")
+    public String createProblem(@RequestBody ProblemEveluationDto problem) {
+      dmojProblemService.createNewProblem(problem);
+      return "successfully created!!";
+    }
+
 
 }
