@@ -1,6 +1,6 @@
 package tr.com.obss.codefrontation.exceptions;
 
-import tr.com.obss.codefrontation.dto.ErrorDto;
+import tr.com.obss.codefrontation.dto.ErrorDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
-        ErrorDto error = new ErrorDto();
+        ErrorDTO error = new ErrorDTO();
         error.setErrorMessage(ex.getMessage());
         return new ResponseEntity<>(error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -27,7 +27,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Object> handleNullPointerException(NullPointerException ex) {
-        ErrorDto error = new ErrorDto();
+        ErrorDTO error = new ErrorDTO();
         error.setErrorMessage(ex.getMessage());
         return new ResponseEntity<>(new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }

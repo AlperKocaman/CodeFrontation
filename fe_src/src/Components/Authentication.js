@@ -3,7 +3,7 @@ import { Router } from "@reach/router";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import PasswordReset from "./PasswordReset";
-function Application() {
+function Authentication() {
   return (
 
         <Router>
@@ -15,4 +15,4 @@ function Application() {
   );
 }
 
-export default Application;
+export default Authentication;

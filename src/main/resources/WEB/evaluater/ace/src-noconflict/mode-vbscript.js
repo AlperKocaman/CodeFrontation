@@ -15,7 +15,7 @@ var VBScriptHighlightRules = function() {
         "constant.language.asp": "Empty|False|Nothing|Null|True",
         "variable.language.vb.asp": "Me",
         "support.class.vb.asp": "RegExp",
-        "support.class.asp": "Application|ObjectContext|Request|Response|Server|Session",
+        "support.class.asp": "Authentication|ObjectContext|Request|Response|Server|Session",
         "support.class.collection.asp": "Contents|StaticObjects|ClientCertificate|Cookies|Form|QueryString|ServerVariables",
         "support.constant.asp": "TotalBytes|Buffer|CacheControl|Charset|ContentType|Expires|ExpiresAbsolute"
             + "|IsClientConnected|PICS|Status|ScriptTimeout|CodePage|LCID|SessionID|Timeout",

@@ -838,7 +838,7 @@ var ScalaHighlightRules = function() {
         "Unit|Any|AnyVal|AnyRef|Null|ScalaObject|Singleton|Seq|Iterable|List|" +
         "Option|Array|Char|Byte|Int|Long|Nothing|" +
 
-        "App|Application|BufferedIterator|BigDecimal|BigInt|Console|Either|" +
+        "App|Authentication|BufferedIterator|BigDecimal|BigInt|Console|Either|" +
         "Enumeration|Equiv|Fractional|Function|IndexedSeq|Integral|Iterator|" +
         "Map|Numeric|Nil|NotNull|Ordered|Ordering|PartialFunction|PartialOrdering|" +
         "Product|Proxy|Range|Responder|Seq|Serializable|Set|Specializable|Stream|" +

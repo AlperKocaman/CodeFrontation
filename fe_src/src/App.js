@@ -1,8 +1,8 @@
 import React, {Component, Suspense, useContext} from "react";
-import Application from "./Components/Application";
+import Authentication from "./Components/Authentication";
 import './App.css';
-import Compiler from "./Components/Compiler";
 import {auth, generateUserDocument} from "./Components/Firebase";
+import Pages from "./Components/Pages";
 
 class App extends Component {
     state = {
@@ -17,14 +17,14 @@ class App extends Component {
     };
     render() {
         let { user } = this.state;
-        user=true;  //login mekanizmasını kaldırmak için konuldu
+        user=true;  //FIXME login mekanizmasını kaldırmak için konuldu
         return (
             <div>
             <div className={user ?  '' :'hidden'}>
-                    <Compiler />
+                    <Pages />
                 </div>
                 <div className={user ? 'hidden' : ''}>
-                    <Application />
+                    <Authentication />
                 </div>
             </div>
         );
