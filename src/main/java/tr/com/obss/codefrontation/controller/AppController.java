@@ -19,7 +19,7 @@ import tr.com.obss.codefrontation.dto.AuthDto;
 import tr.com.obss.codefrontation.dto.TestDto;
 import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
 import tr.com.obss.codefrontation.service.ICompilerService;
-import tr.com.obss.codefrontation.service.ProblemService;
+import tr.com.obss.codefrontation.service.DmojProblemService;
 
 @Slf4j
 @RestController
@@ -29,12 +29,12 @@ public class AppController {
 
   private ICompilerService compilerService;
 
-  private ProblemService problemService;
+  private DmojProblemService dmojProblemService;
 
   @Autowired
-  public AppController(ICompilerService compilerService, ProblemService problemService) {
+  public AppController(ICompilerService compilerService, DmojProblemService dmojProblemService) {
     this.compilerService = compilerService;
-    this.problemService = problemService;
+    this.dmojProblemService = dmojProblemService;
   }
 
   @ResponseBody
@@ -56,7 +56,7 @@ public class AppController {
 
   @PostMapping("/createProblem")
   public String createProblem(@RequestBody ProblemEveluationDto problem) {
-    problemService.createNewProblem(problem);
+    dmojProblemService.createNewProblem(problem);
     return "successfully created!!";
   }
 

@@ -27,12 +27,12 @@ import tr.com.obss.codefrontation.security.models.DmojProperties;
 
 @Slf4j
 @Service
-public class ProblemService {
+public class DmojProblemService {
 
   private DmojProperties dmojProperties;
 
   @Autowired
-  public ProblemService(DmojProperties dmojProperties) {
+  public DmojProblemService(DmojProperties dmojProperties) {
 
     this.dmojProperties = dmojProperties;
 
