@@ -24,7 +24,7 @@ export class TemplateList extends Component {
     emptyTemplate = {
         id: null,
         name: '',
-        role:'',
+        role:{id:null,name:''},
         definition:'',
         author: ''
     };
@@ -44,11 +44,7 @@ export class TemplateList extends Component {
             globalFilter: null
         };
 
-        this.roleItems = [
-            {roleName :"Admin",id:1},
-            {roleName:"User",id:2},
-            {roleName:"Guest",id:3}
-        ];
+        this.roleItems = [];
 
         this.templateService = new TemplateService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
@@ -76,6 +72,12 @@ export class TemplateList extends Component {
         this.templateService.getTemplates().then(res => {
             this.setState({templates: res.data});
         });
+        
+        this.templateService.getRoles().then(res => {
+            console.log(res);
+            this.roleItems = res.data;
+        });
+
     }
 
     openNew() {
@@ -226,10 +228,8 @@ export class TemplateList extends Component {
     }
 
     onRoleChange(e){
-        const id = e.id;
-        const roleName = e.roleName;
         let template = {...this.state.template};
-        template[`role`] = roleName;
+        template[`role`] = e.value;
         this.setState({ template });
 
     }
@@ -338,7 +338,7 @@ export class TemplateList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="role">Role</label>
-                        <Dropdown optionLabel="role" value={this.state.template.role} options={this.roleItems} onChange={(e) => this.onRoleChange(e)} placeholder="Select a Role"/>
+                        <Dropdown optionLabel="name" value={this.state.template.role} options={this.roleItems} onChange={(e) => {this.onRoleChange(e)}} placeholder="Select a Role"/>
                         {this.state.submitted && !this.state.template.role && <small className="p-invalid">Template role is required.</small>}
                     </div>
                     <div className="p-field">

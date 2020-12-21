@@ -22,10 +22,14 @@ export default class TemplateService {
         }
     }
 
+    async getRoles() {
+        const url = "http://localhost:8080/main/roles";
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
+        return response;
+    }
+
     async getTemplates() {
-        if(true){
-            return [];
-        }
         const url = "http://localhost:8080/main/templates";
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
