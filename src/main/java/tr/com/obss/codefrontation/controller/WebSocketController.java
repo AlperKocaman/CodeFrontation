@@ -7,7 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tr.com.obss.codefrontation.dto.SubmissionDTO;
+import tr.com.obss.codefrontation.dto.TestCaseDTO;
+import tr.com.obss.codefrontation.enums.Result;
+import tr.com.obss.codefrontation.enums.Status;
+import tr.com.obss.codefrontation.service.SubmissionService;
+import tr.com.obss.codefrontation.service.TestCaseService;
 
 import javax.annotation.PostConstruct;
 import java.io.DataInputStream;
@@ -17,6 +24,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -24,6 +32,11 @@ import java.util.UUID;
 @CrossOrigin
 @RequestMapping("/judge")
 public class WebSocketController {
+	@Autowired
+	private  SubmissionService submissionService;
+
+	@Autowired
+	private TestCaseService testCaseService;
 
 	public ServerSocket serverSocket;
 	private final Gson gson = new GsonBuilder().create();
@@ -58,12 +71,20 @@ public class WebSocketController {
 								//{"name": "test-case-status", "submission-id": 1, "cases": [{"position": 1, "status": 0, "time": 0.13805162, "points": 5, "total-points": 5,
 								// "memory": 9684, "output": "10\n2\n", "extended-feedback": "", "feedback": ""}]}
 								if(res.get("name").equals("test-case-status")){
+
+									Status status = Status.NOT_COMPLETED;
 									String submissionId= (String) res.get("submission-id");
 									JSONArray cases= (JSONArray) res.get("cases");
 									for (Object obj:cases){
 										JSONObject caseObj= (JSONObject) obj;
 										Long casePosition=(Long) caseObj.get("position");
 										Long caseStatus=(Long) caseObj.get("status");
+										if(caseStatus==1){  //FIXME buryaı test et hata olunca ne oluyor
+											status=Status.COMPLETED;
+										}else{
+											status=Status.NOT_COMPLETED;
+										}
+
 										Double caseTime=(Double) caseObj.get("time");
 										Long casePoints=(Long) caseObj.get("points");
 										Long caseTotalPoints=(Long) caseObj.get("total-points");
@@ -71,7 +92,20 @@ public class WebSocketController {
 										String caseOutput = (String) caseObj.get("output");
 										String caseExtendedFeedback = (String) caseObj.get("extended-feedback");
 										String caseFeedback = (String) caseObj.get("feedback");
+
+										TestCaseDTO testCaseDTO= new TestCaseDTO();
+										testCaseDTO.setSubmissionId(UUID.fromString(submissionId));
+										testCaseDTO.setOutput(caseOutput);
+										testCaseDTO.setPosition(casePosition);
+										testCaseDTO.setTime(caseTime);
+										testCaseDTO.setMemory(caseMemory);
+										testCaseDTO.setPoint(casePoints);
+										testCaseDTO.setTotalPoint(caseTotalPoints);
+										testCaseDTO.setStatus(status);
+
+										testCaseService.addTestCase(testCaseDTO);
 									}
+
 								}
 								//client says: {"name": "handshake", "problems": [["aplusb", 1605472737.1798956], ["shortest1", 1604807687.554187]],
 								// "executors": {"AWK": [["awk", [4, 1, 4]]], "BF": [["bf", [1, 33, 7]]], "C": [["gcc", [7]]], "CPP03": [["g++", [7]]],
@@ -95,25 +129,25 @@ public class WebSocketController {
 										String langName= (String) valueArr1.get(0);
 										log.info("key: "+ longCode + " value: " + langName);
 									});
+									sendMessage();
 								}
-								//submissionService.updateSubmission(submissionReq);
 								log.info("client says: "+str);
 							}
 						}
 
 
 						//JSONObject res= (JSONObject) JSONValue.parse(str);
-						if(check){
-							sendMessage();
-							check=false;
-							Thread.sleep(1000);
-							sendEvaluateMessage();
-						}
-						if (a==5){
-							check= true;
-						}else{
-							check= false;
-						}
+						//if(check){
+						//	sendMessage();
+						//	check=false;
+						//	Thread.sleep(1000);
+						//	sendEvaluateMessage();
+						//}
+						//if (a==5){
+						//	check= true;
+						//}else{
+						//	check= false;
+						//}
 
 
 					} catch (SocketTimeoutException s) {
@@ -240,8 +274,11 @@ public class WebSocketController {
 		out.flush();
 	}
 
+
 	@PostMapping("/submit")
-	public void eval(@RequestBody JSONObject submissionReq) throws Exception {
+	public SubmissionDTO evaluate(@RequestBody SubmissionDTO dto) throws Exception {
+		SubmissionDTO result =submissionService.addSubmission(dto);
+		JSONObject submissionReq= convertSubmissionDtoToJsonObject(result);
 		String submissionStr=submissionReq.toJSONString();
 		int submissionLen=submissionStr.length();
 		String lenStr=""+submissionLen;
@@ -253,11 +290,66 @@ public class WebSocketController {
 		out.writeBytes(lenStr);
 		out.writeBytes(submissionStr);
 		out.flush();
-		//submissionService.addSubmission(submissionReq)
+		return result;
 	}
-	@GetMapping("/submit")
-	public String getEvalResult(@RequestBody JSONObject submissionReq)  {
-		//submissionService.getSubmissionMetrics(submissionReq);
-		return "";
+
+	public JSONObject convertSubmissionDtoToJsonObject(SubmissionDTO dto){
+		JSONObject obj=new JSONObject();
+		obj.put("name","submission-request");
+		obj.put("submission-id", dto.getId().toString());
+		obj.put("problem-id",dto.getProblemCode());
+		obj.put("language",dto.getLanguage().name());
+		obj.put("source",dto.getBody());
+		obj.put("time-limit",2.0);
+		obj.put("memory-limit",65536);
+		obj.put("short-circuit",false);
+
+		JSONObject meta=new JSONObject();
+		meta.put("pretests-only",false);
+		meta.put("in-contest",null);
+		meta.put("attempt-no",1);
+		meta.put("user",1);
+
+		obj.put("meta",meta);
+		return obj;
+	}
+
+	@GetMapping("/submit/{id}")
+	public JSONObject getEvalResult(@PathVariable UUID id) throws Exception {
+		List<TestCaseDTO> testCaseList= testCaseService.getTestCasesBySubmissionId(id);
+		if (testCaseList.isEmpty()){
+			return null;
+		}
+		SubmissionDTO dto= new SubmissionDTO();
+		Double time= Double.valueOf(0);
+		Long memory= Long.valueOf(0);
+		Long points= Long.valueOf(0);
+		Result result=Result.ACCEPTED; //FIXME burayı dene reject durumu
+		Status status = Status.COMPLETED;
+		for (TestCaseDTO testCaseDTO:testCaseList){
+			if(testCaseDTO.getStatus()==Status.NOT_COMPLETED){  //FIXME buryaı test et hata olunca ne oluyor
+				status=Status.NOT_COMPLETED;
+			}
+			Double caseTime=testCaseDTO.getTime();
+			time+=caseTime;
+			Long casePoints=testCaseDTO.getPoint();
+			points+=casePoints;
+			Long caseMemory=testCaseDTO.getMemory();
+			if(memory<caseMemory){
+				memory=caseMemory;
+			}
+		}
+
+		dto.setId(id);
+		dto.setTime(time);
+		dto.setMemory(memory);
+		dto.setPoint(points);
+		dto.setStatus(status);
+		dto.setResult(result);
+		SubmissionDTO resDto= submissionService.updateSubmission(dto);
+		JSONObject res=new JSONObject();
+		res.put("testCaseList",testCaseList);
+		res.put("submission",resDto);
+		return res;
 	}
 }

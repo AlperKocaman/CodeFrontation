@@ -5,7 +5,8 @@ public enum Language {
     PYTHON(2),
     JAVASCRIPT(3),
     C(4),
-    RUBY(5);
+    RUBY(5),
+    PY3(6);
 
     private int value;
 

@@ -68,6 +68,9 @@ security:
     - /main/users/*
     - /main/problems/*
     - /main
+    - /judge
+    - /judge/*
+    - /judge/submit/*
     - /registerSonar
     - /getSonarMetrics/*
   exposed-headers:

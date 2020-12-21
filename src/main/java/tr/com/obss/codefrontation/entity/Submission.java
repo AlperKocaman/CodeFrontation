@@ -19,15 +19,15 @@ public class Submission {
     @GeneratedValue
     private UUID id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "assignment_id")
-    private Assignment assignmentId;
+    private Assignment assignment;
 
     private Double time;
 
-    private Double memory;
+    private Long memory;
 
-    private Integer point;
+    private Long point;
 
     private String body;
 
@@ -39,7 +39,7 @@ public class Submission {
 
     private URL sonarUrl;
 
-    private String name;
+    private String name;//FIXME kaldırılabilir gereksiz
 
     private Date createdDate;
 
