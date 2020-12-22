@@ -22,8 +22,8 @@ export default class ProblemService {
         }
     }
 
-    async getProblems() {
-        const url = "http://localhost:8080/main/problems";
+    async getProblems(username) {
+        const url = "http://localhost:8080/main/problems/" + username;
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;
