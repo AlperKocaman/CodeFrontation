@@ -22,7 +22,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, UUID> {
 
     boolean existsById(UUID id);
 
-	List<Assignment> findByUserId(User user);
+	List<Assignment> findByUser(User user);
 
 	List<Assignment> findByProblemId(UUID problemId);
 }
