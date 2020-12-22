@@ -101,6 +101,11 @@ public class AppController {
         return problemService.getAllProblems();
     }
 
+    @GetMapping("/problems/{username}")
+    public List<ProblemDTO> getProblemListByUserName(@PathVariable String username) {
+        return problemService.getAllProblemsAssignedToUserByUsername(username);
+    }
+
     @PostMapping("/problems/delete-problems")
     public List<ProblemDTO> deleteProblemList(@RequestBody List<ProblemDTO> problems) {
         return problemService.deleteProblems(problems);

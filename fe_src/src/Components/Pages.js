@@ -16,6 +16,7 @@ function Pages() {
             <UserList path="users"/>
             <DataTableCrudDemo path="test"/>
             <ProblemList path="admin/problems"/>
+            <ProblemList path="admin/problems/:username"/>
             <SubmissionList path="admin/submissions"/>
             <UserList path="admin/users"/>
         </Router>
