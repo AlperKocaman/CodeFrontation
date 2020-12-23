@@ -19,6 +19,8 @@ function Pages() {
             <ProblemList path="admin/problems"/>
             <ProblemList path="admin/problems/:username"/>
             <SubmissionList path="admin/submissions"/>
+            <SubmissionList path="admin/submissions/:username"/>
+            <SubmissionList path="admin/submissions/:username/:problemCode"/>
             <UserList path="admin/users"/>
         </Router>
 

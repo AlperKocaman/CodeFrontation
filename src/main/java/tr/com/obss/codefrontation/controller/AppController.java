@@ -9,12 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
-
-import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDTO;
 import tr.com.obss.codefrontation.dto.ProblemDTO;
 import tr.com.obss.codefrontation.dto.SubmissionDTO;
@@ -65,10 +59,25 @@ public class AppController {
         return userService.getAllUser();
     }
 
+    /*
+    Submission Controller Methods
+     */
+
     @GetMapping("/submissions")
     public List<SubmissionDTO> getSubmissionList() {
-        List<SubmissionDTO> list =  submissionService.getAllSubmissions();
+        List<SubmissionDTO> list = submissionService.getAllSubmissions();
         return list;
+    }
+
+    @GetMapping("/submissions/{username}")
+    public List<SubmissionDTO> getSubmissionListByUserName(@PathVariable String username) {
+        return submissionService.getSubmissionsByUsername(username);
+    }
+
+    @GetMapping("/submissions/{username}/{problemCode}")
+    public List<SubmissionDTO> getSubmissionListByUserNameAndProblemCode(
+            @PathVariable String username, @PathVariable String problemCode) {
+        return submissionService.getSubmissionsByUsernameAndProblemCode(username, problemCode);
     }
 
     @PostMapping("/users/delete-users")
@@ -143,7 +152,7 @@ public class AppController {
 //
     //    return result;
     //}
-    
+
     @PostMapping("/createProblem")
     public String createProblem(@RequestBody ProblemEveluationDto problem) {
       dmojProblemService.createNewProblem(problem);
