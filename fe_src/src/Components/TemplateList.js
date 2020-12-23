@@ -79,7 +79,7 @@ export class TemplateList extends Component {
         this.templateService.getTemplates().then(res => {
             let temp = res.data;
             temp.forEach((item,i)=>{
-                temp.roleName=item.role?item.role.name:'';
+                item.roleName=item.role?item.role.name:'';
             });
             this.setState({templates:temp});
         });
