@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "templates")
-public class Template {
+public class Template extends BaseEntity {
 
     @Id
     @GeneratedValue
