@@ -8,14 +8,23 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.TemplateDTO;
+import tr.com.obss.codefrontation.entity.Role;
 import tr.com.obss.codefrontation.entity.Template;
+import tr.com.obss.codefrontation.entity.User;
 import tr.com.obss.codefrontation.mapper.TemplateMapper;
 import tr.com.obss.codefrontation.repository.TemplateRepository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceProperty;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class TemplateService {
+	
+	@PersistenceContext(properties = {@PersistenceProperty(name = "hibernate.max_fetch_depth", value = "1"), @PersistenceProperty(name = "hibernate.enable_lazy_load_no_trans", value = "true")})
+    public EntityManager entityManager;
+	
 	private final TemplateMapper mapper;
 	private final TemplateRepository templateRepository;
 
@@ -44,11 +53,13 @@ public class TemplateService {
 
 	public TemplateDTO addTemplate(TemplateDTO templateDTO) {
 		Template template = mapper.toTemplateEntity(templateDTO);
+		template.setAuthor(entityManager.getReference(User.class,templateDTO.getAuthorId()));
+		template.setRole(entityManager.getReference(Role.class,templateDTO.getRole().getId()));
 		Template entity = templateRepository.save(template);
 		log.info("Template created: {}", template.toString());
-
 		return mapper.toTemplateDTO(entity);
 	}
+	
 
 	public TemplateDTO updateTemplate(TemplateDTO templateDTO) throws Exception{
 		Template origEntity = templateRepository.findById(templateDTO.getId()).orElseThrow(Exception::new);

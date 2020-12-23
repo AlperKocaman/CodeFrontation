@@ -18,15 +18,19 @@ import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
 import {Dropdown} from "primereact/dropdown";
+import UserService from '../service/UserService';
 
 export class TemplateList extends Component {
 
     emptyTemplate = {
         id: null,
         name: '',
-        role:{id:null,name:''},
+        role:null,//{id:null,name:''},
+        roleName:'',
         definition:'',
-        author: ''
+        author: null,
+        authorId:'',
+        authorName:''
     };
 
     
@@ -41,12 +45,15 @@ export class TemplateList extends Component {
             template: this.emptyTemplate,
             selectedTemplates: null,
             submitted: false,
-            globalFilter: null
+            globalFilter: null,
+            templatesForDatatable:[]
         };
 
         this.roleItems = [];
+        this.userItems = [];
 
         this.templateService = new TemplateService();
+        this.userService = new UserService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
@@ -70,12 +77,21 @@ export class TemplateList extends Component {
 
     componentDidMount() {
         this.templateService.getTemplates().then(res => {
-            this.setState({templates: res.data});
+            let temp = res.data;
+            temp.forEach((item,i)=>{
+                temp.roleName=item.role?item.role.name:'';
+            });
+            this.setState({templates:temp});
         });
         
         this.templateService.getRoles().then(res => {
             console.log(res);
             this.roleItems = res.data;
+        });
+
+        this.userService.getUsers().then(res => {
+            console.log(res);
+            this.userItems = res.data;
         });
 
     }
@@ -104,8 +120,6 @@ export class TemplateList extends Component {
     }
 
     saveTemplate() {
-
-
         if (this.state.template.name.trim()) {
 
             if (this.state.template.id) {
@@ -230,8 +244,16 @@ export class TemplateList extends Component {
     onRoleChange(e){
         let template = {...this.state.template};
         template[`role`] = e.value;
+        template[`roleName`] = e.value?e.value.name:'';
         this.setState({ template });
+    }
 
+    onUserChange(e){
+        let template = {...this.state.template};
+        template[`author`] = e.value;
+        template[`authorId`] = e.value?e.value.id:'';
+        template[`authorName`] = e.value?e.value.username:'';
+        this.setState({ template });
     }
 
     onInputNumberChange(e, name) {
@@ -324,9 +346,9 @@ export class TemplateList extends Component {
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column field="name" header="Name" sortable></Column>
-                        <Column field="role" header="Role" sortable></Column>
+                        <Column field="roleName" header="Role" sortable></Column>
                         <Column field="definition" header="Definition" sortable></Column>
-                        <Column field="author" header="Authors" sortable></Column>
+                        <Column field="authorName" header="Authors" sortable></Column>
                         <Column body={this.actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
@@ -338,7 +360,7 @@ export class TemplateList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="role">Role</label>
-                        <Dropdown optionLabel="name" value={this.state.template.role} options={this.roleItems} onChange={(e) => {this.onRoleChange(e)}} placeholder="Select a Role"/>
+                        <Dropdown optionLabel="name" value={this.state.template.role} options={this.roleItems} onChange={(e) => this.onRoleChange(e)} placeholder="Select a Role"/>
                         {this.state.submitted && !this.state.template.role && <small className="p-invalid">Template role is required.</small>}
                     </div>
                     <div className="p-field">
@@ -348,7 +370,7 @@ export class TemplateList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="author">Authors</label>
-                        <InputText id="author" value={this.state.template.author} onChange={(e) => this.onInputChange(e, 'author')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.template.author })} />
+                        <Dropdown optionLabel="username" value={this.state.template.author} options={this.userItems} onChange={(e) => this.onUserChange(e)} placeholder="Select a Author"/>
                         {this.state.submitted && !this.state.template.author && <small className="p-invalid">Authors are required.</small>}
                     </div>
                 </Dialog>

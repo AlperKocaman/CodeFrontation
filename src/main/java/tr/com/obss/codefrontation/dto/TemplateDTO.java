@@ -9,7 +9,8 @@ import lombok.Data;
 public class TemplateDTO {
     private UUID id;
 
-    private String author;
+    private String authorName;
+    private UUID authorId;
     private String name;
     private String definition;
     

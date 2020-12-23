@@ -17,13 +17,13 @@ public class Template {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
-    private User authorId;
+    private User author;
     private String name;
     private String definition;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
-    private Role roleId;
+    private Role role;
 
 }
 
