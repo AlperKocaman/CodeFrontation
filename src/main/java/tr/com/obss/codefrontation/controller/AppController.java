@@ -31,7 +31,6 @@ import tr.com.obss.codefrontation.service.TemplateService;
 import tr.com.obss.codefrontation.service.UserService;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -164,22 +163,22 @@ public class AppController {
 
     /* End of controller methods for Templates */
 
-    @PostMapping("/evaluate")
-    public String compileAndRun(@RequestBody Object codeMap) {
-        @SuppressWarnings("rawtypes")
-        Map map = (Map) codeMap;
-        String code = (String) map.get("code");
-        String lang = (String) map.get("lang");
-        //TODO will take lang parameter as Java, Python etc.
-        String result = "";
-        if (lang.equals("java")) {
-            result = compilerService.javaCompileAndRun(code);
-        } else {
-            result = "Please select Java theme, other themes are not supported yet";
-        }
-
-        return result;
-    }
+    //@PostMapping("/evaluate")
+    //public String compileAndRun(@RequestBody Object codeMap) {
+    //    @SuppressWarnings("rawtypes")
+    //    Map map = (Map) codeMap;
+    //    String code = (String) map.get("code");
+    //    String lang = (String) map.get("lang");
+    //    //TODO will take lang parameter as Java, Python etc.
+    //    String result = "";
+    //    if (lang.equals("java")) {
+    //        result = compilerService.javaCompileAndRun(code);
+    //    } else {
+    //        result = "Please select Java theme, other themes are not supported yet";
+    //    }
+//
+    //    return result;
+    //}
     
     @PostMapping("/createProblem")
     public String createProblem(@RequestBody ProblemEveluationDto problem) {

@@ -2,6 +2,10 @@
 
 http://localhost:8080/main ==> Code Frontation 2020
 
+##JUDGE SERVER PYTHON PART
+
+python_src/judge-server/dmoj/main.py   run etmek gerek    localhost:9999 portunu dinliyor (API için 8081 portunu dinliyor)
+
 ## Postgres Install
 
 https://www.postgresql.org/download/

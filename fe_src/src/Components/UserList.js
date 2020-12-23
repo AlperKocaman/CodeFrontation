@@ -246,7 +246,8 @@ export class UserList extends Component {
             </React.Fragment>
         )
     }
-
+//<a style={{cursor: 'pointer', textDecoration: 'underline'}}
+//onClick={this.onClickUsername}>{rowData.username}</a>
     statusBodyTemplate(rowData) {
         return <span className={`user-badge status-${rowData.isAdmin ?  'admin' :'user'}`}>{rowData.isAdmin ?  'ADMIN' :'USER'}</span>;
     }

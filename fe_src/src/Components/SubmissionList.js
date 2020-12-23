@@ -23,7 +23,7 @@ export class SubmissionList extends Component {
     id: null,
     problemCode: '',
     name: '',
-    user: '',
+    username: '',
     language: false,
     time: '',
     memory: '',
@@ -238,7 +238,7 @@ export class SubmissionList extends Component {
             <Column field="problemCode" header="Problem Code" sortable></Column>
             <Column field="name" header="Name" sortable></Column>
 
-            <Column field="user" header="User" sortable></Column>
+            <Column field="username" header="User" sortable></Column>
             <Column field="language" header="Language"sortable></Column>
             <Column field="time" header="Time" sortable></Column>
             <Column field="memory" header="Memory" sortable></Column>

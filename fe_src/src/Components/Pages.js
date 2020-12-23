@@ -7,6 +7,7 @@ import UserList from "./UserList";
 import DataTableCrudDemo from "../Demo/DataTableCrudDemo";
 import Compiler from "./Compiler";
 import TemplateList from "./TemplateList";
+import UserListTest from "../Demo/UserListTest";
 
 function Pages() {
     return (
@@ -14,7 +15,7 @@ function Pages() {
         <Router>
             <Compiler path="/"/>
             <Dashboard path="admin"/>
-            <UserList path="users"/>
+            <UserListTest path="users"/>
             <DataTableCrudDemo path="test"/>
             <ProblemList path="admin/problems"/>
             <TemplateList path="admin/templates"/>
