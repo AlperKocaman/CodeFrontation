@@ -68,6 +68,7 @@ security:
     - /main/users/*
     - /main/problems/*
     - /main/templates/*
+    - /main/submissions/*
     - /main
     - /judge
     - /judge/*

@@ -91,7 +91,7 @@ export class ProblemList extends Component {
     }
 
     componentDidMount() {
-        this.problemService.getProblems().then(res => {
+        this.problemService.getProblems(this.props.username ? this.props.username : '').then(res => {
             this.setState({problems: res.data});
         });
     }

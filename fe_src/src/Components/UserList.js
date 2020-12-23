@@ -259,7 +259,7 @@ export class UserList extends Component {
 
     onClickUsername = (event) => {
         console.log('onClickUsername : ' + event.target.text);
-        window.location.assign('users/' + event.target.text);
+        window.location.assign('problems/' + event.target.text);
     };
 
     actionBodyTemplate(rowData) {

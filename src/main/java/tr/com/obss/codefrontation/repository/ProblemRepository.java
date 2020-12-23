@@ -12,6 +12,8 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
 
 	Optional<Problem> findByName(String problemName);
 
+	Optional<Problem> findById(UUID problemID);
+
 	void deleteByName(String problemName);
 
 	boolean existsByName(String problemName);
