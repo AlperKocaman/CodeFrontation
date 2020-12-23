@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard";
 import UserList from "./UserList";
 import DataTableCrudDemo from "../Demo/DataTableCrudDemo";
 import Compiler from "./Compiler";
+import TemplateList from "./TemplateList";
 import UserListTest from "../Demo/UserListTest";
 
 function Pages() {
@@ -18,12 +19,12 @@ function Pages() {
             <DataTableCrudDemo path="test"/>
             <ProblemList path="admin/problems"/>
             <ProblemList path="admin/problems/:username"/>
+            <TemplateList path="admin/templates"/>
             <SubmissionList path="admin/submissions"/>
             <SubmissionList path="admin/submissions/:username"/>
             <SubmissionList path="admin/submissions/:username/:problemCode"/>
             <UserList path="admin/users"/>
         </Router>
-
 
     );
 }
