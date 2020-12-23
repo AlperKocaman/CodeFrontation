@@ -17,13 +17,17 @@ import com.google.firebase.auth.FirebaseToken;
 import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.AuthDTO;
 import tr.com.obss.codefrontation.dto.ProblemDTO;
+import tr.com.obss.codefrontation.dto.RoleDTO;
 import tr.com.obss.codefrontation.dto.SubmissionDTO;
+import tr.com.obss.codefrontation.dto.TemplateDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
 import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
 import tr.com.obss.codefrontation.service.CompilerService;
 import tr.com.obss.codefrontation.service.DmojProblemService;
 import tr.com.obss.codefrontation.service.ProblemService;
+import tr.com.obss.codefrontation.service.RoleService;
 import tr.com.obss.codefrontation.service.SubmissionService;
+import tr.com.obss.codefrontation.service.TemplateService;
 import tr.com.obss.codefrontation.service.UserService;
 
 import java.util.List;
@@ -39,8 +43,11 @@ public class AppController {
     private final CompilerService compilerService;
     private final UserService userService;
     private final ProblemService problemService;
+    private final TemplateService templateService;
+    private final RoleService roleService;
     private final SubmissionService submissionService;
     private final DmojProblemService dmojProblemService;
+    
 
     private static final Gson gson = new GsonBuilder().create();
 
@@ -121,6 +128,40 @@ public class AppController {
     }
 
     /* End of controller methods for Problems */
+    
+    @GetMapping("/roles")
+    public List<RoleDTO> getRoleList() {
+        return roleService.getAllRoles();
+    }
+    
+    /* Controller methods for templates page */
+
+    @GetMapping("/templates")
+    public List<TemplateDTO> getTemplateList() {
+        return templateService.getAllTemplates();
+    }
+
+    @PostMapping("/templates/delete-templates")
+    public List<TemplateDTO> deleteTemplateList(@RequestBody List<TemplateDTO> templates) {
+        return templateService.deleteTemplates(templates);
+    }
+
+    @DeleteMapping("/templates/{id}")
+    public UUID deleteTemplate(@PathVariable UUID id) throws Exception {
+        return templateService.deleteTemplate(id);
+    }
+
+    @PostMapping("/template")
+    public TemplateDTO addTemplate(@RequestBody TemplateDTO template) throws Exception {
+        return templateService.addTemplate(template);
+    }
+
+    @PutMapping("/templates/{id}")
+    public TemplateDTO updateTemplate(@PathVariable UUID id, @RequestBody TemplateDTO template) throws Exception {
+        return templateService.updateTemplate(template);
+    }
+
+    /* End of controller methods for Templates */
 
     //@PostMapping("/evaluate")
     //public String compileAndRun(@RequestBody Object codeMap) {
