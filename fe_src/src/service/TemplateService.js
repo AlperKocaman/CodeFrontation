@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default class ProblemService {
+export default class TemplateService {
 
     async requestToServer(url = '',method='', data = {}) {
         try {
@@ -22,38 +22,45 @@ export default class ProblemService {
         }
     }
 
-    async getProblems(username) {
-        const url = "http://localhost:8080/main/problems/" + username;
+    async getRoles() {
+        const url = "http://localhost:8080/main/roles";
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;
     }
 
-    async deleteProblems(problems){
-        const url="http://localhost:8080/main/problems/delete-problems";
-        const method='POST';
-        const response = await this.requestToServer(url, method, problems);
+    async getTemplates() {
+        const url = "http://localhost:8080/main/templates";
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
         return response;
     }
 
-    async deleteProblem(problem){
-        const url="http://localhost:8080/main/problems/"+problem.id;
+    async deleteTemplates(templates){
+        const url="http://localhost:8080/main/templates/delete-templates";
+        const method='POST';
+        const response = await this.requestToServer(url, method, templates);
+        return response;
+    }
+
+    async deleteTemplate(template){
+        const url="http://localhost:8080/main/templates/"+template.id;
         const method='DELETE';
         const response = await this.requestToServer(url, method, {});
         return response;
     }
 
-    async addProblem(problem){
-        const url="http://localhost:8080/main/problem";
+    async addTemplate(template){
+        const url="http://localhost:8080/main/template";
         const method='POST';
-        const response = await this.requestToServer(url, method, problem);
+        const response = await this.requestToServer(url, method, template);
         return response;
     }
 
-    async updateProblem(problem){
-        const url="http://localhost:8080/main/problems/"+problem.id;
+    async updateTemplate(template){
+        const url="http://localhost:8080/main/templates/"+template.id;
         const method='PUT';
-        const response = await this.requestToServer(url, method, problem);
+        const response = await this.requestToServer(url, method, template);
         return response;
     }
 }
