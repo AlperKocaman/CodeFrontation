@@ -23,7 +23,7 @@ export class UserList extends Component {
 
     emptyUser = {
         id: null,
-        userName: '',
+        username: '',
         firstName: '',
         lastName: '',
         email: '',
