@@ -17,7 +17,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
-import {MultiSelect} from "primereact/multiselect";
+import { MultiSelect } from "primereact/multiselect";
 
 export class ProblemList extends Component {
 
@@ -31,8 +31,28 @@ export class ProblemList extends Component {
         bestCode: '',
         timeLimit: 0,
         memoryLimit: '',
-        allowedLanguages: ''
+        allowedLanguages: null
     };
+
+    languages = [
+        'JAVA',
+        'PYTHON',
+        'CPP',
+        'C',
+        'C#',
+        'JAVASCRIPT',
+        'PHP',
+        'GO',
+        'HASKELL',
+        'SCALA',
+        'KOTLIN',
+        'SWIFT',
+        'OBJECTIVE_C',
+        'TYPESCRIPT',
+        'RUBY',
+        'HTML',
+        'CSS'
+    ];
 
     constructor(props) {
         super(props);
@@ -45,28 +65,11 @@ export class ProblemList extends Component {
             problem: this.emptyProblem,
             selectedProblems: null,
             submitted: false,
-            globalFilter: null
+            globalFilter: null,
+            selectedLanguages: null
         };
 
-        this.languages = [
-            {language: 'JAVA'},
-            {language: 'PYTHON'},
-            {language: 'CPP'},
-            {language: 'C'},
-            {language: 'C#'},
-            {language: 'JAVASCRIPT'},
-            {language: 'PHP'},
-            {language: 'GO'},
-            {language: 'HASKELL'},
-            {language: 'SCALA'},
-            {language: 'KOTLIN'},
-            {language: 'SWIFT'},
-            {language: 'OBJECTIVE_C'},
-            {language: 'TYPESCRIPT'},
-            {language: 'RUBY'},
-            {language: 'HTML'},
-            {language: 'CSS'}
-        ];
+
 
         this.problemService = new ProblemService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
@@ -123,6 +126,8 @@ export class ProblemList extends Component {
 
 
         if (this.state.problem.name.trim()) {
+
+            this.state.problem.allowedLanguages = this.state.problem.allowedLanguages.toString();
 
             if (this.state.problem.id) {
                 this.problemService.updateProblem(this.state.problem).then(data => {
@@ -275,7 +280,6 @@ export class ProblemList extends Component {
     }
 
     onClickProblemCode = (event) => {
-        console.log('onClickProblemCode : ' + event.target.text);
         window.location.assign('problems/' + event.target.text);
     };
 
@@ -382,8 +386,8 @@ export class ProblemList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="allowedLanguages">Allowed Languages</label>
-                        <MultiSelect id="allowedLanguages"  display="chip" placeholder="Select Language/s" optionLabel="language" value={this.state.problem.allowedLanguages} options={this.languages} onChange={(e) => this.onInputChange(e, 'allowedLanguages')}
-                                     className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.allowedLanguages })}/>
+                        <MultiSelect id="allowedLanguages" display="chip" placeholder= {"Select Languages"} value={this.state.selectedLanguages} options={this.languages} onChange={(e) => { this.setState({ selectedLanguages: e.value}); this.onInputChange(e, 'allowedLanguages'); }}
+                            className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.allowedLanguages })} />
                         {this.state.submitted && !this.state.problem.allowedLanguages && <small className="p-invalid">Allowed languages is required.</small>}
                     </div>
                 </Dialog>
