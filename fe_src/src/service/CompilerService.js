@@ -35,4 +35,19 @@ export default class CompilerService {
         const response = await this.requestToServer(url, method, data);
         return response;
     }
+
+
+    async getTestRun(id) {
+        const url = "http://localhost:8080/judge/testRun/"+id;
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
+        return response;
+    }
+
+    async testRun(data){
+        const url="http://localhost:8080/judge/testRun";
+        const method='POST';
+        const response = await this.requestToServer(url, method, data);
+        return response;
+    }
 }

@@ -18,6 +18,17 @@ const Compiler = () => {
             initPythonEditor()
         }
     };
+    const sendCodeForRun = (requestData,lang,assignmentId,problemCode,username) => {
+
+        var data = { "body": requestData, "language":lang, "assignmentId":assignmentId
+            , "problemCode":problemCode, "username":username };
+
+        compilerService.testRun(data).then(res => {
+            let result=res.data;
+            console.log(result);
+            setTimeout(getTestRunResult, 3000, result.id);
+        });
+    };
 
     const sendCode = (requestData,lang,assignmentId,problemCode,username) => {
 
@@ -60,6 +71,41 @@ const Compiler = () => {
         sendCode("" + htmEditor.getValue(),lang,assignmentId,problemCode,username);
 
     }
+
+    const runCode = () => {
+        var htmEditor = ace.edit("htmEditor");
+        const assignmentId="2331b35b-0778-4810-b7ad-828527d74def";
+        const problemCode="aplusb";
+        const username="mduzgun";     //FIXME dinamikleştir
+        sendCodeForRun("" + htmEditor.getValue(),lang,assignmentId,problemCode,username);
+
+    }
+    const getTestRunResult= (submissionId)  => {
+        compilerService.getTestRun(submissionId).then(res => {
+            var resultArea = document.getElementById("resultArea");
+            let testRunCaseList= res.data.testRunCaseList;
+            let response="";
+            if(testRunCaseList==undefined){
+                resultArea.innerText = "Error is occurred !!!";
+            }else{
+                testRunCaseList.forEach(caseObj => {
+                    console.log(caseObj)
+                    if (caseObj.point==100){
+                        response+= "Test Cases are passed succesfully"
+                    }else{
+                        response+= "Test Cases are not passed succesfully"
+                    }
+                    //response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
+                });
+                let testRun= res.data.testRun;
+                //response+= "Total Result ==> time= "+testRun.time+", memory= "+testRun.memory+", point= "+testRun.point+"\n"
+
+                resultArea.innerText = response;
+            }
+        });
+    }
+
+
     const getSubmitResult= (submissionId)  => {
         compilerService.getSubmit(submissionId).then(res => {
             var resultArea = document.getElementById("resultArea");
@@ -76,14 +122,18 @@ const Compiler = () => {
             // "status":"NOT_COMPLETED","result":"ACCEPTED","sonarUrl":null,"name":null,"createdDate":null,"updatedDate":null}}
             let testCaseList= res.data.testCaseList;
             let response="";
-            testCaseList.forEach(caseObj => {
-                console.log(caseObj)
-                response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
-            });
-            let submission= res.data.submission;
-            response+= "Total Result ==> time= "+submission.time+", memory= "+submission.memory+", point= "+submission.point+"\n"
+            if(testCaseList==undefined){
+                resultArea.innerText = "Error is occurred !!!";
+            }else{
+                testCaseList.forEach(caseObj => {
+                    console.log(caseObj)
+                    response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
+                });
+                let submission= res.data.submission;
+                response+= "Total Result ==> time= "+submission.time+", memory= "+submission.memory+", point= "+submission.point+"\n"
 
-            resultArea.innerText = response;
+                resultArea.innerText = response;
+            }
         });
     }
 
@@ -167,7 +217,9 @@ const Compiler = () => {
               </div>
 
           </div>
-          <button id="executeButton" type="button" className="btn btn-dark" style={{background: '#4CAF50',
+          <button id="runButton" type="button" className="btn btn-dark" style={{background: '#4CAF50',
+              color: 'white'}} onClick={() => runCode()}>Run</button>
+          <button id="executeButton" type="button" className="btn btn-dark" style={{background: 'blue',
               color: 'white'}} onClick={() => executeCode()}>Execute</button>
 
           <br></br>

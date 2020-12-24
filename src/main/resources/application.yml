@@ -71,6 +71,7 @@ security:
     - /judge
     - /judge/*
     - /judge/submit/*
+    - /judge/testRun/*
     - /registerSonar
     - /getSonarMetrics/*
   exposed-headers:
