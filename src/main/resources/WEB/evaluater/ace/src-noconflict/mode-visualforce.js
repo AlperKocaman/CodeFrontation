@@ -2528,7 +2528,7 @@ var VisualforceHighlightRules = function() {
         "variable.language":
             "$Action|$Api|$Component|$ComponentLabel|$CurrentPage|$FieldSet|$Label|$Label|" +
             "$ObjectType|$Organization|$Page|$Permission|$Profile|$Resource|$SControl|" +
-            "$Setup|$Site|$System.OriginDateTime|$User|$UserRole|" +
+            "$Setup|$Site|$System.OriginDateTime|$UserListTest|$UserRole|" +
             "Site|UITheme|UIThemeDisplayed",
         "keyword":
             "",

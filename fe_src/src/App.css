@@ -1,0 +1,21 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
+.inner {
+  height: 300px;
+  padding-right: 0;
+  padding-left: 0;
+
+}
+.option {
+  background: #4CAF50;
+  color: white;
+  margin-bottom: 5px;
+}
+.hidden { display:none; }

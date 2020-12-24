@@ -2291,7 +2291,7 @@ var functionMap = {
     ],
     "array_diff_ukey": [
         "array array_diff_ukey(array arr1, array arr2 [, array ...], callback key_comp_func)",
-        "Returns the entries of arr1 that have keys which are not present in any of the others arguments. User supplied function is used for comparing the keys. This function is like array_udiff() but works on the keys instead of the values. The associativity is preserved."
+        "Returns the entries of arr1 that have keys which are not present in any of the others arguments. UserListTest supplied function is used for comparing the keys. This function is like array_udiff() but works on the keys instead of the values. The associativity is preserved."
     ],
     "array_fill": [
         "array array_fill(int start_key, int num, mixed val)",
@@ -5894,7 +5894,7 @@ var functionMap = {
     ],
     "ldap_dn2ufn": [
         "string ldap_dn2ufn(string dn)",
-        "Convert DN to User Friendly Naming format"
+        "Convert DN to UserListTest Friendly Naming format"
     ],
     "ldap_err2str": [
         "string ldap_err2str(int errno)",
@@ -8774,11 +8774,11 @@ var functionMap = {
     ],
     "posix_getpwnam": [
         "array posix_getpwnam(string groupname)",
-        "User database access (POSIX.1, 9.2.2)"
+        "UserListTest database access (POSIX.1, 9.2.2)"
     ],
     "posix_getpwuid": [
         "array posix_getpwuid(long uid)",
-        "User database access (POSIX.1, 9.2.2)"
+        "UserListTest database access (POSIX.1, 9.2.2)"
     ],
     "posix_getrlimit": [
         "array posix_getrlimit(void)",

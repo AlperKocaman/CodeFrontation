@@ -1,10 +1,8 @@
 package tr.com.obss.codefrontation.sonar;
 
 import lombok.*;
-import org.sonarsource.scanner.cli.Main;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
