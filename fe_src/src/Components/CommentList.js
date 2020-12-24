@@ -51,9 +51,30 @@ export class CommentList extends Component {
   }
 
   componentDidMount() {
-    this.commentService.getComments().then(res => {
-      this.setState(Object.assign(this.state.comments, res.data));
-    });
+    debugger;
+    console.log(this.props.username)
+    if (this.props.username && !this.props.problemName) {
+      this.commentService.getComments(this.props.username).then(res => {
+        if (res.data  != null){
+          this.setState({ comment: res.data });
+      }
+      });
+    }
+    else if (this.props.problemName && this.props.username) {
+      this.commentService.getCommentsByUsernameAndProblemCode(this.props.username, this.props.problemCode).then(res => {
+        if (res.data  != null){
+          this.setState({ comment: res.data });
+      }
+        
+      })
+    }
+    else {
+      this.commentService.getComments().then(res => {
+        if (res.data  != null){
+          this.setState({ comment: res.data });
+      }
+      });
+    }
   }
 
   exportCSV() {

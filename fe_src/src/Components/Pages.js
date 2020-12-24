@@ -26,6 +26,8 @@ function Pages() {
             <SubmissionList path="admin/submissions/:username/:problemCode"/>
             <UserList path="admin/users"/>
             <CommentList path="admin/comments"/>
+            <CommentList path="admin/comments/:username/"/>
+            <CommentList path="admin/comments/:username/:problemCode"/>
         </Router>
 
     );

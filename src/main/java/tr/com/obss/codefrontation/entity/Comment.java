@@ -12,8 +12,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "commentSubmission")
-public class SubmissionComment {
+@Table(name = "comment_submission")
+public class Comment {
 
   @Id
   @GeneratedValue

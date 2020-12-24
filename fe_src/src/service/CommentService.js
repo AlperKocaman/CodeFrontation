@@ -22,20 +22,25 @@ export default class CommentService{
         }
     }
 
-    async getUserComments(user) {
-        const url = "http://localhost:8080/main/comments/userId#" + user.id;
+    // admin/serhataras --returns all comments on all submissions
+
+    // admin/serhataras/a+b --return all comments for a problem for serhataras
+
+    async getComments(username) {
+        const url = "http://localhost:8080/main/comments/" + username;
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;
     }
-    async getSubmissionComments(submission) {
-        const url = "http://localhost:8080/main/comments/submissionId#" + submission.id;
+    async getCommentsByUsernameAndProblemCode(username, problemCode) {
+        const url = "http://localhost:8080/main/comments/" + username + "/" + problemCode;
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;
     }
+
     async getComments() {
-        const url = "http://localhost:8080/main/comments";
+        const url = "http://localhost:8080/main/comments/";
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;

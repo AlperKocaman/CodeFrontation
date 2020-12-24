@@ -6,14 +6,14 @@ import java.util.Date;
 import java.util.UUID;
 
 @Data
-public class SubmissionCommentDTO {
+public class CommentDTO {
     private UUID id;
 
     private UUID submissionId;
 
     private UUID commenterUserId;
 
-    private String userName;
+    private String username;
 
     private String problemName;
 

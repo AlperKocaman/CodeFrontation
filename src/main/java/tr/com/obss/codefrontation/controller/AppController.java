@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import tr.com.obss.codefrontation.dto.AuthDTO;
 import tr.com.obss.codefrontation.dto.ProblemDTO;
-import tr.com.obss.codefrontation.dto.SubmissionCommentDTO;
+import tr.com.obss.codefrontation.dto.CommentDTO;
 import tr.com.obss.codefrontation.dto.RoleDTO;
 import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.TemplateDTO;
@@ -79,12 +79,6 @@ public class AppController {
         return list;
     }
 
-    @GetMapping("/comments")
-    public List<SubmissionCommentDTO> getSubmissionCommentList() {
-        List<SubmissionCommentDTO> list =  commentService.getAllSubmissionComments();
-        return list;
-    }
-
     @GetMapping("/submissions/{username}")
     public List<SubmissionDTO> getSubmissionListByUserName(@PathVariable String username) {
         return submissionService.getSubmissionsByUsername(username);
@@ -116,6 +110,23 @@ public class AppController {
         return userService.updateUser(user);
     }
 
+   @GetMapping("/comments")
+    public List<CommentDTO> getSubmissionCommentList() {
+        List<CommentDTO> list =  commentService.getAllSubmissionComments();
+        return list;
+    }
+
+    @GetMapping("/comments/{username}")
+    public List<CommentDTO> getCommentListByUserName(@PathVariable String username) {
+        return commentService.getCommentsByUsername(username);
+    }
+
+    @GetMapping("/comments/{username}/{problemCode}")
+    public List<CommentDTO> getCommentListByUserNameAndProblemCode(
+            @PathVariable String username, @PathVariable String problemCode) {
+        return commentService.getCommentsByUsernameAndProblemCode(username, problemCode);
+    }
+    
     /* End of controller methods for Users */
 
     /* Controller methods for problems page */
