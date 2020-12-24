@@ -4,7 +4,7 @@ import CompilerService from "../service/CompilerService";
 
 const Compiler = () => {
     let displayOfSignOutButton='None'; //TODO for signout burasının değiştirilmesi gerekiyor
-    let lang="java";
+    let lang="PY3";
     let ace = require('ace-builds/src-noconflict/ace');
     let mode_java = require('ace-builds/src-noconflict/mode-java');//TODO if mode_java is not required, error is ocurred in htmEditor.getSession().setMode("ace/mode/java");
     let theme_monokai = require('ace-builds/src-noconflict/theme-monokai'); //TODO if theme-monokai is not required, error is ocurred in htmEditor.setTheme("ace/theme/monokai");
@@ -138,18 +138,16 @@ const Compiler = () => {
     }
 
     const initEditor = () => {
-        var javaBegin =
-            "public class Solution {\n\n" +
-            "   public String solution(){\n" +
-            "       // calculate factorial :) \n" +
-            '       return "HELLO WORLD!!";\n' +
-            "   }" +
-            "\n}\n";
+        var pythonBegin =
+            "N = int(input())\n\n" +
+            "for _ in range(N):\n" +
+            "    a, b = map(int, input().split())\n" +
+            "    print(a + b)\n" ;
 
         ace.require("ace/ext/language_tools");
 
         var htmEditor = ace.edit("htmEditor");
-        htmEditor.getSession().setMode("ace/mode/java");
+        htmEditor.getSession().setMode("ace/mode/python");
         htmEditor.setTheme("ace/theme/monokai");
         htmEditor.setOptions({
             enableBasicAutocompletion: true,
@@ -158,7 +156,7 @@ const Compiler = () => {
         htmEditor.setFontSize(23);
 
         //htmEditor.session.insert(0, javaBegin);//htmEditor.getCursorPosition()
-        htmEditor.setValue(javaBegin);
+        htmEditor.setValue(pythonBegin);
         htmEditor.setShowPrintMargin(false);
         htmEditor.setHighlightActiveLine(false);
     }
@@ -183,13 +181,11 @@ const Compiler = () => {
 
     const initPythonEditor = () => {
         var pythonBegin =
-            "class Solution :\n\n" +
-            "   def __init__(self,value):\n" +
-            '       self.value = value \n' +
-            "   def solution(self):\n" +
-            "       # calculate factorial :) \n" +
-            '       return "HELLO WORLD!!"\n' +
-            "\n}\n";
+            "N = int(input())\n\n" +
+            "for _ in range(N):\n" +
+            "    a, b = map(int, input().split())\n" +
+            "    print(a + b)\n";
+
         ace.require("ace/ext/language_tools");
 
         var htmEditor = ace.edit("htmEditor");
@@ -207,8 +203,8 @@ const Compiler = () => {
           <h1>We Are The Champions!</h1>
 
           <select id="langOption" className="option" onChange={() => optionChanged()}>
-              <option value="JAVA8">Java8</option>
               <option value="PY3">Python3</option>
+              <option value="JAVA8">Java8</option>
           </select>
 
           <div className="row">
@@ -217,9 +213,9 @@ const Compiler = () => {
               </div>
 
           </div>
-          <button id="runButton" type="button" className="btn btn-dark" style={{background: '#4CAF50',
-              color: 'white'}} onClick={() => runCode()}>Run</button>
-          <button id="executeButton" type="button" className="btn btn-dark" style={{background: 'blue',
+          <button id="runButton" type="button" className="btn btn-dark" style={{background: '#f3f7f7',
+              color: 'black'}} onClick={() => runCode()}>Run</button>
+          <button id="executeButton" type="button" className="btn btn-dark" style={{background: '#4CAF50',
               color: 'white'}} onClick={() => executeCode()}>Execute</button>
 
           <br></br>
