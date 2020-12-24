@@ -11,11 +11,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import tr.com.obss.codefrontation.dto.AuthDTO;
 import tr.com.obss.codefrontation.dto.ProblemDTO;
+import tr.com.obss.codefrontation.dto.SubmissionCommentDTO;
 import tr.com.obss.codefrontation.dto.RoleDTO;
 import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.TemplateDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
 import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
+import tr.com.obss.codefrontation.service.CommentService;
 import tr.com.obss.codefrontation.service.CompilerService;
 import tr.com.obss.codefrontation.service.DmojProblemService;
 import tr.com.obss.codefrontation.service.ProblemService;
@@ -41,6 +43,7 @@ public class AppController {
     private final RoleService roleService;
     private final SubmissionService submissionService;
     private final DmojProblemService dmojProblemService;
+    private final CommentService commentService;
     
 
     private static final Gson gson = new GsonBuilder().create();
@@ -73,6 +76,12 @@ public class AppController {
     @GetMapping("/submissions")
     public List<SubmissionDTO> getSubmissionList() {
         List<SubmissionDTO> list = submissionService.getAllSubmissions();
+        return list;
+    }
+
+    @GetMapping("/comments")
+    public List<SubmissionCommentDTO> getSubmissionCommentList() {
+        List<SubmissionCommentDTO> list =  commentService.getAllSubmissionComments();
         return list;
     }
 
