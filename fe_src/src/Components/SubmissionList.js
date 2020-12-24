@@ -16,6 +16,8 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './SubmissionList.css';
 import uuid from 'uuid-random';
+import { Fieldset } from 'primereact/fieldset';
+
 
 export class SubmissionList extends Component {
 
@@ -23,14 +25,14 @@ export class SubmissionList extends Component {
     id: null,
     problemCode: '',
     name: '',
-    username: '',
+    user: '',
     language: false,
     time: '',
     memory: '',
     point: '',
     status: '',
     result: '',
-    sonar: ''
+    sonarUrl: ''
   };
 
   constructor(props) {
@@ -44,12 +46,20 @@ export class SubmissionList extends Component {
       submission: this.emptySubmission,
       selectedSubmissions: null,
       submitted: false,
-      globalFilter: null
+      globalFilter: null,
+      sonarDialog: false,
+      sonarComplexityResults: [],
+      sonarDuplicationResults: [],
+      sonarMaintainabilityResults: [],
+      sonarReliabilityResults: [],
+      sonarSecurityResults: [],
+      sonarSizeResults: []
     };
 
     this.submissionService = new SubmissionService();
     this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
     this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
+
 
     this.openNew = this.openNew.bind(this);
     this.hideDialog = this.hideDialog.bind(this);
@@ -63,12 +73,26 @@ export class SubmissionList extends Component {
     this.onInputNumberChange = this.onInputNumberChange.bind(this);
     this.hideDeleteSubmissionDialog = this.hideDeleteSubmissionDialog.bind(this);
     this.hideDeleteSubmissionsDialog = this.hideDeleteSubmissionsDialog.bind(this);
+    this.addSonarInspectButton = this.addSonarInspectButton.bind(this);
+    this.hideSonarDialog = this.hideSonarDialog.bind(this);
   }
 
   componentDidMount() {
-    this.submissionService.getSubmissions().then(res => {
-      this.setState(Object.assign(this.state.submissions, res.data));
-    });
+    if (this.props.username && !this.props.problemCode) {
+      this.submissionService.getSubmissions(this.props.username).then(res => {
+        this.setState({ submissions: res.data });
+      });
+    }
+    else if (this.props.problemCode && this.props.username) {
+      this.submissionService.getSubmissionsByUsernameAndProblemCode(this.props.username, this.props.problemCode).then(res => {
+        this.setState({ submissions: res.data });
+      })
+    }
+    else {
+      this.submissionService.getSubmissions('').then(res => {
+        this.setState({ submissions: res.data });
+      });
+    }
   }
 
   openNew() {
@@ -195,6 +219,34 @@ export class SubmissionList extends Component {
     );
   }
 
+  addSonarInspectButton(rowData) {
+    return (
+      <Button type="button" icon="pi pi-chart-bar" className="p-button-secondary" onClick={() => this.openSonarDialog(rowData)} />
+    );
+  }
+
+  openSonarDialog(submission) {
+    this.submissionService.getSonarMetrics(submission).then(res =>
+      this.setState({
+        submission: { ...submission },
+        sonarComplexityResults: res[0].data.component.measures,
+        sonarDuplicationResults: res[1].data.component.measures,
+        sonarMaintainabilityResults: res[2].data.component.measures,
+        sonarReliabilityResults: res[3].data.component.measures,
+        sonarSecurityResults: res[4].data.component.measures,
+        sonarSizeResults: res[5].data.component.measures,
+        sonarDialog: true
+      })).catch(error => {
+        console.error('There was an error!', error);
+      });
+  }
+
+  hideSonarDialog() {
+    this.setState({
+      sonarDialog: false
+    });
+  }
+
   render() {
     const header = (
       <div className="table-header">
@@ -239,17 +291,64 @@ export class SubmissionList extends Component {
             <Column field="name" header="Name" sortable></Column>
 
             <Column field="username" header="User" sortable></Column>
-            <Column field="language" header="Language"sortable></Column>
+            <Column field="language" header="Language" sortable></Column>
             <Column field="time" header="Time" sortable></Column>
             <Column field="memory" header="Memory" sortable></Column>
             <Column field="point" header="Point" sortable></Column>
             <Column field="status" header="Status" sortable></Column>
             <Column field="result" header="Result" sortable></Column>
-            <Column field="sonarUrl" header="Sonar" sortable></Column>
+            <Column field={this.addSonarInspectButton} header="Sonar"></Column>
 
             <Column body={this.actionBodyTemplate}></Column>
           </DataTable>
         </div>
+
+        <Dialog visible={this.state.sonarDialog} style={{ width: '1000px' }} header="Sonar Analysis Details" modal className="p-fluid" onHide={this.hideSonarDialog}>
+          <Fieldset legend="Complexity Metrics" toggleable>
+            <DataTable ref={(el) => this.dt = el} value={this.state.sonarComplexityResults} dataKey="id" >
+              <Column field="metric" header="Metrics" ></Column>
+              <Column field="value" header="Values" ></Column>
+            </DataTable>
+          </Fieldset>
+          <p></p>
+          <Fieldset legend="Duplication Metrics" toggleable>
+            <DataTable ref={(el) => this.dt = el} value={this.state.sonarDuplicationResults} dataKey="id" >
+              <Column field="metric" header="Metrics" ></Column>
+              <Column field="value" header="Values" ></Column>
+            </DataTable>
+          </Fieldset>
+          <p></p>
+          <Fieldset legend="Maintainability Metrics" toggleable>
+            <DataTable ref={(el) => this.dt = el} value={this.state.sonarMaintainabilityResults} dataKey="id" >
+              <Column field="metric" header="Metrics" ></Column>
+              <Column field="value" header="Values" ></Column>
+            </DataTable>
+          </Fieldset>
+          <p></p>
+          <Fieldset legend="Reliability Metrics" toggleable>
+            <DataTable ref={(el) => this.dt = el} value={this.state.sonarReliabilityResults} dataKey="id" >
+              <Column field="metric" header="Metrics" ></Column>
+              <Column field="value" header="Values" ></Column>
+            </DataTable>
+          </Fieldset>
+          <p></p>
+          <Fieldset legend="Security Metrics" toggleable>
+            <DataTable ref={(el) => this.dt = el} value={this.state.sonarSecurityResults} dataKey="id" >
+              <Column field="metric" header="Metrics" ></Column>
+              <Column field="value" header="Values" ></Column>
+            </DataTable>
+          </Fieldset>
+          <p></p>
+          <Fieldset legend="Size Metrics" toggleable>
+            <DataTable ref={(el) => this.dt = el} value={this.state.sonarSizeResults} dataKey="id" >
+              <Column field="metric" header="Metrics" ></Column>
+              <Column field="value" header="Values" ></Column>
+            </DataTable>
+          </Fieldset>
+          <br />
+          <p>If you want to look further details, you can proceed to
+                        <a style={{ cursor: 'pointer', textDecoration: 'underline' }} href={this.state.submission.sonarUrl}> SonarQube page of this submission !</a></p>
+        </Dialog>
 
         <Dialog visible={this.state.deleteSubmissionDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSubmissionDialogFooter} onHide={this.hideDeleteSubmissionDialog}>
           <div className="confirmation-content">
