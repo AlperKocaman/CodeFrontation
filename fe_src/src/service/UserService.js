@@ -22,6 +22,13 @@ export default class UserService {
         }
     }
 
+    async getRoles() {
+        const url = "http://localhost:8080/main/roles";
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
+        return response;
+    }
+
     async getUsers() {
         const url = "http://localhost:8080/main/users";
         const method = 'GET';
