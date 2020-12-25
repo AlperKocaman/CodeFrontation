@@ -48,6 +48,8 @@ export class SubmissionList extends Component {
       submitted: false,
       globalFilter: null,
       sonarDialog: false,
+      commentDialog: false,
+      comment: null,
       sonarComplexityResults: [],
       sonarDuplicationResults: [],
       sonarMaintainabilityResults: [],
@@ -60,7 +62,7 @@ export class SubmissionList extends Component {
     this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
     this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
 
-
+    this.linkable = this.linkable.bind(this);
     this.openNew = this.openNew.bind(this);
     this.hideDialog = this.hideDialog.bind(this);
     this.editSubmission = this.editSubmission.bind(this);
@@ -201,6 +203,20 @@ export class SubmissionList extends Component {
     this.setState({ submission });
   }
 
+  linkable(rowData) {
+    if (!this.props.username) {
+      return <a style={{ cursor: 'pointer', textDecoration: 'underline' }}
+        onClick={this.onClickUsername}>{rowData.username}</a>;
+    } else {
+      return <a>{rowData.username}</a>
+    }
+  }
+
+  onClickUsername = (event) => {
+    console.log('onClickUsername : ' + event.target.text);
+    window.location.assign('/admin/submissions/' + event.target.text);
+  };
+
   rightToolbarTemplate() {
     return (
       <React.Fragment>
@@ -221,7 +237,7 @@ export class SubmissionList extends Component {
 
   addSonarInspectButton(rowData) {
     return (
-      <Button type="button" icon="pi pi-chart-bar" className="p-button-secondary" onClick={() => this.openSonarDialog(rowData)} />
+      <Button type="button" icon="pi pi-chart-bar" className="p-button-rounded p-button-text" onClick={() => this.openSonarDialog(rowData)} />
     );
   }
 
@@ -244,6 +260,29 @@ export class SubmissionList extends Component {
   hideSonarDialog() {
     this.setState({
       sonarDialog: false
+    });
+  }
+
+  commentBodyTemplate = (rowData) => {
+    if (!rowData.comment) {
+      return (
+        <Button type="button" icon="pi pi-plus-circle" className="p-button-rounded p-button-success p-button-text" onClick={() => this.openCommentDialog(rowData.comment)} />
+      );
+    } else {
+      return (
+        <Button type="button" icon="pi pi-comment" className="p-button-rounded p-button-text" onClick={() => this.openCommentDialog(rowData.comment)} />
+      );
+    }
+
+  }
+
+  openCommentDialog = (comment) => {
+    this.setState({ commentDialog: true, comment: comment })
+  }
+
+  hideCommentDialog = () => {
+    this.setState({
+      commentDialog: false
     });
   }
 
@@ -290,7 +329,7 @@ export class SubmissionList extends Component {
             <Column field="problemCode" header="Problem Code" sortable></Column>
             <Column field="name" header="Name" sortable></Column>
 
-            <Column field="username" header="User" sortable></Column>
+            <Column field="username" body={this.linkable} header="User" sortable></Column>
             <Column field="language" header="Language" sortable></Column>
             <Column field="time" header="Time" sortable></Column>
             <Column field="memory" header="Memory" sortable></Column>
@@ -298,6 +337,7 @@ export class SubmissionList extends Component {
             <Column field="status" header="Status" sortable></Column>
             <Column field="result" header="Result" sortable></Column>
             <Column field={this.addSonarInspectButton} header="Sonar"></Column>
+            <Column field="comment" header="Comment" body={this.commentBodyTemplate} ></Column>
 
             <Column body={this.actionBodyTemplate}></Column>
           </DataTable>
@@ -349,6 +389,11 @@ export class SubmissionList extends Component {
           <p>If you want to look further details, you can proceed to
                         <a style={{ cursor: 'pointer', textDecoration: 'underline' }} href={this.state.submission.sonarUrl}> SonarQube page of this submission !</a></p>
         </Dialog>
+
+        <Dialog header="Comment" visible={this.state.commentDialog} maximizable modal style={{ width: '30vw' }} onHide={this.hideCommentDialog}>
+          <div>{ }</div>
+        </Dialog>
+
 
         <Dialog visible={this.state.deleteSubmissionDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSubmissionDialogFooter} onHide={this.hideDeleteSubmissionDialog}>
           <div className="confirmation-content">

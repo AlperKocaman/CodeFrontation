@@ -17,7 +17,6 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
-import {MultiSelect} from "primereact/multiselect";
 
 export class ProblemList extends Component {
 
@@ -40,7 +39,7 @@ export class ProblemList extends Component {
         description: '',
         timeLimit: 0,
         memoryLimit: '',
-        allowedLanguages: ''
+        allowedLanguages: null
     };
 
     constructor(props) {
@@ -57,25 +56,7 @@ export class ProblemList extends Component {
             globalFilter: null
         };
 
-        this.languages = [
-            {language: 'JAVA'},
-            {language: 'PYTHON'},
-            {language: 'CPP'},
-            {language: 'C'},
-            {language: 'C#'},
-            {language: 'JAVASCRIPT'},
-            {language: 'PHP'},
-            {language: 'GO'},
-            {language: 'HASKELL'},
-            {language: 'SCALA'},
-            {language: 'KOTLIN'},
-            {language: 'SWIFT'},
-            {language: 'OBJECTIVE_C'},
-            {language: 'TYPESCRIPT'},
-            {language: 'RUBY'},
-            {language: 'HTML'},
-            {language: 'CSS'}
-        ];
+
 
         this.problemService = new ProblemService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
@@ -221,7 +202,6 @@ export class ProblemList extends Component {
     }
 
     onClickProblemCode = (event) => {
-        console.log('onClickProblemCode : ' + event.target.text);
         window.location.assign('/admin/problems/problemKey/' + event.target.text);
     };
 
@@ -269,7 +249,7 @@ export class ProblemList extends Component {
                                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} problems"
                                globalFilter={this.state.globalFilter}
-                               header={header}>
+                               header={header} resizableColumns columnResizeMode="fit" >
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column field="code" body={this.linkable} header="Problem Code" sortable></Column>

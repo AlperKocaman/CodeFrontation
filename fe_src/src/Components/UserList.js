@@ -17,16 +17,19 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
+import {Dropdown} from "primereact/dropdown";
+
 export class UserList extends Component {
 
     emptyUser = {
         id: null,
-        userName: '',
+        username: '',
         firstName: '',
         lastName: '',
         email: '',
         isAdmin: false,
-        targetRole: '',
+        targetRole: null,
+        roleName: '',
         targetProject: '',
         skills: ''
     };
@@ -44,6 +47,8 @@ export class UserList extends Component {
             submitted: false,
             globalFilter: null
         };
+
+        this.roleItems = [];
 
         this.userService = new UserService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
@@ -72,6 +77,13 @@ export class UserList extends Component {
         this.userService.getUsers().then(res => {
             this.setState({users: res.data});
         });
+
+        this.userService.getRoles().then(res => {
+            console.log(res);
+            this.roleItems = res.data;
+        });
+
+
     }
 
     openNew() {
@@ -101,7 +113,9 @@ export class UserList extends Component {
 
 
         if (this.state.user.username.trim()) {
-
+            let dataObj = this.state.user;
+            dataObj.targetRole = dataObj.roleName;
+            delete dataObj.rolename;
             if (this.state.user.id) {
                 this.userService.updateUser(this.state.user).then(data => {
                     const index = this.findIndexById(this.state.user.id);
@@ -262,6 +276,13 @@ export class UserList extends Component {
         window.location.assign('problems/' + event.target.text);
     };
 
+    onRoleChange(e) {
+        let user = {...this.state.user};
+        user[`targetRole`] = e.value;
+        user[`roleName`] = e.value?e.value.name:'';
+        this.setState({ user });
+    }
+
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
@@ -357,8 +378,8 @@ export class UserList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="targetRole">Target Role</label>
-                        <InputText id="targetRole" value={this.state.user.targetRole} onChange={(e) => this.onInputChange(e, 'targetRole')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.targetRole })} />
-                        {this.state.submitted && !this.state.user.targetRole && <small className="p-invalid">Target Role is required.</small>}
+                        <Dropdown optionLabel="name" value={this.state.user.targetRole} options={this.roleItems} onChange={(e) => this.onRoleChange(e)} placeholder="Select a Role"/>
+                        {this.state.submitted && !this.state.user.role && <small className="p-invalid">Target Role is required.</small>}
                     </div>
                     <div className="p-field">
                         <label htmlFor="targetProject">Target Project</label>
