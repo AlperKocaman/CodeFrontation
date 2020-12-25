@@ -20,7 +20,7 @@ import 'brace/theme/tomorrow_night';
 import 'brace/theme/monokai';
 import CompilerService from "../service/CompilerService";
 
-export class Evaluater extends Component {
+export class Evaluator extends Component {
    
     constructor(props) {
         super(props);
@@ -157,7 +157,7 @@ export class Evaluater extends Component {
 
     render() {
         return (
-            <div style={{backgroundColor:'rgb(154, 163, 166)',width:'100vw',height:'100vh'}}>
+            <div style={{backgroundColor:'rgb(255, 255, 255)',width:'63vw',height:'100vh'}}>
                 <div style={{color:'rgb(90, 78, 45)',width:'55vw',height:'60vh',marginLeft:'auto',marginRight:'auto'}}>
                     <h2  style={{marginLeft:'auto',marginRight:'auto'}}>Code Area</h2>
                     <div id ="editorContainer">
@@ -238,4 +238,4 @@ export class Evaluater extends Component {
     }
 }
 
-export default Evaluater;
+export default Evaluator;

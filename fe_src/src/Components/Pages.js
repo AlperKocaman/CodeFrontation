@@ -10,13 +10,13 @@ import TemplateList from "./TemplateList";
 import UserListTest from "../Demo/UserListTest";
 import Problem from "./Problem";
 import AddProblem from "./AddProblem";
-import Evaluater from "./Evaluater";
+import Evaluator from "./Evaluator";
 import CommentList from "./CommentList";
 
 function Pages() {
     return (
         <Router>
-            <Evaluater path="/"/>
+            <Evaluator path="/"/>
             <Compiler path="compiler"/>
             <Dashboard path="admin"/>
             <UserListTest path="users"/>

@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import ProblemService from "../service/ProblemService";
 import './Problem.css';
 import uuid from 'uuid-random';
+import Evaluator from "./Evaluator";
 
 export class Problem extends Component {
 
@@ -149,6 +150,9 @@ export class Problem extends Component {
                         <p>{this.state.problem.explanation}</p>
                     </div>
                 </pre>
+                <div className="evaluator">
+                    <Evaluator/>
+                </div>
             </div>
         )
     }
