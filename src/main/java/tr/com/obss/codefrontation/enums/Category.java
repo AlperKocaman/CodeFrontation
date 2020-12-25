@@ -5,5 +5,6 @@ public enum Category {
     ARRAYS,
     STRINGS,
     SQL,
-    SPRING_CONTEXT
+    SPRING_CONTEXT,
+    ALGORITHMS
 }

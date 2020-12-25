@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, UUID> {
 
-	Optional<Problem> findByName(String problemName);
+	Optional<Problem> findByCode(String code);
 
 	Optional<Problem> findById(UUID problemID);
 
