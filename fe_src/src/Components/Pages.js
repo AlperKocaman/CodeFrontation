@@ -10,14 +10,14 @@ import TemplateList from "./TemplateList";
 import UserListTest from "../Demo/UserListTest";
 import Problem from "./Problem";
 import AddProblem from "./AddProblem";
-import Evaluater from "./Evaluater";
+import Evaluator from "./Evaluator";
 import CommentList from "./CommentList";
 
 function Pages() {
     return (
         <Router>
-            <Compiler path="/"/>
-            <Evaluater path="evaluater"/>
+            <Evaluator path="/"/>
+            <Compiler path="compiler"/>
             <Dashboard path="admin"/>
             <UserListTest path="users"/>
             <DataTableCrudDemo path="test"/>
@@ -35,7 +35,6 @@ function Pages() {
             <CommentList path="admin/comments/:username/"/>
             <CommentList path="admin/comments/:username/:problemCode"/>
         </Router>
-
 
     );
 }
