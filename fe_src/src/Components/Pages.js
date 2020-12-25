@@ -11,6 +11,7 @@ import UserListTest from "../Demo/UserListTest";
 import Problem from "./Problem";
 import AddProblem from "./AddProblem";
 import Evaluater from "./Evaluater";
+import CommentList from "./CommentList";
 
 function Pages() {
     return (
@@ -30,6 +31,9 @@ function Pages() {
             <SubmissionList path="admin/submissions/:username"/>
             <SubmissionList path="admin/submissions/:username/:problemCode"/>
             <UserList path="admin/users"/>
+            <CommentList path="admin/comments"/>
+            <CommentList path="admin/comments/:username/"/>
+            <CommentList path="admin/comments/:username/:problemCode"/>
         </Router>
 
 
