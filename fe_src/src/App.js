@@ -8,9 +8,10 @@ class App extends Component {
     state = {
         user: null
     };
-    componentDidMount = async () => {
-        auth.onAuthStateChanged(async userAuth => {
-            const user = await generateUserDocument(userAuth);
+    componentDidMount =  () => {
+        auth.onAuthStateChanged( userAuth => {
+
+            const user =  generateUserDocument(userAuth);
             this.setState({ user });
         });
     };

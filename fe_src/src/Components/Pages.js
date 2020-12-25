@@ -10,10 +10,11 @@ import TemplateList from "./TemplateList";
 import UserListTest from "../Demo/UserListTest";
 
 function Pages() {
+
     return (
 
         <Router>
-            <Compiler path="/"/>
+            <Compiler default path="/"/>
             <Dashboard path="admin"/>
             <UserListTest path="users"/>
             <DataTableCrudDemo path="test"/>
