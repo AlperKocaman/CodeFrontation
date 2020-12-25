@@ -24,12 +24,12 @@ class App extends Component {
             <div>
                 <div className={user ? '' : 'hidden'}>
                 <span className="p-buttonset" >
-                    <div style = {{marginBottom : '0.5%'}}>
-                    <Button label="Problems" className="p-button-raised p-button-text" onClick = { () => { navigate('/admin/problems')} } />
-                    <Button label="Submissions" className="p-button-raised p-button-text" onClick = { () => { navigate('/admin/submissions') } } />
-                    <Button label="Users" className="p-button-raised p-button-text" onClick = { () => { navigate('/admin/users') } } />
-                    <Button label="Comments" className="p-button-raised p-button-text" onClick = { () => {navigate('/admin/comments') } } />
-                    <Button label="Templates" className="p-button-raised p-button-text" onClick = { () => { navigate('/admin/templates') } } />
+                    <div style = {{marginBottom : '0.5%',  backgroundColor: '#2196F3'}} >
+                    <Button style = {{fontSize: '20px', textColor:'#2196F3'}} label="Problems" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/problems')} } />
+                    <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Submissions" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/submissions') } } />
+                    <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Users" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/users') } } />
+                    <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Comments" className="p-button-raised  p-text-bold" onClick = { () => {navigate('/admin/comments') } } />
+                    <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Templates" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/templates') } } />
                     </div>       
                 </span>
 

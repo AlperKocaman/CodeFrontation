@@ -280,7 +280,7 @@ export class ProblemList extends Component {
     }
 
     onClickProblemCode = (event) => {
-        window.location.assign('problems/' + event.target.text);
+        window.location.assign('/admin/problems/' + event.target.text);
     };
 
     actionBodyTemplate(rowData) {
@@ -333,7 +333,7 @@ export class ProblemList extends Component {
                                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} problems"
                                globalFilter={this.state.globalFilter}
-                               header={header}>
+                               header={header} resizableColumns columnResizeMode="fit" >
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column field="code" body={this.linkable} header="Problem Code" sortable></Column>
