@@ -8,6 +8,7 @@ import DataTableCrudDemo from "../Demo/DataTableCrudDemo";
 import Compiler from "./Compiler";
 import TemplateList from "./TemplateList";
 import UserListTest from "../Demo/UserListTest";
+import CommentList from "./CommentList";
 import Evaluater from "./Evaluater";
 
 function Pages() {
@@ -25,6 +26,9 @@ function Pages() {
             <SubmissionList path="admin/submissions/:username"/>
             <SubmissionList path="admin/submissions/:username/:problemCode"/>
             <UserList path="admin/users"/>
+            <CommentList path="admin/comments"/>
+            <CommentList path="admin/comments/:username/"/>
+            <CommentList path="admin/comments/:username/:problemCode"/>
         </Router>
 
     );
