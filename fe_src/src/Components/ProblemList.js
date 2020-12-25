@@ -222,7 +222,7 @@ export class ProblemList extends Component {
 
     onClickProblemCode = (event) => {
         console.log('onClickProblemCode : ' + event.target.text);
-        window.location.assign('problems/problemKey/' + event.target.text);
+        window.location.assign('/admin/problems/problemKey/' + event.target.text);
     };
 
     actionBodyTemplate(rowData) {
