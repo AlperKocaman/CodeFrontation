@@ -41,13 +41,13 @@ public class ProblemService {
 		} catch (Exception e) {
 			log.error("No user was found by username: " + username);
 		}
-		List<Assignment> userAssignments = assignmentRepository.findByUserId(userMapper.toUserEntity(userDTO));
+		List<Assignment> userAssignments = assignmentRepository.findByUser(userMapper.toUserEntity(userDTO));
 		List<Problem> problemsAssignedToUser = null;
 		if(userAssignments != null && !userAssignments.isEmpty()){
 			problemsAssignedToUser = new ArrayList<>();
 
 			for(Assignment assignment:userAssignments){
-				problemsAssignedToUser.add(assignment.getProblemId());
+				problemsAssignedToUser.add(assignment.getProblem());
 			}
 
 			log.info("Assigned problems to user {} were retrieved: {}", username, problemsAssignedToUser.toString());

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default class SubmissionService{
+export default class SubmissionService {
 
     BACKEND_BASE_URL = "http://localhost:9000/api/";
     FIRST_URL_PARAMETER = "measures/component?metricKeys=";
@@ -12,18 +12,18 @@ export default class SubmissionService{
     SIZE_METRICS = "comment_lines,comment_lines_density,ncloc,functions";
     LAST_URL_PARAMETER = "&component=";
 
-    async requestToServer(url = '',method='', data = {}) {
+    async requestToServer(url = '', method = '', data = {}) {
         try {
-            if (method=='POST'){
+            if (method == 'POST') {
                 const response = await axios.post(url, data);
                 return response;
-            }else if (method=='GET'){
+            } else if (method == 'GET') {
                 const response = await axios.get(url);
                 return response;
-            }else if (method=='PUT'){
+            } else if (method == 'PUT') {
                 const response = await axios.put(url, data);
                 return response;
-            }else if (method=='DELETE'){
+            } else if (method == 'DELETE') {
                 const response = await axios.delete(url, data);
                 return response;
             }
@@ -32,60 +32,66 @@ export default class SubmissionService{
         }
     }
 
-    async getSubmissions() {
-        const url = "http://localhost:8080/main/submissions";
+    async getSubmissions(username) {
+        const url = "http://localhost:8080/main/submissions/" + username;
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
+        return response;
+    }
+    async getSubmissionsByUsernameAndProblemCode(username, problemCode) {
+        const url = "http://localhost:8080/main/submissions/" + username + "/" + problemCode;
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;
     }
 
-    async deleteSubmissions(submissions){
-        const url="http://localhost:8080/main/submissions/delete-submissions";
-        const method='POST';
+    async deleteSubmissions(submissions) {
+        const url = "http://localhost:8080/main/submissions/delete-submissions";
+        const method = 'POST';
         const response = await this.requestToServer(url, method, submissions);
         return response;
     }
 
-    async deleteSubmission(submission){
-        const url="http://localhost:8080/main/submissions/"+submission.id;
-        const method='DELETE';
+    async deleteSubmission(submission) {
+        const url = "http://localhost:8080/main/submissions/" + submission.id;
+        const method = 'DELETE';
         const response = await this.requestToServer(url, method, {});
         return response;
     }
 
-    async addSubmission(submission){
-        const url="http://localhost:8080/main/submission";
-        const method='POST';
+    async addSubmission(submission) {
+        const url = "http://localhost:8080/main/submission";
+        const method = 'POST';
         const response = await this.requestToServer(url, method, submission);
         return response;
     }
 
-    async updateSubmission(submission){
-        const url="http://localhost:8080/main/submissions/"+submission.id;
-        const method='PUT';
+    async updateSubmission(submission) {
+        const url = "http://localhost:8080/main/submissions/" + submission.id;
+        const method = 'PUT';
         const response = await this.requestToServer(url, method, submission);
         return response;
     }
 
-    extractSonarKeyFromUrl(sonarUrl){
+    extractSonarKeyFromUrl(sonarUrl) {
         return sonarUrl.substring(35);
     }
 
-    async getSonarMetrics(submission){
+    async getSonarMetrics(submission) {
         let response = [];
-        const complexityMetricsUrl=this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.COMPLEXITY_METRICS + this.LAST_URL_PARAMETER +
+        const complexityMetricsUrl = this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.COMPLEXITY_METRICS + this.LAST_URL_PARAMETER +
             this.extractSonarKeyFromUrl(submission.sonarUrl);
-        const duplicationMetricsUrl=this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.DUPLICATION_METRICS + this.LAST_URL_PARAMETER +
+        const duplicationMetricsUrl = this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.DUPLICATION_METRICS + this.LAST_URL_PARAMETER +
             this.extractSonarKeyFromUrl(submission.sonarUrl);
-        const maintainabilityMetricsUrl=this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.MAINTAINABILITY_METRICS + this.LAST_URL_PARAMETER +
+        const maintainabilityMetricsUrl = this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.MAINTAINABILITY_METRICS + this.LAST_URL_PARAMETER +
             this.extractSonarKeyFromUrl(submission.sonarUrl);
-        const reliabilityMetricsUrl=this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.RELIABILITY_METRICS + this.LAST_URL_PARAMETER +
+        const reliabilityMetricsUrl = this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.RELIABILITY_METRICS + this.LAST_URL_PARAMETER +
             this.extractSonarKeyFromUrl(submission.sonarUrl);
-        const securityMetricsUrl=this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.SECURITY_METRICS + this.LAST_URL_PARAMETER +
+        const securityMetricsUrl = this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.SECURITY_METRICS + this.LAST_URL_PARAMETER +
             this.extractSonarKeyFromUrl(submission.sonarUrl);
-        const sizeMetricsUrl=this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.SIZE_METRICS + this.LAST_URL_PARAMETER +
+        const sizeMetricsUrl = this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.SIZE_METRICS + this.LAST_URL_PARAMETER +
             this.extractSonarKeyFromUrl(submission.sonarUrl);
-        const method='GET';
+        const method = 'GET';
 
         response.push(await this.requestToServer(complexityMetricsUrl, method, submission));
         response.push(await this.requestToServer(duplicationMetricsUrl, method, submission));

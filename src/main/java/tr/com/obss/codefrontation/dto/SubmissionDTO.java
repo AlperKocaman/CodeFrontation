@@ -1,7 +1,6 @@
 package tr.com.obss.codefrontation.dto;
 
 import lombok.Data;
-import tr.com.obss.codefrontation.entity.Assignment;
 import tr.com.obss.codefrontation.enums.Language;
 import tr.com.obss.codefrontation.enums.Result;
 import tr.com.obss.codefrontation.enums.Status;
@@ -15,13 +14,19 @@ public class  SubmissionDTO {
 
     private UUID id;
 
-    private Assignment assignmentId;
+    //private AssignmentDTO assignment;
+
+    private UUID assignmentId;
+
+    private String problemCode;
+//
+    private String username;
 
     private Double time;
 
-    private Double memory;
+    private Long memory;
 
-    private Integer point;
+    private Long point;
 
     private String body;
 
@@ -33,7 +38,7 @@ public class  SubmissionDTO {
 
     private URL sonarUrl;
 
-    private String name;
+    private String name; //FIXME kaldırılabilir gereksiz
 
     private Date createdDate;
 
