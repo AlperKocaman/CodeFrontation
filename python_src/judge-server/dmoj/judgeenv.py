@@ -51,6 +51,9 @@ cli_command: List[str] = []
 only_executors: Set[str] = set()
 exclude_executors: Set[str] = set()
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(ROOT_DIR, 'judge.yml')
+
 
 def load_env(cli=False, testsuite=False):  # pragma: no cover
     global problem_dirs, only_executors, exclude_executors, log_file, server_host, server_port, no_ansi, no_ansi_emu, skip_self_test, env, startup_warnings, no_watchdog, problem_regex, case_regex, api_listen, secure, no_cert_check, cert_store, problem_watches, cli_history_file, cli_command
@@ -79,7 +82,8 @@ def load_env(cli=False, testsuite=False):  # pragma: no cover
         '-c',
         '--config',
         type=str,
-        default='~/github_examples/judge-server/judge.yml',
+        #default='~/github_examples/judge-server/judge.yml',
+        default=config_path,
         help='file to load judge configurations from (default: ~/.dmojrc)',
     )
 

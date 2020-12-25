@@ -16,6 +16,14 @@ public class ProblemDTO {
 	private Category category;
 	private Level difficultyLevel;
 	private String bestCode;
+	private String inputs;
+	private String inputSpecification;
+	private String outputs;
+	private String outputSpecification;
+	private String description;
+	private String sampleOutputs;
+	private String sampleInputs;
+	private String explanation;
 	private int point;
 	private long timeLimit;
 	private long memoryLimit;

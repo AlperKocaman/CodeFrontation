@@ -4,6 +4,9 @@ package tr.com.obss.codefrontation.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -25,5 +28,16 @@ public class Template extends BaseEntity {
     @JoinColumn(name = "role_id")
     private Role role;
 
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "template_problem",
+            joinColumns = {
+                    @JoinColumn(name = "template_id", referencedColumnName = "id",
+                            nullable = false, updatable = false)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "problem_id", referencedColumnName = "id",
+                            nullable = false, updatable = false)})
+    private Set<Problem> templateProblems;
+    
 }
 

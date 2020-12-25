@@ -1,5 +1,6 @@
 package tr.com.obss.codefrontation.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import tr.com.obss.codefrontation.dto.TemplateDTO;
+import tr.com.obss.codefrontation.entity.Problem;
 import tr.com.obss.codefrontation.entity.Role;
 import tr.com.obss.codefrontation.entity.Template;
 import tr.com.obss.codefrontation.entity.User;
@@ -55,6 +57,8 @@ public class TemplateService {
 		Template template = mapper.toTemplateEntity(templateDTO);
 		template.setAuthor(entityManager.getReference(User.class,templateDTO.getAuthorId()));
 		template.setRole(entityManager.getReference(Role.class,templateDTO.getRole().getId()));
+		List<Problem> problemList = entityManager.createQuery("SELECT p FROM Problem p WHERE p.id IN :problemIds",Problem.class).setParameter("problemIds", templateDTO.getProblemIds()).getResultList();
+		template.setTemplateProblems(new HashSet<Problem>(problemList));
 		Template entity = templateRepository.save(template);
 		log.info("Template created: {}", template.toString());
 		return mapper.toTemplateDTO(entity);

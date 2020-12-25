@@ -1,11 +1,10 @@
 package tr.com.obss.codefrontation.entity;
 
 import lombok.Data;
-import lombok.Getter;
+
 import javax.persistence.*;
 import java.util.UUID;
 
-@Getter
 @Data
 @Entity
 @Table(name = "assignments")

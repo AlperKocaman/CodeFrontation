@@ -19,6 +19,8 @@ import './UserList.css';
 import uuid from 'uuid-random';
 import {Dropdown} from "primereact/dropdown";
 import UserService from '../service/UserService';
+import ProblemService from '../service/ProblemService';
+import {MultiSelect} from "primereact/multiselect";
 
 export class TemplateList extends Component {
 
@@ -30,7 +32,10 @@ export class TemplateList extends Component {
         definition:'',
         author: null,
         authorId:'',
-        authorName:''
+        authorName:'',
+        templateProblems:[],
+        problemIds:[],
+        problemNames:[]
     };
 
     
@@ -51,9 +56,11 @@ export class TemplateList extends Component {
 
         this.roleItems = [];
         this.userItems = [];
+        this.problems = [];
 
         this.templateService = new TemplateService();
         this.userService = new UserService();
+        this.problemService = new ProblemService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
@@ -80,6 +87,7 @@ export class TemplateList extends Component {
             let temp = res.data;
             temp.forEach((item,i)=>{
                 item.roleName=item.role?item.role.name:'';
+                item.problemNames=item.templateProblems?item.templateProblems.map((ee)=>ee.name):[];
             });
             this.setState({templates:temp});
         });
@@ -92,6 +100,10 @@ export class TemplateList extends Component {
         this.userService.getUsers().then(res => {
             console.log(res);
             this.userItems = res.data;
+        });
+
+        this.problemService.getProblems().then(res=>{
+            this.problems = res.data;
         });
 
     }
@@ -237,7 +249,6 @@ export class TemplateList extends Component {
         const val = (e.target && e.target.value) || '';
         let template = {...this.state.template};
         template[`${name}`] = val;
-
         this.setState({ template });
     }
 
@@ -253,6 +264,14 @@ export class TemplateList extends Component {
         template[`author`] = e.value;
         template[`authorId`] = e.value?e.value.id:'';
         template[`authorName`] = e.value?e.value.username:'';
+        this.setState({ template });
+    }
+
+    onProblemChange(e){
+        let template = {...this.state.template};
+        template[`templateProblems`] = e.value;
+        template[`problemIds`] = e.value?e.value.map((item)=>item.id):[];
+        template[`problemNames`] = e.value?e.value.map((item)=>item.name):[];
         this.setState({ template });
     }
 
@@ -349,6 +368,7 @@ export class TemplateList extends Component {
                         <Column field="roleName" header="Role" sortable></Column>
                         <Column field="definition" header="Definition" sortable></Column>
                         <Column field="authorName" header="Authors" sortable></Column>
+                        <Column field="problemNames" header="Problems" sortable></Column>
                         <Column body={this.actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
@@ -372,6 +392,12 @@ export class TemplateList extends Component {
                         <label htmlFor="author">Authors</label>
                         <Dropdown optionLabel="username" value={this.state.template.author} options={this.userItems} onChange={(e) => this.onUserChange(e)} placeholder="Select a Author"/>
                         {this.state.submitted && !this.state.template.author && <small className="p-invalid">Authors are required.</small>}
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="templateProblems">Problems</label>
+                        <MultiSelect id="templateProblems"  display="chip" placeholder="Select Problems" optionLabel="name" value={this.state.template.templateProblems} options={this.problems} onChange={(e) => this.onProblemChange(e)}
+                                     className={classNames({ 'p-invalid': this.state.submitted && !this.state.template.templateProblems })}/>
+                        {this.state.submitted && !this.state.template.templateProblems && <small className="p-invalid">Problems are required.</small>}
                     </div>
                 </Dialog>
 

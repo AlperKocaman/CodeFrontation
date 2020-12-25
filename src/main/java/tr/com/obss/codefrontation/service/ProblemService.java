@@ -93,4 +93,12 @@ public class ProblemService {
 	}
 
 
+	public ProblemDTO getProblemsDetailsByProblemCode(String problemCode) {
+		Optional<Problem> problem = problemRepository.findByCode(problemCode);
+		if(problem.isPresent()){
+			log.info("Problem retrieved: {}", problem.get().getName());
+			return mapper.toProblemDTO(problem.get());
+		}
+		return null;
+	}
 }

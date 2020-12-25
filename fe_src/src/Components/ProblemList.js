@@ -17,7 +17,6 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
-import { MultiSelect } from "primereact/multiselect";
 
 export class ProblemList extends Component {
 
@@ -29,30 +28,19 @@ export class ProblemList extends Component {
         category: '',
         difficultyLevel: 0,
         bestCode: '',
+        inputs: '',
+        inputSpecification:'',
+        outputs: '',
+        outputSpecification:'',
+        sampleInputs:'',
+        sampleOutputs:'',
+        explanation:'',
+        point: 0,
+        description: '',
         timeLimit: 0,
         memoryLimit: '',
         allowedLanguages: null
     };
-
-    languages = [
-        'JAVA',
-        'PYTHON',
-        'CPP',
-        'C',
-        'C#',
-        'JAVASCRIPT',
-        'PHP',
-        'GO',
-        'HASKELL',
-        'SCALA',
-        'KOTLIN',
-        'SWIFT',
-        'OBJECTIVE_C',
-        'TYPESCRIPT',
-        'RUBY',
-        'HTML',
-        'CSS'
-    ];
 
     constructor(props) {
         super(props);
@@ -65,8 +53,7 @@ export class ProblemList extends Component {
             problem: this.emptyProblem,
             selectedProblems: null,
             submitted: false,
-            globalFilter: null,
-            selectedLanguages: null
+            globalFilter: null
         };
 
 
@@ -79,8 +66,7 @@ export class ProblemList extends Component {
         this.linkable = this.linkable.bind(this);
         this.onClickProblemCode = this.onClickProblemCode.bind(this);
         this.openNew = this.openNew.bind(this);
-        this.hideDialog = this.hideDialog.bind(this);
-        this.saveProblem = this.saveProblem.bind(this);
+
         this.editProblem = this.editProblem.bind(this);
         this.confirmDeleteProblem = this.confirmDeleteProblem.bind(this);
         this.deleteProblem = this.deleteProblem.bind(this);
@@ -100,18 +86,8 @@ export class ProblemList extends Component {
     }
 
     openNew() {
-        this.setState({
-            problem: this.emptyProblem,
-            submitted: false,
-            problemDialog: true
-        });
-    }
-
-    hideDialog() {
-        this.setState({
-            submitted: false,
-            problemDialog: false
-        });
+        console.log('onClickProblemListAdd');
+        window.location.assign('/admin/problems/addProblem/');
     }
 
     hideDeleteProblemDialog() {
@@ -120,58 +96,6 @@ export class ProblemList extends Component {
 
     hideDeleteProblemsDialog() {
         this.setState({ deleteProblemsDialog: false });
-    }
-
-    saveProblem() {
-
-
-        if (this.state.problem.name.trim()) {
-
-            this.state.problem.allowedLanguages = this.state.problem.allowedLanguages.toString();
-
-            if (this.state.problem.id) {
-                this.problemService.updateProblem(this.state.problem).then(data => {
-                    const index = this.findIndexById(this.state.problem.id);
-                    let state = { submitted: true };
-                    let problems = [...this.state.problems];
-                    let problem = {...this.state.problem};
-                    problems[index] = problem;
-                    state = {
-                        ...state,
-                        problems,
-                        problemDialog: false,
-                        problem: this.emptyProblem
-                    };
-                    this.setState(state);
-                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Updated', life: 3000 });
-                }).catch(error => {
-                    console.error('There was an error while updating problem!', error);
-                });
-            }
-            else {
-                this.problemService.addProblem(this.state.problem).then(data => {
-                    let state = { submitted: true };
-                    let problems = [...this.state.problems];
-                    let problem = {...this.state.problem};
-                    problem.id = data.data.id;
-                    problems.push(problem);
-
-                    state = {
-                        ...state,
-                        problems,
-                        problemDialog: false,
-                        problem: this.emptyProblem
-                    };
-                    this.setState(state);
-                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Created', life: 3000 });
-                }).catch(error => {
-                    console.error('There was an error while adding problem!', error);
-                });
-            }
-
-        }
-
-
     }
 
     deleteProblem() {
@@ -203,10 +127,8 @@ export class ProblemList extends Component {
     }
 
     editProblem(problem) {
-        this.setState({
-            problem: { ...problem },
-            problemDialog: true
-        });
+        console.log('onClickProblemListEdit');
+        window.location.assign('/admin/problems/addProblem/' + problem.code);
     }
 
     confirmDeleteProblem(problem) {
@@ -280,7 +202,7 @@ export class ProblemList extends Component {
     }
 
     onClickProblemCode = (event) => {
-        window.location.assign('/admin/problems/' + event.target.text);
+        window.location.assign('/admin/problems/problemKey/' + event.target.text);
     };
 
     actionBodyTemplate(rowData) {
@@ -301,12 +223,6 @@ export class ProblemList extends Component {
                     <InputText type="search" onInput={(e) => this.setState({ globalFilter: e.target.value })} placeholder="Search..." />
                 </span>
             </div>
-        );
-        const problemDialogFooter = (
-            <React.Fragment>
-                <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={this.hideDialog} />
-                <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={this.saveProblem} />
-            </React.Fragment>
         );
         const deleteProblemDialogFooter = (
             <React.Fragment>
@@ -348,50 +264,6 @@ export class ProblemList extends Component {
                         <Column body={this.actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
-                <Dialog visible={this.state.problemDialog} style={{ width: '500px' }} header="Problem Details" modal className="p-fluid" footer={problemDialogFooter} onHide={this.hideDialog}>
-                    <div className="p-field">
-                        <label htmlFor="code">Problem Code</label>
-                        <InputText id="code" value={this.state.problem.code} onChange={(e) => this.onInputChange(e, 'code')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.code })} />
-                        {this.state.submitted && !this.state.problem.code && <small className="p-invalid">Problem code is required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="name">Problem Name</label>
-                        <InputText id="name" value={this.state.problem.name} onChange={(e) => this.onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.name })} />
-                        {this.state.submitted && !this.state.problem.name && <small className="p-invalid">Problem name is required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="author">Authors</label>
-                        <InputText id="author" value={this.state.problem.author} onChange={(e) => this.onInputChange(e, 'author')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.author })} />
-                        {this.state.submitted && !this.state.problem.author && <small className="p-invalid">Authors are required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="category">Problem Category</label>
-                        <InputText id="category" value={this.state.problem.category} onChange={(e) => this.onInputChange(e, 'category')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.category })} />
-                        {this.state.submitted && !this.state.problem.category && <small className="p-invalid">Problem category is required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="difficultyLevel">Difficulty Level</label>
-                        <InputText id="difficultyLevel" value={this.state.problem.difficultyLevel} onChange={(e) => this.onInputChange(e, 'difficultyLevel')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.difficultyLevel })} />
-                        {this.state.submitted && !this.state.problem.difficultyLevel && <small className="p-invalid">Problem difficulty level is required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="timeLimit">Time Limit</label>
-                        <InputText id="timeLimit" value={this.state.problem.timeLimit} onChange={(e) => this.onInputChange(e, 'timeLimit')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.timeLimit })} />
-                        {this.state.submitted && !this.state.problem.timeLimit && <small className="p-invalid">Problem time limit is required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="memoryLimit">Memory Limit</label>
-                        <InputText id="memoryLimit" value={this.state.problem.memoryLimit} onChange={(e) => this.onInputChange(e, 'memoryLimit')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.memoryLimit })} />
-                        {this.state.submitted && !this.state.problem.memoryLimit && <small className="p-invalid">Problem memory limit is required.</small>}
-                    </div>
-                    <div className="p-field">
-                        <label htmlFor="allowedLanguages">Allowed Languages</label>
-                        <MultiSelect id="allowedLanguages" display="chip" placeholder= {"Select Languages"} value={this.state.selectedLanguages} options={this.languages} onChange={(e) => { this.setState({ selectedLanguages: e.value}); this.onInputChange(e, 'allowedLanguages'); }}
-                            className={classNames({ 'p-invalid': this.state.submitted && !this.state.problem.allowedLanguages })} />
-                        {this.state.submitted && !this.state.problem.allowedLanguages && <small className="p-invalid">Allowed languages is required.</small>}
-                    </div>
-                </Dialog>
-
                 <Dialog visible={this.state.deleteProblemDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProblemDialogFooter} onHide={this.hideDeleteProblemDialog}>
                     <div className="confirmation-content">
                         <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem'}} />

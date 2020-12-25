@@ -29,6 +29,13 @@ export default class ProblemService {
         return response;
     }
 
+    async getProblem(problemCode) {
+        const url = "http://localhost:8080/main/problems/problemKey/" + problemCode;
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
+        return response;
+    }
+
     async deleteProblems(problems){
         const url="http://localhost:8080/main/problems/delete-problems";
         const method='POST';

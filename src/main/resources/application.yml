@@ -66,13 +66,17 @@ security:
     - /public/*
     - /main/*
     - /main/users/*
+    - /main/problems/problemKey/*
+    - /problems/addProblem/*
     - /main/problems/*
     - /main/templates/*
     - /main/submissions/*
+    - /main/comments/*
     - /main
     - /judge
     - /judge/*
     - /judge/submit/*
+    - /judge/testRun/*
     - /registerSonar
     - /getSonarMetrics/*
   exposed-headers:
