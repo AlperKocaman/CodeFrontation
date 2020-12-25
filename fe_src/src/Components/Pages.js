@@ -13,8 +13,8 @@ import Evaluater from "./Evaluater";
 function Pages() {
     return (
         <Router>
-            <Compiler path="/"/>
-            <Evaluater path="evaluater"/>
+            <Evaluater path="/"/>
+            <Compiler path="compiler"/>
             <Dashboard path="admin"/>
             <UserListTest path="users"/>
             <DataTableCrudDemo path="test"/>
