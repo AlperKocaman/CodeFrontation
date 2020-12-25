@@ -29,6 +29,15 @@ export class ProblemList extends Component {
         category: '',
         difficultyLevel: 0,
         bestCode: '',
+        inputs: '',
+        inputSpecification:'',
+        outputs: '',
+        outputSpecification:'',
+        sampleInputs:'',
+        sampleOutputs:'',
+        explanation:'',
+        point: 0,
+        description: '',
         timeLimit: 0,
         memoryLimit: '',
         allowedLanguages: ''
@@ -97,11 +106,8 @@ export class ProblemList extends Component {
     }
 
     openNew() {
-        this.setState({
-            problem: this.emptyProblem,
-            submitted: false,
-            problemDialog: true
-        });
+        console.log('onClickProblemListAdd');
+        window.location.assign('/admin/problems/addProblem/');
     }
 
     hideDialog() {
@@ -198,10 +204,8 @@ export class ProblemList extends Component {
     }
 
     editProblem(problem) {
-        this.setState({
-            problem: { ...problem },
-            problemDialog: true
-        });
+        console.log('onClickProblemListEdit');
+        window.location.assign('/admin/problems/addProblem/' + problem.code);
     }
 
     confirmDeleteProblem(problem) {
@@ -276,7 +280,7 @@ export class ProblemList extends Component {
 
     onClickProblemCode = (event) => {
         console.log('onClickProblemCode : ' + event.target.text);
-        window.location.assign('problems/' + event.target.text);
+        window.location.assign('problems/problemKey/' + event.target.text);
     };
 
     actionBodyTemplate(rowData) {
