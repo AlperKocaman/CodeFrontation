@@ -8,12 +8,13 @@ import DataTableCrudDemo from "../Demo/DataTableCrudDemo";
 import Compiler from "./Compiler";
 import TemplateList from "./TemplateList";
 import UserListTest from "../Demo/UserListTest";
+import Evaluater from "./Evaluater";
 
 function Pages() {
     return (
-
         <Router>
             <Compiler path="/"/>
+            <Evaluater path="evaluater"/>
             <Dashboard path="admin"/>
             <UserListTest path="users"/>
             <DataTableCrudDemo path="test"/>
