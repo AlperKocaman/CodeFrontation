@@ -136,6 +136,11 @@ public class AppController {
         return problemService.getAllProblems();
     }
 
+    @GetMapping({"/problems/addProblem/{problemCode}", "/problems/problemKey/{problemCode}"})
+    public ProblemDTO getProblemByProblemCode(@PathVariable String problemCode) {
+        return problemService.getProblemsDetailsByProblemCode(problemCode);
+    }
+
     @GetMapping("/problems/{username}")
     public List<ProblemDTO> getProblemListByUserName(@PathVariable String username) {
         return problemService.getAllProblemsAssignedToUserByUsername(username);

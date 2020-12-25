@@ -66,6 +66,8 @@ security:
     - /public/*
     - /main/*
     - /main/users/*
+    - /main/problems/problemKey/*
+    - /problems/addProblem/*
     - /main/problems/*
     - /main/templates/*
     - /main/submissions/*

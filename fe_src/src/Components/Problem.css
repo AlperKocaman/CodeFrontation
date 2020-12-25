@@ -1,0 +1,47 @@
+.content {
+    border: 1px solid #b3b7bb;
+    margin-right: 100px;
+    margin-left: 100px;
+    background-color: white;
+
+}
+
+.content2 {
+    margin: 50px 80px;
+    wordBreak: break-word;
+}
+
+.sample {
+    border: 1px solid #b3b7bb;
+    border-radius: 5px;
+    background-color: whitesmoke;
+}
+
+body {
+    background-color: whitesmoke;
+    color: black;
+    font-family: SansSerif, serif;
+    text-align: left;
+    overflow-y: scroll;
+    display: flex;
+}
+
+p {
+    wordBreak: break-word;
+    white-space: pre-wrap;
+}
+
+h1 {
+    font-family: Arial;
+    color: #000066;
+}
+
+h3 {
+    font-family: Arial;
+    color: #000066;
+}
+
+h6 {
+    font-family: Arial;
+    color: #000066;
+}
