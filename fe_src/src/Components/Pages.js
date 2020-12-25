@@ -9,12 +9,13 @@ import Compiler from "./Compiler";
 import TemplateList from "./TemplateList";
 import UserListTest from "../Demo/UserListTest";
 import CommentList from "./CommentList";
+import Evaluater from "./Evaluater";
 
 function Pages() {
     return (
-
         <Router>
-            <Compiler path="/"/>
+            <Evaluater path="/"/>
+            <Compiler path="compiler"/>
             <Dashboard path="admin"/>
             <UserListTest path="users"/>
             <DataTableCrudDemo path="test"/>
