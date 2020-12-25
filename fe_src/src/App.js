@@ -8,7 +8,6 @@ class App extends Component {
     state = {
         user: null
     };
-    check=false;
     componentDidMount = async () => {
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
@@ -17,7 +16,7 @@ class App extends Component {
     };
     render() {
         let { user } = this.state;
-        user=true;  //FIXME login mekanizmasını kaldırmak için konuldu
+        //user=true;  //FIXME login mekanizmasını kaldırmak için konuldu
         return (
             <div>
             <div className={user ?  '' :'hidden'}>

@@ -3,7 +3,7 @@ import {auth} from "./Firebase";
 import CompilerService from "../service/CompilerService";
 
 const Compiler = () => {
-    let displayOfSignOutButton='None'; //TODO for signout burasının değiştirilmesi gerekiyor
+    let displayOfSignOutButton='block'; //TODO for signout burasının değiştirilmesi gerekiyor
     let lang="PY3";
     let ace = require('ace-builds/src-noconflict/ace');
     let mode_java = require('ace-builds/src-noconflict/mode-java');//TODO if mode_java is not required, error is ocurred in htmEditor.getSession().setMode("ace/mode/java");
