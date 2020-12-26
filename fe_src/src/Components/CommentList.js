@@ -12,10 +12,8 @@ import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
-import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './CommentList.css';
-import uuid from 'uuid-random';
 import {auth, generateUserDocument} from "./Firebase";
 
 export class CommentList extends Component {

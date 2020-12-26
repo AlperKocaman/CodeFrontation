@@ -136,7 +136,7 @@ export class Evaluator extends Component {
                 //    this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token);
                 //});
             }
-            setTimeout(this.getSubmitResult, 10000, result.id);
+            setTimeout(this.getSubmitResult, 3000, result.id);
         });
     }
 
@@ -176,7 +176,7 @@ export class Evaluator extends Component {
         this.compilerService.testRun(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
-            setTimeout(this.getTestRunResult, 10000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
+            setTimeout(this.getTestRunResult, 3000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
         });
     };
 

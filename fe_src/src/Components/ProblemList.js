@@ -5,7 +5,6 @@ import 'primeflex/primeflex.css';
 import './indexTable.css';
 
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import ProblemService from "../service/ProblemService";
@@ -16,7 +15,6 @@ import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './UserList.css';
-import uuid from 'uuid-random';
 import {auth, generateUserDocument} from "./Firebase";
 
 export class ProblemList extends Component {
@@ -152,21 +150,6 @@ export class ProblemList extends Component {
         });
     }
 
-    findIndexById(id) {
-        let index = -1;
-        for (let i = 0; i < this.state.problems.length; i++) {
-            if (this.state.problems[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    }
-
-    createId() {
-        return uuid();
-    }
 
     exportCSV() {
         this.dt.exportCSV();

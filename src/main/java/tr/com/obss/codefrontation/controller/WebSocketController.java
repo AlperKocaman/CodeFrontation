@@ -10,7 +10,6 @@ import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tr.com.obss.codefrontation.dto.*;
-import tr.com.obss.codefrontation.enums.Language;
 import tr.com.obss.codefrontation.enums.Result;
 import tr.com.obss.codefrontation.enums.Status;
 import tr.com.obss.codefrontation.service.SubmissionService;
@@ -26,7 +25,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,15 +65,11 @@ public class WebSocketController {
 						serverSocket.getLocalPort() + "...");
 				server = serverSocket.accept();
 				log.info("Just connected to " + server.getRemoteSocketAddress());
-				boolean check= false;
 				in = new DataInputStream(server.getInputStream());
 				out = new DataOutputStream(server.getOutputStream());
-				int a=0;
 				while(true) {
-					a++;
 					try {
 						Thread.sleep(100);
-						//String str="";
 						while(in.available()>0){
 							String str=in.readUTF();
 							if(!str.equals("")){
@@ -94,7 +88,7 @@ public class WebSocketController {
 											JSONObject caseObj= (JSONObject) obj;
 											Long casePosition=(Long) caseObj.get("position");
 											Long caseStatus=(Long) caseObj.get("status");
-											if(caseStatus==0){  //FIXME buryaı test et hata olunca ne oluyor
+											if(caseStatus==0){
 												status=Status.COMPLETED;
 											}else{
 												status=Status.NOT_COMPLETED;
@@ -129,14 +123,14 @@ public class WebSocketController {
 											testRunCaseService.addTestRunCase(testRunCaseDTO);
 										}
 									}else{
-										Status status = Status.NOT_COMPLETED;
+										Status status ;
 
 										JSONArray cases= (JSONArray) res.get("cases");
 										for (Object obj:cases){
 											JSONObject caseObj= (JSONObject) obj;
 											Long casePosition=(Long) caseObj.get("position");
 											Long caseStatus=(Long) caseObj.get("status");
-											if(caseStatus==0){  //FIXME buryaı test et hata olunca ne oluyor
+											if(caseStatus==0){
 												status=Status.COMPLETED;
 											}else{
 												status=Status.NOT_COMPLETED;
@@ -200,22 +194,6 @@ public class WebSocketController {
 								log.info("client says: "+str);
 							}
 						}
-
-
-						//JSONObject res= (JSONObject) JSONValue.parse(str);
-						//if(check){
-						//	sendMessage();
-						//	check=false;
-						//	Thread.sleep(1000);
-						//	sendEvaluateMessage();
-						//}
-						//if (a==5){
-						//	check= true;
-						//}else{
-						//	check= false;
-						//}
-
-
 					} catch (SocketTimeoutException s) {
 						log.info("Socket timed out!");
 						break;
@@ -250,10 +228,6 @@ public class WebSocketController {
 
 	public void sendMessage() throws IOException {
 		DataOutputStream out = new DataOutputStream(server.getOutputStream());
-		//out.writeBytes("1");
-		//out.flush();
-
-
 		JSONObject obj=new JSONObject();
 		obj.put("name","handshake-success");
 		String str2=obj.toJSONString();//"{\"name\":\"handshake-success\"}";
@@ -277,7 +251,6 @@ public class WebSocketController {
 		//String timeStr=Long.toString(time);;
 		//{'name': 'ping', 'when': 1608427743.1646569}
 		String str3=ping.toJSONString();//"{\"name\":\"ping\",\"'when'\":\"ping\"}";
-		//server.close();
 		int len3=str3.length();
 		String lenStr3=""+len3;
 		int spaceReq3= 3-lenStr3.length();
@@ -288,9 +261,6 @@ public class WebSocketController {
 
 		out.writeBytes(lenStr3);
 		out.writeBytes(str3);
-
-		//out.writeBytes(lenStr3);
-		//out.writeBytes(str3);
 		out.flush();
 	}
 
@@ -303,7 +273,6 @@ public class WebSocketController {
 
         //{'name': 'ping', 'when': 1608427743.1646569}
         String str3=ping.toJSONString();//"{\"name\":\"ping\",\"'when'\":\"ping\"}";
-        //server.close();
         int len3=str3.length();
         String lenStr3=""+len3;
         int spaceReq3= 3-lenStr3.length();
@@ -317,10 +286,8 @@ public class WebSocketController {
         out.flush();
     }
 
-	public void sendEvaluateMessage() throws IOException {
+	public void sendTestMessage() throws IOException {
 		DataOutputStream out = new DataOutputStream(server.getOutputStream());
-		//out.writeBytes("1");
-		//out.flush();
 
 		//{'name': 'submission-request', 'submission-id': 28, 'problem-id': 'aplusb', 'language': 'PY3',
 		//        'source': 'N = int(input())\r\n\r\nfor _ in range(N):\r\n    a, b = map(int, input().split())\r\n    print(a + b)', 'time-limit': 2.0,
@@ -365,7 +332,6 @@ public class WebSocketController {
 		//String timeStr=Long.toString(time);;
 		//{'name': 'ping', 'when': 1608427743.1646569}
 		String str3=ping.toJSONString();//"{\"name\":\"ping\",\"'when'\":\"ping\"}";
-		//server.close();
 		int len3=str3.length();
 		String lenStr3=""+len3;
 		int spaceReq3= 3-lenStr3.length();
@@ -376,9 +342,6 @@ public class WebSocketController {
 
 		out.writeBytes(lenStr3);
 		out.writeBytes(str3);
-
-		//out.writeBytes(lenStr3);
-		//out.writeBytes(str3);
 		out.flush();
 	}
 
@@ -554,6 +517,4 @@ public class WebSocketController {
 		res.put("submission",resDto);
 		return res;
 	}
-
-
 }

@@ -1,10 +1,9 @@
-import React, {useContext} from "react";
+import React from "react";
 import {Router} from "@reach/router";
 import ProblemList from "./ProblemList";
 import SubmissionList from "./SubmissionList";
 import Dashboard from "./Dashboard";
 import UserList from "./UserList";
-import Compiler from "./Compiler";
 import TemplateList from "./TemplateList";
 import Problem from "./Problem";
 import AddProblem from "./AddProblem";
@@ -15,7 +14,6 @@ function Pages() {
     return (
         <Router>
             <Evaluator default path="/"/>
-            <Compiler path="compiler"/>
             <Dashboard path="admin"/>
             <Problem path="admin/problems/problemKey/:problemCode"/>
             <ProblemList path="admin/problems"/>

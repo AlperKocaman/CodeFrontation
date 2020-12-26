@@ -1,4 +1,4 @@
-import React, {Component, Suspense, useContext} from "react";
+import React, {Component} from "react";
 import Authentication from "./Components/Authentication";
 import './App.css';
 import { Button } from 'primereact/button';

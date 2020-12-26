@@ -1,5 +1,4 @@
 import React from 'react'
-import {auth} from "./Firebase";
 
 const Dashboard = () => {
 

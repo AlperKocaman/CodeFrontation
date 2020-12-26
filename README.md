@@ -4,7 +4,10 @@ http://localhost:8080/main ==> Code Frontation 2020
 
 ##JUDGE SERVER PYTHON PART
 
-python_src/judge-server/dmoj/main.py   run etmek gerek    localhost:9999 portunu dinliyor (API için 8081 portunu dinliyor)
+$ cd python_src/judge-server
+$ pip install -e .
+
+python_src/judge-server/dmoj/main.py   run etmek gerek    socket 9999 portunu kullanıyor
 
 ## Postgres Install
 
@@ -29,4 +32,4 @@ http://localhost:3000/   ==> Admin Dashboard Page
 
 http://localhost:3000/users  ==> Admin User list Page
 
-http://localhost:3000/test  ==> test table Page
+

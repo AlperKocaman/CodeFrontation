@@ -25,10 +25,6 @@ export default class CommentService{
         }
     }
 
-    // admin/serhataras --returns all comments on all submissions
-
-    // admin/serhataras/a+b --return all comments for a problem for serhataras
-
     async getComments(username,token) {
         const url = "http://localhost:8080/main/comments/" + username;
         const method = 'GET';

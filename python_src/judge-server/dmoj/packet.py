@@ -155,7 +155,6 @@ class PacketManager:
         try:
             while True:
                 self._receive_packet(self._read_single())
-                #print("_receive_packet: "+str(self._read_single()), flush=True)
         except KeyboardInterrupt:
             pass
         except Exception:  # connection reset by peer
@@ -168,17 +167,14 @@ class PacketManager:
     def _read_single(self) -> dict:  # decompress kaldır
         try:
             data = self.input.read(3)
-            #data = self.input.read(PacketManager.SIZE_PACK.size)
         except socket.error:
             self._reconnect()
             return self._read_single()
         if not data:
             self._reconnect()
             return self._read_single()
-        #size = PacketManager.SIZE_PACK.unpack(data)[0]
         sizeStr= utf8text(data).strip()
         try:
-            #packet = zlib.decompress(self.input.read(size))
             packet = self.input.read(int(sizeStr))
         except zlib.error:
             self._reconnect()
@@ -244,19 +240,11 @@ class PacketManager:
                 # We cannot use utf8text because it may not be text.
                 packet[k] = v.decode('utf-8', 'replace')
 
-        #raw = zlib.compress(utf8bytes(json.dumps(packet)))
         with self._lock:
             try:
-                #self.output.writelines((PacketManager.SIZE_PACK.pack(len(raw)), raw))
-
-                #das=(PacketManager.SIZE_PACK.pack(len(raw)), raw)
-                #dfdf=bytes(json.dumps(packet), 'utf-8')
                 erty= utf8bytes(json.dumps(packet))
                 das=(PacketManager.SIZE_PACK.pack(len(erty)), erty)
                 self.output.writelines(das)
-                #self.output.writelines( bytes(json.dumps(packet), 'utf-8'))
-                #self.output.writelines(utf8bytes(json.dumps(packet)))
-
             except Exception:  # connection reset by peer
                 log.exception('Exception while sending packet to site, will not attempt to reconnect! Quitting judge.')
                 os._exit(1)
@@ -303,20 +291,10 @@ class PacketManager:
         self._send_packet({'name': 'handshake', 'problems': problems, 'executors': runtimes, 'id': id, 'key': key})
         log.info('Awaiting handshake response: [%s]:%s', self.host, self.port)
         try:
-            #data = self.input.read(PacketManager.SIZE_PACK.size)
             size=self.input.read(3)
             sizeStr= utf8text(size).strip()
 
             data=self.input.read(int(sizeStr))
-            #while self.input.isatty():
-            #    #data+=utf8text(self.input.read(1))
-            #    data=self.input.read(1)
-
-            #size = PacketManager.SIZE_PACK.unpack(data)[0]
-            #packet = utf8text(zlib.decompress(self.input.read(size)))
-            #packet = utf8text(self.input.read(size))
-            #packet = utf8text(data)
-            #resp = json.loads(packet)
             resp = json.loads(data)
         except Exception:
             log.exception('Cannot understand handshake response: [%s]:%s', self.host, self.port)

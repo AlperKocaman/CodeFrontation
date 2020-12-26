@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import { Link } from "@reach/router";
-import { signInWithGoogle } from "./Firebase";
 import { auth } from "./Firebase";
 
 

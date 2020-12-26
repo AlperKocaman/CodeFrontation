@@ -12,10 +12,6 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [error, setError] = useState(null);
 
-  //useEffect(() => {
-  //  // code to run on component mount
-  //}, [])
-
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();
     try{
