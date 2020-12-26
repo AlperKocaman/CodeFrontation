@@ -17,6 +17,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
+import {auth, generateUserDocument} from "./Firebase";
 
 export class ProblemList extends Component {
 
@@ -53,7 +54,8 @@ export class ProblemList extends Component {
             problem: this.emptyProblem,
             selectedProblems: null,
             submitted: false,
-            globalFilter: null
+            globalFilter: null,
+            authenticateUser: null
         };
 
 
@@ -79,7 +81,12 @@ export class ProblemList extends Component {
         this.hideDeleteProblemsDialog = this.hideDeleteProblemsDialog.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            this.setState({'authenticateUser': user });
+        });
+
         this.problemService.getProblems(this.props.username ? this.props.username : '').then(res => {
             this.setState({problems: res.data});
         });

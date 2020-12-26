@@ -17,6 +17,7 @@ import { InputText } from 'primereact/inputtext';
 import './SubmissionList.css';
 import uuid from 'uuid-random';
 import { Fieldset } from 'primereact/fieldset';
+import {auth, generateUserDocument} from "./Firebase";
 
 
 export class SubmissionList extends Component {
@@ -55,7 +56,8 @@ export class SubmissionList extends Component {
       sonarMaintainabilityResults: [],
       sonarReliabilityResults: [],
       sonarSecurityResults: [],
-      sonarSizeResults: []
+      sonarSizeResults: [],
+      authenticateUser: null
     };
 
     this.submissionService = new SubmissionService();
@@ -79,7 +81,11 @@ export class SubmissionList extends Component {
     this.hideSonarDialog = this.hideSonarDialog.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
+    auth.onAuthStateChanged(async userAuth => {
+      const user = await generateUserDocument(userAuth);
+      this.setState({'authenticateUser': user });
+    });
     if (this.props.username && !this.props.problemCode) {
       this.submissionService.getSubmissions(this.props.username).then(res => {
         this.setState({ submissions: res.data });

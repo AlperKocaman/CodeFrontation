@@ -19,6 +19,7 @@ import 'brace/theme/chrome';
 import 'brace/theme/tomorrow_night';
 import 'brace/theme/monokai';
 import CompilerService from "../service/CompilerService";
+import {auth, generateUserDocument} from "./Firebase";
 
 export class Evaluator extends Component {
    
@@ -53,11 +54,19 @@ export class Evaluator extends Component {
         this.state = {
             themeName:'dracula',
             modeName:'java',
-            consoleOutput:'output...'
+            consoleOutput:'output...',
+            authenticateUser: null
         };
 
         this.codeString='';
 
+    }
+
+    componentDidMount = async () => {
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            this.setState({'authenticateUser': user});
+        });
     }
 
     onChange(newValue) {

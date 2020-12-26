@@ -6,13 +6,14 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState(null);
 
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();
     try{
       const {user} = await auth.createUserWithEmailAndPassword(email, password);
-      await generateUserDocument(user, {displayName});
+      await generateUserDocument(user, {displayName,username});
     }
     catch(error){
       setError('Error Signing up with email and password');
@@ -21,6 +22,7 @@ const SignUp = () => {
     setEmail("");
     setPassword("");
     setDisplayName("");
+    setUsername("");
   };
 
   const onChangeHandler = event => {
@@ -32,7 +34,11 @@ const SignUp = () => {
       setPassword(value);
     } else if (name === "displayName") {
       setDisplayName(value);
+    }else if (name === "username") {
+      setUsername(value);
     }
+
+
   };
 
   return (
@@ -45,6 +51,18 @@ const SignUp = () => {
           </div>
         )}
         <form className="">
+          <label htmlFor="username" className="block">
+            Username:
+          </label>
+          <input
+              type="text"
+              className="my-1 p-1 w-full "
+              name="username"
+              value={username}
+              placeholder="E.g: testUser"
+              id="username"
+              onChange={event => onChangeHandler(event)}
+          />
           <label htmlFor="displayName" className="block">
             Display Name:
           </label>

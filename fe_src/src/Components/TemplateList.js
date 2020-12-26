@@ -21,6 +21,7 @@ import {Dropdown} from "primereact/dropdown";
 import UserService from '../service/UserService';
 import ProblemService from '../service/ProblemService';
 import {MultiSelect} from "primereact/multiselect";
+import {auth, generateUserDocument} from "./Firebase";
 
 export class TemplateList extends Component {
 
@@ -51,7 +52,8 @@ export class TemplateList extends Component {
             selectedTemplates: null,
             submitted: false,
             globalFilter: null,
-            templatesForDatatable:[]
+            templatesForDatatable:[],
+            authenticateUser: null
         };
 
         this.roleItems = [];
@@ -82,7 +84,11 @@ export class TemplateList extends Component {
         this.hideDeleteTemplatesDialog = this.hideDeleteTemplatesDialog.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            this.setState({'authenticateUser': user });
+        });
         this.templateService.getTemplates().then(res => {
             let temp = res.data;
             temp.forEach((item,i)=>{

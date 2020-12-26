@@ -18,6 +18,7 @@ import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
 import {Dropdown} from "primereact/dropdown";
+import {auth, generateUserDocument} from "./Firebase";
 
 export class UserList extends Component {
 
@@ -45,7 +46,8 @@ export class UserList extends Component {
             user: this.emptyUser,
             selectedUsers: null,
             submitted: false,
-            globalFilter: null
+            globalFilter: null,
+            authenticateUser: null
         };
 
         this.roleItems = [];
@@ -73,7 +75,11 @@ export class UserList extends Component {
         this.hideDeleteUsersDialog = this.hideDeleteUsersDialog.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            this.setState({'authenticateUser': user });
+        });
         this.userService.getUsers().then(res => {
             this.setState({users: res.data});
         });

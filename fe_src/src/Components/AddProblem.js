@@ -15,6 +15,7 @@ import './AddProblem.css';
 import uuid from 'uuid-random';
 import {MultiSelect} from "primereact/multiselect";
 import {InputTextarea} from "primereact/inputtextarea";
+import {auth, generateUserDocument} from "./Firebase";
 
 export class AddProblem extends Component {
 
@@ -85,7 +86,8 @@ export class AddProblem extends Component {
             selectedLanguages: null,
             selectedDifficulty: null,
             selectedCategory: null,
-            globalFilter: null
+            globalFilter: null,
+            authenticateUser: null
         };
 
         this.problemService = new ProblemService();
@@ -96,7 +98,11 @@ export class AddProblem extends Component {
         this.onInputNumberChange = this.onInputNumberChange.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            this.setState({'authenticateUser': user });
+        });
         if(this.props.problemCode && this.state.problem.name.valueOf() === ""){
             this.problemService.getProblem(this.props.problemCode).then(res => {
                 this.setState({problem: res.data});

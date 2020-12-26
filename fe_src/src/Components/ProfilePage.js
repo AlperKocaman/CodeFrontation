@@ -3,7 +3,7 @@ import { UserContext } from "../providers/UserProvider";
 import {auth} from "./Firebase";
 const ProfilePage = () => {
   const user = useContext(UserContext);
-  const {photoURL, displayName, email} = user;
+  const {photoURL, displayName,username, email} = user;
   console.log(user);
   
 

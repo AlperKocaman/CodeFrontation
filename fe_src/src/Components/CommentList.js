@@ -16,6 +16,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './CommentList.css';
 import uuid from 'uuid-random';
+import {auth, generateUserDocument} from "./Firebase";
 
 export class CommentList extends Component {
 
@@ -40,7 +41,8 @@ export class CommentList extends Component {
       comments: [],
       commentDialog: false,
       comment: this.emptyComment,
-      globalFilter: null
+      globalFilter: null,
+      authenticateUser: null
     };
 
     this.commentService = new CommentService();
@@ -50,8 +52,11 @@ export class CommentList extends Component {
     this.onInputNumberChange = this.onInputNumberChange.bind(this);
   }
 
-  componentDidMount() {
-    debugger;
+  componentDidMount = async () => {
+    auth.onAuthStateChanged(async userAuth => {
+      const user = await generateUserDocument(userAuth);
+      this.setState({'authenticateUser': user });
+    });
     console.log(this.props.username)
     if (this.props.username && !this.props.problemName) {
       this.commentService.getComments(this.props.username).then(res => {
