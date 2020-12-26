@@ -8,6 +8,8 @@ import React, { Component } from 'react';
 import ProblemService from "../service/ProblemService";
 import './Problem.css';
 import uuid from 'uuid-random';
+import Evaluator from "./Evaluator";
+import {auth, generateUserDocument} from "./Firebase";
 
 export class Problem extends Component {
 
@@ -39,7 +41,8 @@ export class Problem extends Component {
         this.state = {
             problem: this.emptyProblem,
             submitted: false,
-            globalFilter: null
+            globalFilter: null,
+            authenticateUser: null
         };
 
         this.problemService = new ProblemService();
@@ -48,7 +51,11 @@ export class Problem extends Component {
         this.onInputNumberChange = this.onInputNumberChange.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            this.setState({'authenticateUser': user });
+        });
         this.problemService.getProblem(this.props.problemCode ? this.props.problemCode : '').then(res => {
             this.setState({problem: res.data});
         });
@@ -149,6 +156,9 @@ export class Problem extends Component {
                         <p>{this.state.problem.explanation}</p>
                     </div>
                 </pre>
+                <div className="evaluator">
+                    <Evaluator/>
+                </div>
             </div>
         )
     }

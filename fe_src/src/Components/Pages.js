@@ -4,23 +4,19 @@ import ProblemList from "./ProblemList";
 import SubmissionList from "./SubmissionList";
 import Dashboard from "./Dashboard";
 import UserList from "./UserList";
-import DataTableCrudDemo from "../Demo/DataTableCrudDemo";
 import Compiler from "./Compiler";
 import TemplateList from "./TemplateList";
-import UserListTest from "../Demo/UserListTest";
 import Problem from "./Problem";
 import AddProblem from "./AddProblem";
-import Evaluater from "./Evaluater";
+import Evaluator from "./Evaluator";
 import CommentList from "./CommentList";
 
 function Pages() {
     return (
         <Router>
-            <Evaluater path="/"/>
+            <Evaluator path="/"/>
             <Compiler path="compiler"/>
             <Dashboard path="admin"/>
-            <UserListTest path="users"/>
-            <DataTableCrudDemo path="test"/>
             <Problem path="admin/problems/problemKey/:problemCode"/>
             <ProblemList path="admin/problems"/>
             <AddProblem path="admin/problems/addProblem"/>

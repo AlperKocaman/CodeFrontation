@@ -20,6 +20,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import './SubmissionList.css';
 import uuid from 'uuid-random';
 import { Fieldset } from 'primereact/fieldset';
+import {auth, generateUserDocument} from "./Firebase";
 import classNames from 'classnames';
 
 export class SubmissionList extends Component {
@@ -78,7 +79,7 @@ export class SubmissionList extends Component {
       sonarReliabilityResults: [],
       sonarSecurityResults: [],
       sonarSizeResults: [],
-
+      authenticateUser: null
     };
 
     this.submissionService = new SubmissionService();
@@ -99,7 +100,11 @@ export class SubmissionList extends Component {
     this.hideSonarDialog = this.hideSonarDialog.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
+    auth.onAuthStateChanged(async userAuth => {
+      const user = await generateUserDocument(userAuth);
+      this.setState({'authenticateUser': user });
+    });
     if (this.props.username && !this.props.problemCode) {
       this.submissionService.getSubmissions(this.props.username).then(res => {
         this.setState({ submissions: res.data });
@@ -358,7 +363,6 @@ export class SubmissionList extends Component {
             <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
             <Column field="problemCode" header="Problem Code" sortable></Column>
             <Column field="name" header="Name" sortable></Column>
-
             <Column field="username" body={this.linkable} header="User" sortable></Column>
             <Column field="language" header="Language" sortable></Column>
             <Column field="time" header="Time" sortable></Column>
