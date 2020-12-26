@@ -17,6 +17,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { SelectButton } from 'primereact/selectbutton';
 import './UserList.css';
 import uuid from 'uuid-random';
 import {Dropdown} from "primereact/dropdown";
@@ -34,7 +35,7 @@ export class UserList extends Component {
         firstName:null,
         lastName: null,
         email: '',
-        isAdmin: false,
+        isAdmin: null,
         targetRole: '',
         roleName: '',
         targetProject: '',
@@ -58,12 +59,15 @@ export class UserList extends Component {
             selectedTemplate: [],
             authenticateUser: null,
             token: '',
-            hasInvalidInput: true
+            hasInvalidInput: true,
+            isAdmin: false
         };
 
 
         this.templates = [];
         this.problems = [];
+        this.isAdminOptions = [{name: 'Admin', value: 'true'},
+                                {name: 'User', value: 'false'}];
         this.roleItems = [];
 
         this.userService = new UserService();
@@ -328,7 +332,14 @@ export class UserList extends Component {
     }
 
     onInputChange(e, name) {
-        const val = (e.target && e.target.value) || '';
+        let val = (e.target && e.target.value) || '';
+        if(val === 'false'){
+            val = false;
+            this.setState({isAdmin: 'false'} );
+        }else if(val === 'true'){
+            val = true;
+            this.setState({isAdmin: 'true'} );
+        }
         let user = {...this.state.user};
         user[`${name}`] = val;
         if (val === '' || val === null || val === undefined || val === NaN) {
@@ -486,12 +497,12 @@ export class UserList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="isAdmin">Admin Status</label>
-                        <InputText id="isAdmin" value={this.state.user.isAdmin} onChange={(e) => this.onInputChange(e, 'isAdmin')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.isAdmin })} />
+                        <SelectButton value={this.state.isAdmin} options={this.isAdminOptions} optionLabel="name" onChange={(e) => this.onInputChange(e, 'isAdmin')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.user.isAdmin })} />
                         {this.state.submitted && !this.state.user.isAdmin && <small className="p-invalid">Admin Status is required.</small>}
                     </div>
                     <div className="p-field">
                         <label htmlFor="targetRole">Target Role</label>
-                        <Dropdown optionLabel="name" value={this.state.user.targetRole} options={this.roleItems} onChange={(e) => this.onRoleChange(e)} placeholder="Select a Role" />
+                        <Dropdown optionLabel="name" optionValue = "value" value={this.state.user.targetRole} options={this.roleItems} disabled = {this.state.isAdmin === 'true' ? true : false} onChange={(e) => this.onRoleChange(e)} placeholder="Select a Role" />
                         {this.state.submitted && !this.state.user.targetRole && <small className="p-invalid">Target Role is required.</small>}
                     </div>
                     <div className="p-field">
