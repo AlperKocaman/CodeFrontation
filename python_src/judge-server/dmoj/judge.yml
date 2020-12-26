@@ -7,7 +7,7 @@ key: "4qQG!RG9WYAbIwMq2M!:L$/~zgLErzU,o|waRd:x{4jkKRpjD}ddU>M,I%hXK{Q,9o0;d}q+p^
 # be a problem directory.
 problem_storage_root:
   #- /home/mehmet/github_examples/problems
-  - /home/mehmet/cf/python_src/judge-server/problems
+  - <PROJECT_BASE_PATH>/python_src/judge-server/problems
 # All configuration for language executors
 # If you're unsure of what values a language needs, your best bet is to consult the source of the executor:
 # <https://github.com/DMOJ/judge/tree/master/dmoj/executors>
@@ -53,10 +53,10 @@ runtime:
   python2dir: /opt/python27/
   python3: /usr/bin/python3.7
   python3dir: /opt/python34/
-  java: /usr/bin/java
-  javac: /usr/bin/javac
-  java8: /usr/lib/jvm/jdk-8-oracle-i586/bin/java
-  javac8: /usr/lib/jvm/jdk-8-oracle-i586/bin/javac
+  java: /opt/jdk/jdk1.8.0_251/bin/java
+  javac: /opt/jdk/jdk1.8.0_251/bin/javac
+  java8: /opt/jdk/jdk1.8.0_251/bin/java
+  javac8: /opt/jdk/jdk1.8.0_251/bin/javac
   # Custom V8 build to facilitate online judging: https://github.com/DMOJ/v8dmoj
   v8dmoj: /home/judge/judge/executors/v8dmoj
   php: /usr/bin/php

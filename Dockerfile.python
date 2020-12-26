@@ -1,0 +1,9 @@
+FROM python:3.7
+WORKDIR /judge
+COPY ./python_src/judge-server /judge
+RUN apt-get update && apt-get install -y python3-dev python3-pip build-essential libseccomp-dev
+RUN pip3 install --upgrade pip
+RUN pip3 install dmoj
+RUN pip3 install -e .
+
+ENTRYPOINT ["python","main.py"]

@@ -94,14 +94,21 @@ public class WebSocketController {
 											JSONObject caseObj= (JSONObject) obj;
 											Long casePosition=(Long) caseObj.get("position");
 											Long caseStatus=(Long) caseObj.get("status");
-											if(caseStatus==1){  //FIXME buryaı test et hata olunca ne oluyor
+											if(caseStatus==0){  //FIXME buryaı test et hata olunca ne oluyor
 												status=Status.COMPLETED;
 											}else{
 												status=Status.NOT_COMPLETED;
 											}
 
 											Double caseTime=(Double) caseObj.get("time");
-											Long casePoints=(Long) caseObj.get("points");
+											Long casePoints= Long.valueOf(0);
+											try {
+												Double casePointsD = (Double) caseObj.get("points");
+												casePoints = (new Double(casePointsD)).longValue();
+											}catch (Exception e){
+												casePoints = (Long) caseObj.get("points");
+											}
+
 											Long caseTotalPoints=(Long) caseObj.get("total-points");
 											Long caseMemory=(Long) caseObj.get("memory");
 											String caseOutput = (String) caseObj.get("output");
@@ -114,6 +121,7 @@ public class WebSocketController {
 											testRunCaseDTO.setPosition(casePosition);
 											testRunCaseDTO.setTime(caseTime);
 											testRunCaseDTO.setMemory(caseMemory);
+
 											testRunCaseDTO.setPoint(casePoints);
 											testRunCaseDTO.setTotalPoint(caseTotalPoints);
 											testRunCaseDTO.setStatus(status);
@@ -128,14 +136,20 @@ public class WebSocketController {
 											JSONObject caseObj= (JSONObject) obj;
 											Long casePosition=(Long) caseObj.get("position");
 											Long caseStatus=(Long) caseObj.get("status");
-											if(caseStatus==1){  //FIXME buryaı test et hata olunca ne oluyor
+											if(caseStatus==0){  //FIXME buryaı test et hata olunca ne oluyor
 												status=Status.COMPLETED;
 											}else{
 												status=Status.NOT_COMPLETED;
 											}
 
 											Double caseTime=(Double) caseObj.get("time");
-											Long casePoints=(Long) caseObj.get("points");
+											Long casePoints= Long.valueOf(0);
+											try {
+												Double casePointsD = (Double) caseObj.get("points");
+												casePoints = (new Double(casePointsD)).longValue();
+											}catch (Exception e){
+												casePoints = (Long) caseObj.get("points");
+											}
 											Long caseTotalPoints=(Long) caseObj.get("total-points");
 											Long caseMemory=(Long) caseObj.get("memory");
 											String caseOutput = (String) caseObj.get("output");

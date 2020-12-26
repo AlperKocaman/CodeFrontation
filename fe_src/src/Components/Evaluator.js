@@ -45,7 +45,7 @@ export class Evaluator extends Component {
         //react type language enum
         this.languages={
 
-            java:"JAVA",
+            java:"JAVA8",
             python:"PYTHON",
             javascript:"JAVASCRIPT",
             c_cpp:"C",
@@ -126,18 +126,17 @@ export class Evaluator extends Component {
             "codes":[requestData],
             "fileNames":[fileName] }
 
-        var submissionId = "94798e71-11c2-4abd-bdaa-59c7e6172417";
         this.compilerService.addSubmit(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
             if(result){
-                this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
-                    data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
-                        ... data };
-                    this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token);
-                });
+                //this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
+                //    data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
+                //        ... data };
+                //    this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token);
+                //});
             }
-            setTimeout(this.getSubmitResult, 3000, result.id);
+            setTimeout(this.getSubmitResult, 10000, result.id);
         });
     }
 
@@ -177,7 +176,7 @@ export class Evaluator extends Component {
         this.compilerService.testRun(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
-            setTimeout(this.getTestRunResult, 3000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
+            setTimeout(this.getTestRunResult, 10000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
         });
     };
 
@@ -278,7 +277,7 @@ export class Evaluator extends Component {
                         }}
                         />
                     </div> 
-                    <div style={{marginTop:'2px',float:'right'}}>
+                    <div style={{marginTop:'2px',float:'right',lineHeight: '30px'}}>
                         <button id="executeButton" type="button" className="btn btn-dark" style={{marginTop:'2px',marginRight:'0px',background: '#f3f7f7',
                                 color: 'black'}} onClick={() => this.setState({consoleOutput:'output...'})}>Clear Console</button>
                     </div>

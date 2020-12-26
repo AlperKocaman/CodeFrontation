@@ -8,7 +8,7 @@ export default class UserService {
         };
         try {
             if (method=='POST'){
-                const response = await axios.post(url, data, config);
+                const response = await axios.post(url, data);
                 return response;
             }else if (method=='GET'){
                 const response = await axios.get(url, config);
@@ -59,10 +59,10 @@ export default class UserService {
         return response;
     }
 
-    async addUser(user, token){
+    async addUser(user){
         const url="http://localhost:8080/main/user";
         const method='POST';
-        const response = await this.requestToServer(url, method, user, token);
+        const response = await this.requestToServer(url, method, user, "");
         return response;
     }
 

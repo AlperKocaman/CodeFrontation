@@ -28,7 +28,7 @@ public class TestRun {
     private Long memory;
 
     private Long point;
-
+    @Column(columnDefinition="TEXT")
     private String body;
 
     private Language language;

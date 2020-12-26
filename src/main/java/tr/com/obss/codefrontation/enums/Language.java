@@ -1,7 +1,7 @@
 package tr.com.obss.codefrontation.enums;
 
 public enum Language {
-    JAVA(1, "java"),
+    JAVA8(1, "java"),
     PYTHON(2, "py"),
     JAVASCRIPT(3, "js"),
     C(4, "c"),
