@@ -3,7 +3,7 @@ import { UserContext } from "../providers/UserProvider";
 import {auth} from "./Firebase";
 const ProfilePage = () => {
   const user = useContext(UserContext);
-  const {photoURL, displayName,username, email} = user;
+  const {photoURL, firstname,lastname,username, email} = user;
   console.log(user);
   
 
@@ -20,7 +20,7 @@ const ProfilePage = () => {
           className="border border-blue-300"
         ></div>
         <div className = "md:pl-4">
-        <h2 className = "text-2xl font-semibold">{displayName}</h2>
+        <h2 className = "text-2xl font-semibold">{firstname}</h2>
         <h3 className = "italic">{email}</h3>
         </div>
       </div>
