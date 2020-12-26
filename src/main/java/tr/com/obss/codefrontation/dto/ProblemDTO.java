@@ -24,7 +24,7 @@ public class ProblemDTO {
 	private String sampleOutputs;
 	private String sampleInputs;
 	private String explanation;
-	private int point;
+	private String point;
 	private long timeLimit;
 	private long memoryLimit;
 	private String allowedLanguages;

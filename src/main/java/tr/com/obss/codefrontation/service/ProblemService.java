@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tr.com.obss.codefrontation.dto.ProblemDTO;
 import tr.com.obss.codefrontation.dto.UserDTO;
+import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
+import tr.com.obss.codefrontation.dto.problem.ProblemTestCaseDto;
 import tr.com.obss.codefrontation.entity.Assignment;
 import tr.com.obss.codefrontation.entity.Problem;
 import tr.com.obss.codefrontation.entity.User;
@@ -13,10 +15,7 @@ import tr.com.obss.codefrontation.mapper.ProblemMapper;
 import tr.com.obss.codefrontation.repository.AssignmentRepository;
 import tr.com.obss.codefrontation.repository.ProblemRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -27,6 +26,7 @@ public class ProblemService {
 	private final AssignmentRepository assignmentRepository;
 	private final UserService userService;
 	private final Mapper userMapper;
+	private final DmojProblemService dmojProblemService;
 
 	public List<ProblemDTO> getAllProblems() {
 		List<Problem> problemList = problemRepository.findAll();
@@ -77,6 +77,7 @@ public class ProblemService {
 
 	public ProblemDTO addProblem(ProblemDTO problemDTO) {
 		Problem problem = mapper.toProblemEntity(problemDTO);
+		createNewProblemForDMOJ(problemDTO);
 		Problem entity = problemRepository.save(problem);
 		log.info("Problem created: {}", problem.toString());
 
@@ -86,10 +87,82 @@ public class ProblemService {
 	public ProblemDTO updateProblem(ProblemDTO problemDTO) throws Exception{
 		Problem origEntity = problemRepository.findById(problemDTO.getId()).orElseThrow(Exception::new);
 		mapper.updateEntity(problemDTO, origEntity);
+		createNewProblemForDMOJ(problemDTO);
 		problemRepository.save(origEntity);
 		log.info("Problem updated: {}", origEntity.toString());
 
 		return problemDTO;
+	}
+
+	private void createNewProblemForDMOJ(ProblemDTO problemDTO){
+		ProblemEveluationDto problemEveluationDto = new ProblemEveluationDto();
+		String inputs = problemDTO.getInputs();
+		String outputs = problemDTO.getOutputs();
+		String points = problemDTO.getPoint();
+
+		List<ProblemTestCaseDto> problemTestCaseDtos = new ArrayList<>();
+		ProblemTestCaseDto problemTestCaseDto = null;
+		Scanner scannerInput = new Scanner(inputs);
+		Scanner scannerOutput = new Scanner(outputs);
+		Scanner scannerPoint = new Scanner(points);
+		int lineIndex = 0;
+		StringBuilder input = new StringBuilder();
+		while (scannerInput.hasNextLine()) {
+			String line = scannerInput.nextLine();
+			if(line.startsWith("[INPUT")){
+				if(lineIndex != 0){
+					problemTestCaseDto.setInput(input.toString());
+					input = new StringBuilder();
+				}
+				lineIndex ++ ;
+				problemTestCaseDto = new ProblemTestCaseDto();
+				problemTestCaseDtos.add(problemTestCaseDto);
+				continue;
+			}
+			input.append(line);
+		}
+		problemTestCaseDto.setInput(input.toString());
+		scannerInput.close();
+
+		lineIndex = 0;
+		StringBuilder output = new StringBuilder();
+		while (scannerOutput.hasNextLine()) {
+			String line = scannerOutput.nextLine();
+			if(line.startsWith("[OUTPUT")){
+				if(lineIndex != 0){
+					problemTestCaseDto.setOutput(output.toString());
+					output = new StringBuilder();
+				}
+				lineIndex ++ ;
+				problemTestCaseDto = problemTestCaseDtos.get(lineIndex-1);
+				continue;
+			}
+			output.append(line);
+		}
+		problemTestCaseDto.setOutput(output.toString());
+		scannerOutput.close();
+
+		lineIndex = 0;
+		StringBuilder pointStrBuilder = new StringBuilder();
+		while (scannerPoint.hasNextLine()) {
+			String line = scannerPoint.nextLine();
+			if(line.startsWith("[POINT")){
+				if(lineIndex != 0){
+					problemTestCaseDto.setPoint(Double.valueOf(pointStrBuilder.toString()));
+					pointStrBuilder= new StringBuilder();
+				}
+				lineIndex ++ ;
+				problemTestCaseDto = problemTestCaseDtos.get(lineIndex-1);
+				continue;
+			}
+			pointStrBuilder.append(line);
+		}
+		problemTestCaseDto.setPoint(Double.valueOf(pointStrBuilder.toString()));
+		scannerPoint.close();
+
+		problemEveluationDto.setName(problemDTO.getName());
+		problemEveluationDto.setTestCases(problemTestCaseDtos);
+		dmojProblemService.createNewProblem(problemEveluationDto);
 	}
 
 

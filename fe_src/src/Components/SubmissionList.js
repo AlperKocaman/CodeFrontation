@@ -325,7 +325,6 @@ export class SubmissionList extends Component {
             header={header}>
 
             <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-            <Column field="id" header="Id" sortable></Column>
             <Column field="problemCode" header="Problem Code" sortable></Column>
             <Column field="name" header="Name" sortable></Column>
 

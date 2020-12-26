@@ -9,10 +9,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tr.com.obss.codefrontation.dto.SubmissionDTO;
-import tr.com.obss.codefrontation.dto.TestCaseDTO;
-import tr.com.obss.codefrontation.dto.TestRunCaseDTO;
-import tr.com.obss.codefrontation.dto.TestRunDTO;
+import tr.com.obss.codefrontation.dto.*;
+import tr.com.obss.codefrontation.enums.Language;
 import tr.com.obss.codefrontation.enums.Result;
 import tr.com.obss.codefrontation.enums.Status;
 import tr.com.obss.codefrontation.service.SubmissionService;
@@ -28,6 +26,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +46,9 @@ public class WebSocketController {
 
 	@Autowired
 	private TestRunCaseService testRunCaseService;
+
+	@Autowired
+	private SonarController sonarController;
 
 	public ServerSocket serverSocket;
 	private final Gson gson = new GsonBuilder().create();
@@ -370,6 +372,24 @@ public class WebSocketController {
 	@PostMapping("/submit")
 	public SubmissionDTO evaluate(@RequestBody SubmissionDTO dto) throws Exception {
 		SubmissionDTO result =submissionService.addSubmission(dto);
+		JSONObject submissionReq= convertSubmissionDtoToJsonObject(result);
+		String submissionStr=submissionReq.toJSONString();
+		int submissionLen=submissionStr.length();
+		String lenStr=""+submissionLen;
+		int spaceReq= 3-lenStr.length();
+
+		for (int i=0; i<spaceReq; i++){
+			lenStr+=" ";
+		}
+		out.writeBytes(lenStr);
+		out.writeBytes(submissionStr);
+		out.flush();
+		return result;
+	}
+
+	@PutMapping("/submit/{id}")
+	public SubmissionDTO updateSubmissionWithSonarData(@PathVariable UUID id, @RequestBody SubmissionDTO dto) throws Exception {
+		SubmissionDTO result =submissionService.updateSubmissionPointWithSonarData(dto);
 		JSONObject submissionReq= convertSubmissionDtoToJsonObject(result);
 		String submissionStr=submissionReq.toJSONString();
 		int submissionLen=submissionStr.length();

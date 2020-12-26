@@ -151,7 +151,9 @@ export class Problem extends Component {
                     </div>
                 </pre>
                 <div className="evaluator">
-                    <Evaluator/>
+                    <Evaluator
+                        problemCode={this.state.problem.code}
+                    />
                 </div>
             </div>
         )

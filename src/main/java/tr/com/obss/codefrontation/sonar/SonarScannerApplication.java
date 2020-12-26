@@ -1,14 +1,12 @@
 package tr.com.obss.codefrontation.sonar;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Alper Kocaman
- */
-
+@Slf4j
 @Getter
 @Setter
 @Builder
@@ -28,7 +26,7 @@ public class SonarScannerApplication {
 				new SonarScannerFileOperationsController(this);
 		sonarScannerFileOperationsController.performFileOperations();
 		SonarUtils.runProcess(constituteSonarParameters(sonarScannerFileOperationsController.getFolderPath()));
-		System.out.println("End of the execution with a success!!!! :)  ");
+		log.info("Sonar scanner completed its operation");
 	}
 
 	private String constituteSonarParameters(String projectBaseDir) {

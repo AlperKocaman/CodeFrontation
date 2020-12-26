@@ -33,7 +33,7 @@ export class AddProblem extends Component {
         sampleInputs:'',
         sampleOutputs:'',
         explanation:'',
-        point: 0,
+        point: '',
         description: '',
         timeLimit: 0,
         memoryLimit: 0,
@@ -338,6 +338,11 @@ export class AddProblem extends Component {
                             <InputTextarea value={this.state.problem.outputs} onChange={(e) => this.onInputChange(e, 'outputs')}
                                            required autoFocus rows={10} cols={95} autoResize
                                            placeholder="Please provide the outputs of the problem that will be expected from program here!"/>
+                        </div>
+                        <div className="p-field">
+                            <InputTextarea value={this.state.problem.point} onChange={(e) => this.onInputChange(e, 'point')}
+                                           required autoFocus rows={10} cols={95} autoResize
+                                           placeholder="Please provide the points of the problem that will be expected from program here!"/>
                         </div>
                     </div>
                     <br/><br/><br/>
