@@ -76,7 +76,7 @@ export default class SubmissionService {
         return response;
     }
 
-    extractSonarKeyFromUrl(sonarUrl, token) {
+    extractSonarKeyFromUrl(sonarUrl) {
         return sonarUrl.substring(35);
     }
 
@@ -96,12 +96,12 @@ export default class SubmissionService {
             this.extractSonarKeyFromUrl(submission.sonarUrl);
         const method = 'GET';
 
-        response.push(await this.requestToServer(complexityMetricsUrl, method, submission, token));
-        response.push(await this.requestToServer(duplicationMetricsUrl, method, submission, token));
-        response.push(await this.requestToServer(maintainabilityMetricsUrl, method, submission, token));
-        response.push(await this.requestToServer(reliabilityMetricsUrl, method, submission, token));
-        response.push(await this.requestToServer(securityMetricsUrl, method, submission, token));
-        response.push(await this.requestToServer(sizeMetricsUrl, method, submission, token));
+        response.push(await this.requestToServer(complexityMetricsUrl, method, submission));
+        response.push(await this.requestToServer(duplicationMetricsUrl, method, submission));
+        response.push(await this.requestToServer(maintainabilityMetricsUrl, method, submission));
+        response.push(await this.requestToServer(reliabilityMetricsUrl, method, submission));
+        response.push(await this.requestToServer(securityMetricsUrl, method, submission));
+        response.push(await this.requestToServer(sizeMetricsUrl, method, submission));
         return response;
     }
 

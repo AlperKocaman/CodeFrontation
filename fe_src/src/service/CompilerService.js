@@ -53,4 +53,18 @@ export default class CompilerService {
         const response = await this.requestToServer(url, method, data, token);
         return response;
     }
+
+    async registerSonar(data, token){
+        const url="http://localhost:8080/registerSonar";
+        const method='POST';
+        const response = await this.requestToServer(url, method, data, token);
+        return response;
+    }
+
+    async updateSubmissionWithSonarData(data, id, token){
+        const url="http://localhost:8080/judge/submit/" + id;
+        const method='PUT';
+        const response = await this.requestToServer(url, method, data, token);
+        return response;
+    }
 }

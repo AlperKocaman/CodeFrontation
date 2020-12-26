@@ -64,9 +64,9 @@ export class Evaluator extends Component {
     }
 
     componentDidMount = async () => {
-        if(this.props.uri!='/'){
-            window.location.assign('/');
-        }
+        // if(this.props.uri!='/'){
+        //     window.location.assign('/');
+        // }
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
             if (userAuth) {
@@ -102,11 +102,35 @@ export class Evaluator extends Component {
     sendCode = (requestData,lang,assignmentId,problemCode,username) => {
 
         let data = { "body": requestData, "language":lang, "assignmentId":assignmentId
-          , "problemCode":problemCode, "username":username };
+          , "problemCode":problemCode, "username":username, "point": 0, "time": 0, "memory": 0};
 
+
+        let fileName = username + "-" + problemCode;
+        if(lang === this.languages.java){
+            let codeStr = requestData;
+            let classStrIndex = codeStr.indexOf("class");
+            let whiteSpaceStrIndex = codeStr.indexOf(" ", classStrIndex+6);
+            fileName = codeStr.substring(classStrIndex+6,whiteSpaceStrIndex);
+        }
+
+        let sonarRegistryData = {
+            "id": username + "-" + problemCode,
+            "programmingLanguage":lang,
+            "numberOfSubmittedFile":1,
+            "codes":[requestData],
+            "fileNames":[fileName] }
+
+        var submissionId = "94798e71-11c2-4abd-bdaa-59c7e6172417";
         this.compilerService.addSubmit(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
+            if(result){
+                this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
+                    data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
+                        ... data };
+                    this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token);
+                });
+            }
             setTimeout(this.getSubmitResult, 3000, result.id);
         });
     }
@@ -145,7 +169,7 @@ export class Evaluator extends Component {
         this.compilerService.testRun(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
-            setTimeout(this.getTestRunResult, 3000, result.id);
+            setTimeout(this.getTestRunResult, 3000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
         });
     };
 
