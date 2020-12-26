@@ -1,0 +1,33 @@
+serhat@vulcan:~/Desktop/code-frontation-backend/python_src/asymptotic_notation$ python3 asymptotic_notation_demo.py
+---------------------------------------
+Asymptotic_Notation for sum_of_list
+
+-------------Results-------------
+
+Best Result -->
+Linear: time = 0.03 + 4.1E-06*n (sec)
+Other Results -->
+Constant: time = 0.24 (sec)
+Linear: time = 0.03 + 4.1E-06*n (sec)
+Quadratic: time = 0.11 + 3.7E-11*n^2 (sec)
+Cubic: time = 0.14 + 3.4E-16*n^3 (sec)
+Polynomial: time = -11 * x^0.92 (sec)
+Logarithmic: time = -0.33 + 0.056*log(n) (sec)
+Linearithmic: time = 0.041 + 3.5E-07*n*log(n) (sec)
+Exponential: time = -4.2 * 4.2E-05^n (sec)
+---------------------------------------
+Asymptotic_Notation for fing max
+
+-------------Results-------------
+
+Best Result -->
+Linear: time = -0.00027 + 3.1E-06*n (sec)
+Other Results -->
+Constant: time = 0.15 (sec)
+Linear: time = -0.00027 + 3.1E-06*n (sec)
+Quadratic: time = 0.053 + 2.9E-11*n^2 (sec)
+Cubic: time = 0.077 + 2.7E-16*n^3 (sec)
+Polynomial: time = -13 * x^1 (sec)
+Logarithmic: time = -0.23 + 0.038*log(n) (sec)
+Linearithmic: time = 0.0071 + 2.6E-07*n*log(n) (sec)
+Exponential: time = -4.9 * 4.6E-05^n (sec)
