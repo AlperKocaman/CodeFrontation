@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import SubmissionService from '../service/SubmissionService';
+import UserService from '../service/UserService';
 import CommentService from '../service/CommentService';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
@@ -56,6 +57,7 @@ export class SubmissionList extends Component {
     updatedDate: ''
   };
 
+
   constructor(props) {
     super(props);
 
@@ -83,6 +85,7 @@ export class SubmissionList extends Component {
     };
 
     this.submissionService = new SubmissionService();
+    this.userService = new UserService();
     this.commentService = new CommentService();
     this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
 
@@ -103,8 +106,9 @@ export class SubmissionList extends Component {
   componentDidMount = async () => {
     auth.onAuthStateChanged(async userAuth => {
       const user = await generateUserDocument(userAuth);
-      this.setState({'authenticateUser': user });
+      this.setState({authenticateUser: user });
     });
+
     if (this.props.username && !this.props.problemCode) {
       this.submissionService.getSubmissions(this.props.username).then(res => {
         this.setState({ submissions: res.data });
@@ -123,6 +127,7 @@ export class SubmissionList extends Component {
   }
 
   saveComment = () => {
+    this.setState({ submitted: true });
     if (this.state.comment.username.trim()) {
       this.commentService.addComment(this.state.comment).then(data => {
         let state = { submitted: true };
@@ -237,7 +242,6 @@ export class SubmissionList extends Component {
   }
 
   onClickUsername = (event) => {
-    console.log('onClickUsername : ' + event.target.text);
     window.location.assign('/admin/submissions/' + event.target.text);
   };
 
@@ -289,20 +293,22 @@ export class SubmissionList extends Component {
 
   openAddCommentDialog = (submission) => {
 
-    this.state.comment = {
-      submissionId: submission.id,
-      //FIXME: State user bilgisi ile degistir
-      commenterUserId: "c4ccbe05-ce6d-405e-901d-ed8a11f2fb96",
-      username: submission.username,
-      problemCode: submission.problemCode,
-      problemName: submission.name,
-      targetRole: 'Associate Consultant',
-      targetProject: 'IHTAR',
-      //FIXME: State user bilgisi ile degistir
-      commenterUserName: 'Some Reviwer',
-      createdDate: new Date(),
-      updatedDate: new Date()
-    }
+    this.userService.getUserByUsername(this.state.authenticateUser.username).then(res => {
+      this.state.authenticateUser.id = res.data.id;
+    }).then(this.userService.getUserByUsername(submission.username).then(res => {
+      this.state.comment = {
+        submissionId: submission.id,
+        commenterUserId: this.state.authenticateUser.id,
+        username: submission.username,
+        problemCode: submission.problemCode,
+        problemName: submission.name,
+        targetRole: res.data.targetRole,
+        targetProject: res.data.targetProject,
+        commenterUserName: this.state.authenticateUser.username,
+        createdDate: new Date(),
+        updatedDate: new Date()
+      }
+    }));
 
     this.setState({
       addCommentDialog: true
@@ -429,8 +435,10 @@ export class SubmissionList extends Component {
               <div className="card">
                 <Fieldset legend={`Comment: ${index+1}`} toggleable>
                   <div style = {{fontWeight: 'bold'}}>{a.commenterUserName}</div>
-                  <div><span>Comment: </span>{a.comment}</div>
-                  <div><span>Rating: </span>{a.rating} / 10</div>
+                  <br></br>
+                  <div>{a.comment}</div>
+                  <br></br>
+                  <div style = {{fontWeight: 'bold'}}>Rating: {a.rating} / 10</div>
                 </Fieldset>
               </div>
 

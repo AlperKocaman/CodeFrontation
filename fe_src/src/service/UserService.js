@@ -36,6 +36,13 @@ export default class UserService {
         return response;
     }
 
+    async getUserByUsername(username) {
+        const url = "http://localhost:8080/main/users/" + username;
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
+        return response;
+    }
+
     async deleteUsers(users){
         const url="http://localhost:8080/main/users/delete-users";
         const method='POST';
