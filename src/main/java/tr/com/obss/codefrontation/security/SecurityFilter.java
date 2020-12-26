@@ -49,7 +49,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 		String sessionCookieValue = null;
 		FirebaseToken decodedToken = null;
 		Credentials.CredentialType type = null;
-		boolean strictServerSessionEnabled = securityProps.getFirebaseProps().isEnableStrictServerSession();
+		boolean strictServerSessionEnabled = false;//securityProps.getFirebaseProps().isEnableStrictServerSession();  //FIXME remove this
 		Cookie sessionCookie = cookieUtils.getCookie("session");
 		String token = securityService.getBearerToken(request);
 		try {

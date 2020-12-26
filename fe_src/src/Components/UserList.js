@@ -47,7 +47,8 @@ export class UserList extends Component {
             selectedUsers: null,
             submitted: false,
             globalFilter: null,
-            authenticateUser: null
+            authenticateUser: null,
+            token: ''
         };
 
         this.roleItems = [];
@@ -76,18 +77,24 @@ export class UserList extends Component {
     }
 
     componentDidMount = async () => {
-        auth.onAuthStateChanged(async userAuth => {
-            const user = await generateUserDocument(userAuth);
+        auth.onAuthStateChanged( userAuth => {
+            const user =  generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken => {
+                    this.setState({'token': idToken });
+                    this.userService.getUsers(idToken).then(res => {
+                        this.setState({users: res.data});
+                    });
+
+                    this.userService.getRoles(idToken).then(res => {
+                        console.log(res);
+                        this.roleItems = res.data;
+                    });
+                });
+            }
             this.setState({'authenticateUser': user });
         });
-        this.userService.getUsers().then(res => {
-            this.setState({users: res.data});
-        });
 
-        this.userService.getRoles().then(res => {
-            console.log(res);
-            this.roleItems = res.data;
-        });
 
 
     }
@@ -123,7 +130,7 @@ export class UserList extends Component {
             dataObj.targetRole = dataObj.roleName;
             delete dataObj.rolename;
             if (this.state.user.id) {
-                this.userService.updateUser(this.state.user).then(data => {
+                this.userService.updateUser(this.state.user,this.state.token).then(data => {
                     const index = this.findIndexById(this.state.user.id);
                     let state = { submitted: true };
                     let users = [...this.state.users];
@@ -142,7 +149,7 @@ export class UserList extends Component {
                 });
             }
             else {
-                this.userService.addUser(this.state.user).then(data => {
+                this.userService.addUser(this.state.user,this.state.token).then(data => {
                     let state = { submitted: true };
                     let users = [...this.state.users];
                     let user = {...this.state.user};
@@ -168,7 +175,7 @@ export class UserList extends Component {
     }
 
     deleteUser() {
-        this.userService.deleteUser(this.state.user).then(data => {
+        this.userService.deleteUser(this.state.user,this.state.token).then(data => {
             let users = this.state.users.filter(val => val.id !== this.state.user.id);
             this.setState({
                 users,
@@ -182,7 +189,7 @@ export class UserList extends Component {
     }
 
     deleteSelectedUsers() {
-        this.userService.deleteUsers(this.state.selectedUsers).then(data => {
+        this.userService.deleteUsers(this.state.selectedUsers,this.state.token).then(data => {
             let users = this.state.users.filter(val => !this.state.selectedUsers.includes(val));
             this.setState({
                 users,

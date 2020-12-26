@@ -64,25 +64,25 @@ security:
     - /favicon.ico
     - /session/login
     - /public/*
-    - /main/*
-    - /main/users/*
-    - /main/problems/problemKey/*
-    - /problems/addProblem/*
-    - /main/problems/*
-    - /main/problems/username/*
-    - /main/templates/*
-    - /main/submissions/*
-    - /main/submissions/username/*
-    - /main/comments/*
-    - /main/comments/username/*
-    - /main/commentsBySubmissionId/*
-    - /main
-    - /judge
-    - /judge/*
-    - /judge/submit/*
-    - /judge/testRun/*
-    - /registerSonar
-    - /getSonarMetrics/*
+    #- /main/*
+    #- /main/users/*
+    #- /main/problems/problemKey/*
+    #- /problems/addProblem/*
+    #- /main/problems/*
+    #- /main/problems/username/*
+    #- /main/templates/*
+    #- /main/submissions/*
+    #- /main/submissions/username/*
+    #- /main/comments/*
+    #- /main/comments/username/*
+    #- /main/commentsBySubmissionId/*
+    #- /main
+    #- /judge
+    #- /judge/*
+    #- /judge/submit/*
+    #- /judge/testRun/*
+    #- /registerSonar
+    #- /getSonarMetrics/*
   exposed-headers:
     - X-Xsrf-Token
 

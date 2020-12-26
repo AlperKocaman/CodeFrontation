@@ -79,7 +79,8 @@ export class SubmissionList extends Component {
       sonarReliabilityResults: [],
       sonarSecurityResults: [],
       sonarSizeResults: [],
-      authenticateUser: null
+      authenticateUser: null,
+      token: ''
     };
 
     this.submissionService = new SubmissionService();
@@ -103,28 +104,34 @@ export class SubmissionList extends Component {
   componentDidMount = async () => {
     auth.onAuthStateChanged(async userAuth => {
       const user = await generateUserDocument(userAuth);
+      if (userAuth) {
+        userAuth.getIdToken().then(idToken =>  {
+          this.setState({'token': idToken });
+          if (this.props.username && !this.props.problemCode) {
+            this.submissionService.getSubmissions(this.props.username, idToken).then(res => {
+              this.setState({ submissions: res.data });
+            });
+          }
+          else if (this.props.problemCode && this.props.username) {
+            this.submissionService.getSubmissionsByUsernameAndProblemCode(this.props.username, this.props.problemCode, idToken).then(res => {
+              this.setState({ submissions: res.data });
+            })
+          }
+          else {
+            this.submissionService.getSubmissions('', idToken).then(res => {
+              this.setState({ submissions: res.data });
+            });
+          }
+        });
+      }
       this.setState({'authenticateUser': user });
     });
-    if (this.props.username && !this.props.problemCode) {
-      this.submissionService.getSubmissions(this.props.username).then(res => {
-        this.setState({ submissions: res.data });
-      });
-    }
-    else if (this.props.problemCode && this.props.username) {
-      this.submissionService.getSubmissionsByUsernameAndProblemCode(this.props.username, this.props.problemCode).then(res => {
-        this.setState({ submissions: res.data });
-      })
-    }
-    else {
-      this.submissionService.getSubmissions('').then(res => {
-        this.setState({ submissions: res.data });
-      });
-    }
+
   }
 
   saveComment = () => {
     if (this.state.comment.username.trim()) {
-      this.commentService.addComment(this.state.comment).then(data => {
+      this.commentService.addComment(this.state.comment, this.state.token).then(data => {
         let state = { submitted: true };
         let comment = { ...this.state.comment };
         comment.id = data.id;
@@ -159,7 +166,7 @@ export class SubmissionList extends Component {
 
 
   deleteSubmission() {
-    this.submissionService.deleteSubmission(this.state.submission).then(data => {
+    this.submissionService.deleteSubmission(this.state.submission, this.state.token).then(data => {
       let submissions = this.state.submissions.filter(val => val.id !== this.state.submission.id);
       this.setState({
         submissions,
@@ -173,7 +180,7 @@ export class SubmissionList extends Component {
   }
 
   deleteSelectedSubmissions() {
-    this.submissionService.deleteSubmissions(this.state.selectedSubmissions).then(data => {
+    this.submissionService.deleteSubmissions(this.state.selectedSubmissions, this.state.token).then(data => {
       let submissions = this.state.submissions.filter(val => !this.state.selectedSubmissions.includes(val));
       this.setState({
         submissions,
@@ -257,7 +264,7 @@ export class SubmissionList extends Component {
   }
 
   openSonarDialog(submission) {
-    this.submissionService.getSonarMetrics(submission).then(res =>
+    this.submissionService.getSonarMetrics(submission, this.state.token).then(res =>
       this.setState({
         submission: { ...submission },
         sonarComplexityResults: res[0].data.component.measures,
@@ -310,7 +317,7 @@ export class SubmissionList extends Component {
   }
 
   openShowCommentDialog = (submission) => {
-    this.commentService.getCommentsBySubmissionId(submission.id).then(res => {
+    this.commentService.getCommentsBySubmissionId(submission.id, this.state.token).then(res => {
       this.setState(Object.assign({}, { showCommentDialog: true }, { comments: res.data }))
     });
   }

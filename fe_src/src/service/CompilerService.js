@@ -2,19 +2,22 @@ import axios from 'axios';
 
 export default class CompilerService {
 
-    async requestToServer(url = '',method='', data = {}) {
+    async requestToServer(url = '',method='', data = {},token='') {
+        const config = {
+            headers: { Authorization: 'Bearer '+token }
+        };
         try {
             if (method=='POST'){
-                const response = await axios.post(url, data);
+                const response = await axios.post(url, data, config);
                 return response;
             }else if (method=='GET'){
-                const response = await axios.get(url);
+                const response = await axios.get(url, config);
                 return response;
             }else if (method=='PUT'){
-                const response = await axios.put(url, data);
+                const response = await axios.put(url, data, config);
                 return response;
             }else if (method=='DELETE'){
-                const response = await axios.delete(url, data);
+                const response = await axios.delete(url, data, config);
                 return response;
             }
         } catch (error) {
@@ -22,32 +25,32 @@ export default class CompilerService {
         }
     }
 
-    async getSubmit(id) {
+    async getSubmit(id, token) {
         const url = "http://localhost:8080/judge/submit/"+id;
         const method = 'GET';
-        const response = await this.requestToServer(url, method, {});
+        const response = await this.requestToServer(url, method, {}, token);
         return response;
     }
 
-    async addSubmit(data){
+    async addSubmit(data, token){
         const url="http://localhost:8080/judge/submit";
         const method='POST';
-        const response = await this.requestToServer(url, method, data);
+        const response = await this.requestToServer(url, method, data, token);
         return response;
     }
 
 
-    async getTestRun(id) {
+    async getTestRun(id, token) {
         const url = "http://localhost:8080/judge/testRun/"+id;
         const method = 'GET';
-        const response = await this.requestToServer(url, method, {});
+        const response = await this.requestToServer(url, method, {}, token);
         return response;
     }
 
-    async testRun(data){
+    async testRun(data, token){
         const url="http://localhost:8080/judge/testRun";
         const method='POST';
-        const response = await this.requestToServer(url, method, data);
+        const response = await this.requestToServer(url, method, data, token);
         return response;
     }
 }

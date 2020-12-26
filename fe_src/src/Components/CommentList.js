@@ -42,7 +42,8 @@ export class CommentList extends Component {
       commentDialog: false,
       comment: this.emptyComment,
       globalFilter: null,
-      authenticateUser: null
+      authenticateUser: null,
+      token: ''
     };
 
     this.commentService = new CommentService();
@@ -53,33 +54,39 @@ export class CommentList extends Component {
   }
 
   componentDidMount = async () => {
-    auth.onAuthStateChanged(async userAuth => {
-      const user = await generateUserDocument(userAuth);
+    auth.onAuthStateChanged( userAuth => {
+      const user = generateUserDocument(userAuth);
+      if (userAuth) {
+        userAuth.getIdToken().then(idToken => {
+          this.setState({'token': idToken });
+          console.log(this.props.username)
+          if (this.props.username && !this.props.problemCode) {
+            this.commentService.getComments(this.props.username,idToken).then(res => {
+              if (res.data  != null){
+                this.setState({ comments: res.data });
+              }
+            });
+          }
+          else if (this.props.problemCode && this.props.username) {
+            this.commentService.getCommentsByUsernameAndProblemCode(this.props.username, this.props.problemCode,idToken).then(res => {
+              if (res.data  != null){
+                this.setState({ comments: res.data });
+              }
+
+            })
+          }
+          else {
+            this.commentService.getComments(idToken).then(res => {
+              if (res.data  != null){
+                this.setState({ comments: res.data });
+              }
+            });
+          }
+        });
+      }
       this.setState({'authenticateUser': user });
     });
-    console.log(this.props.username)
-    if (this.props.username && !this.props.problemCode) {
-      this.commentService.getComments(this.props.username).then(res => {
-        if (res.data  != null){
-          this.setState({ comments: res.data });
-      }
-      });
-    }
-    else if (this.props.problemCode && this.props.username) {
-      this.commentService.getCommentsByUsernameAndProblemCode(this.props.username, this.props.problemCode).then(res => {
-        if (res.data  != null){
-          this.setState({ comments: res.data });
-      }
-        
-      })
-    }
-    else {
-      this.commentService.getComments().then(res => {
-        if (res.data  != null){
-          this.setState({ comments: res.data });
-      }
-      });
-    }
+
   }
 
   exportCSV() {

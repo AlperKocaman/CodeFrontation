@@ -55,7 +55,8 @@ export class Evaluator extends Component {
             themeName:'dracula',
             modeName:'java',
             consoleOutput:'output...',
-            authenticateUser: null
+            authenticateUser: null,
+            token: ''
         };
 
         this.codeString='';
@@ -68,6 +69,11 @@ export class Evaluator extends Component {
         }
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    this.setState({'token': idToken });
+                });
+            }
             this.setState({'authenticateUser': user});
         });
     }
@@ -98,7 +104,7 @@ export class Evaluator extends Component {
         let data = { "body": requestData, "language":lang, "assignmentId":assignmentId
           , "problemCode":problemCode, "username":username };
 
-        this.compilerService.addSubmit(data).then(res => {
+        this.compilerService.addSubmit(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
             setTimeout(this.getSubmitResult, 3000, result.id);
@@ -107,7 +113,7 @@ export class Evaluator extends Component {
 
 
     getSubmitResult= (submissionId)  => {
-        this.compilerService.getSubmit(submissionId).then(res => {
+        this.compilerService.getSubmit(submissionId, this.state.token).then(res => {
             let testCaseList= res.data.testCaseList;
             let response="";
             if(testCaseList==undefined){
@@ -136,7 +142,7 @@ export class Evaluator extends Component {
         var data = { "body": requestData, "language":lang, "assignmentId":assignmentId
             , "problemCode":problemCode, "username":username };
 
-        this.compilerService.testRun(data).then(res => {
+        this.compilerService.testRun(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
             setTimeout(this.getTestRunResult, 3000, result.id);
@@ -144,7 +150,7 @@ export class Evaluator extends Component {
     };
 
     getTestRunResult = (submissionId)  => {
-        this.compilerService.getTestRun(submissionId).then(res => {
+        this.compilerService.getTestRun(submissionId, this.state.token).then(res => {
             let testRunCaseList= res.data.testRunCaseList;
             let response="";
             if(testRunCaseList==undefined){
