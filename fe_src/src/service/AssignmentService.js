@@ -31,4 +31,11 @@ export default class AssignmentService {
         const response = await this.requestToServer(url, method, {user:user,problem:problem}, token);
         return response;
     }
+
+    async getAssignmentByUsernameAndProblemCode(username, problemCode, token){
+        const url=`http://localhost:8080/main/assignments/${username}/${problemCode}`;
+        const method='GET';
+        const response = await this.requestToServer(url, method, {}, token);
+        return response;
+    }
 }

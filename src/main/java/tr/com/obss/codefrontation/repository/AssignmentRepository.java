@@ -26,7 +26,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, UUID> {
 
 	List<Assignment> findByUser(User user);
 
-	@Query("Select a From Assignment a Where a.user.username =: username and a.problem.code =: problemCode")
+	@Query("Select a From Assignment a Where a.user.username = :username and a.problem.code = :problemCode")
 	Optional<Assignment> getAssignmentByUsernameAndProblemCode(String username, String problemCode);
 
 	List<Assignment> findByProblemId(UUID problemId);

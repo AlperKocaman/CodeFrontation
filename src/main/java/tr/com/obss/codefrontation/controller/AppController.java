@@ -204,6 +204,11 @@ public class AppController {
     public AssignmentDTO addAssigment(@RequestBody AssignmentDTO assignmentDTO) throws Exception {
         return assignmentService.addAssignment(assignmentDTO);
     }
+    
+    @GetMapping("/assignments/{username}/{problemCode}")
+    public AssignmentDTO getAssigment(@PathVariable("username") String username, @PathVariable("problemCode") String problemCode) throws Exception {
+        return assignmentService.getAssignment(problemCode, username);
+    }
 
     /* End of controller methods for Templates */
 

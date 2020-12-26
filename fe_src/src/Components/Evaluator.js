@@ -20,6 +20,7 @@ import 'brace/theme/tomorrow_night';
 import 'brace/theme/monokai';
 import CompilerService from "../service/CompilerService";
 import {auth, generateUserDocument} from "./Firebase";
+import AssignmentService from '../service/AssignmentService';
 
 export class Evaluator extends Component {
    
@@ -39,6 +40,7 @@ export class Evaluator extends Component {
         this.getSubmitResult = this.getSubmitResult.bind(this);
 
         this.compilerService = new CompilerService();
+        this.assignmentService = new AssignmentService();
 
         //react type language enum
         this.languages={
@@ -56,7 +58,8 @@ export class Evaluator extends Component {
             modeName:'java',
             consoleOutput:'output...',
             authenticateUser: null,
-            token: ''
+            token: '',
+            problemCode:''
         };
 
         this.codeString='';
@@ -67,6 +70,7 @@ export class Evaluator extends Component {
         // if(this.props.uri!='/'){
         //     window.location.assign('/');
         // }
+        this.setState({problemCode:this.props.problemCode});
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
             if (userAuth) {
@@ -92,11 +96,13 @@ export class Evaluator extends Component {
     };
 
     submitCode = () => {
-        const assignmentId="2331b35b-0778-4810-b7ad-828527d74def";
-        const problemCode="aplusb";
-        const username="mduzgun";     //FIXME dinamikleştir
-        this.sendCode("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        const username=this.state.authenticateUser.username;     //FIXME dinamikleştir
+        const problemCode=this.state.problemCode;
 
+        this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,this.state.token).then(res => {
+            const assignmentId=res.data.id;
+            this.sendCode("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        });
     }
 
     sendCode = (requestData,lang,assignmentId,problemCode,username) => {
@@ -155,10 +161,12 @@ export class Evaluator extends Component {
     }
 
     testCode = () => {
-        const assignmentId="2331b35b-0778-4810-b7ad-828527d74def";
-        const problemCode="aplusb";
-        const username="mduzgun";     //FIXME dinamikleştir
-        this.sendCodeForRun("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        const username=this.state.authenticateUser.username;     //FIXME dinamikleştir
+        const problemCode=this.state.problemCode;
+        this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,this.state.token).then(res => {
+            const assignmentId=res.data.id;
+            this.sendCodeForRun("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        });
     }
 
     sendCodeForRun = (requestData,lang,assignmentId,problemCode,username) => {
