@@ -69,9 +69,13 @@ security:
     - /main/problems/problemKey/*
     - /problems/addProblem/*
     - /main/problems/*
+    - /main/problems/username/*
     - /main/templates/*
     - /main/submissions/*
+    - /main/submissions/username/*
     - /main/comments/*
+    - /main/comments/username/*
+    - /main/commentsBySubmissionId/*
     - /main
     - /judge
     - /judge/*
