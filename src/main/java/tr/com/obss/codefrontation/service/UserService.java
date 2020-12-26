@@ -18,12 +18,14 @@ public class UserService {
     private final Mapper mapper;
     private final UserRepository repository;
 
-    public UserDTO addUser(UserDTO dto) {
+    public UserDTO addUser(UserDTO dto) throws Exception {
         User user = mapper.toUserEntity(dto);
-        User entity=repository.save(user);
-        log.info("User created: {}", user.toString());
-
-        return mapper.toUserDTO(entity);
+        if(checkUsernameIsUnique(user.getUsername())){
+            User entity=repository.save(user);
+            log.info("User created: {}", user.toString());
+            return mapper.toUserDTO(entity);
+        }
+        else throw new Exception();
     }
 
     public UserDTO updateUser(UserDTO dto) throws Exception {
@@ -83,6 +85,15 @@ public class UserService {
             throw new Exception();
         }
         return username;
+    }
+
+    public boolean checkUsernameIsUnique(String username) throws Exception {
+        if(repository.existsByUsername(username)){
+            throw new Exception();
+        }
+        else {
+            return true;
+        }
     }
 
 }

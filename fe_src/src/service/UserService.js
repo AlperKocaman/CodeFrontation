@@ -38,6 +38,12 @@ export default class UserService {
         const response = await this.requestToServer(url, method, {}, token);
         return response;
     }
+    async getUserByUsername(username,token) {
+        const url = "http://localhost:8080/main/users/" + username;
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {}, token);
+        return response;
+    }
 
     async deleteUsers(users, token){
         const url="http://localhost:8080/main/users/delete-users";

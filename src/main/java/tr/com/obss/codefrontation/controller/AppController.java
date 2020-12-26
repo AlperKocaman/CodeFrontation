@@ -57,6 +57,11 @@ public class AppController {
         return userService.getAllUser();
     }
 
+    @GetMapping("/users/{username}")
+    public UserDTO getUserListByUsername(@PathVariable String username) throws Exception {
+        return userService.getUserByUsername(username);
+    }
+
     /*
     Submission Controller Methods
      */
@@ -93,6 +98,7 @@ public class AppController {
         return userService.addUser(user);
     }
 
+
     @PutMapping("/users/{id}")
     public UserDTO updateUser(@PathVariable UUID id, @RequestBody UserDTO user) throws Exception {
         return userService.updateUser(user);
@@ -113,7 +119,6 @@ public class AppController {
     public List<CommentDTO> getCommentListByUserName(@PathVariable String username) {
         return commentService.getCommentsByUsername(username);
     }
-
 
     @GetMapping("/commentsBySubmissionId/{submissionId}")
     public List<CommentDTO> getCommentListBySubmissionId(
