@@ -277,7 +277,7 @@ export class AddProblem extends Component {
                             <br/>
                             <label htmlFor="timeLimit" className="p-d-block">Time Limit</label>
                             <InputText id="timeLimit" value={this.state.problem.timeLimit} aria-describedby="time-help" onChange={(e) => this.onInputChange(e, 'timeLimit')} required autoFocus />
-                            <small id="time-help" className="p-d-block">Time limit of the problem in minutes</small>
+                            <small id="time-help" className="p-d-block">Time limit of the problem in seconds.</small>
                             {this.state.submitted && !this.state.problem.timeLimit && <small className="p-invalid">Problem time limit is required.</small>}
                             <br/>
                         </div>
@@ -285,7 +285,7 @@ export class AddProblem extends Component {
                             <br/>
                             <label htmlFor="memoryLimit" className="p-d-block">Memory Limit</label>
                             <InputText id="memoryLimit" value={this.state.problem.memoryLimit} aria-describedby="memory-help" onChange={(e) => this.onInputChange(e, 'memoryLimit')} required autoFocus />
-                            <small id="memory-help" className="p-d-block">Memory limit of the problem in megabytes</small>
+                            <small id="memory-help" className="p-d-block">Memory limit of the problem in megabytes.</small>
                             {this.state.submitted && !this.state.problem.memoryLimit && <small className="p-invalid">Problem memory limit is required.</small>}
                             <br/>
                         </div>

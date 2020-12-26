@@ -9,22 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import tr.com.obss.codefrontation.dto.AuthDTO;
-import tr.com.obss.codefrontation.dto.ProblemDTO;
-import tr.com.obss.codefrontation.dto.CommentDTO;
-import tr.com.obss.codefrontation.dto.RoleDTO;
-import tr.com.obss.codefrontation.dto.SubmissionDTO;
-import tr.com.obss.codefrontation.dto.TemplateDTO;
-import tr.com.obss.codefrontation.dto.UserDTO;
+import tr.com.obss.codefrontation.dto.*;
 import tr.com.obss.codefrontation.dto.problem.ProblemEveluationDto;
-import tr.com.obss.codefrontation.service.CommentService;
-import tr.com.obss.codefrontation.service.CompilerService;
-import tr.com.obss.codefrontation.service.DmojProblemService;
-import tr.com.obss.codefrontation.service.ProblemService;
-import tr.com.obss.codefrontation.service.RoleService;
-import tr.com.obss.codefrontation.service.SubmissionService;
-import tr.com.obss.codefrontation.service.TemplateService;
-import tr.com.obss.codefrontation.service.UserService;
+import tr.com.obss.codefrontation.service.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +27,7 @@ public class AppController {
     private final UserService userService;
     private final ProblemService problemService;
     private final TemplateService templateService;
+    private final AssignmentService assignmentService;
     private final RoleService roleService;
     private final SubmissionService submissionService;
     private final DmojProblemService dmojProblemService;
@@ -146,6 +134,7 @@ public class AppController {
         return problemService.getAllProblemsAssignedToUserByUsername(username);
     }
 
+    // FIXME : Delete mapping olmalı ?
     @PostMapping("/problems/delete-problems")
     public List<ProblemDTO> deleteProblemList(@RequestBody List<ProblemDTO> problems) {
         return problemService.deleteProblems(problems);
@@ -198,6 +187,11 @@ public class AppController {
     @PutMapping("/templates/{id}")
     public TemplateDTO updateTemplate(@PathVariable UUID id, @RequestBody TemplateDTO template) throws Exception {
         return templateService.updateTemplate(template);
+    }
+
+    @PostMapping("/assignments")
+    public AssignmentDTO addAssigment(@RequestBody AssignmentDTO assignmentDTO) throws Exception {
+        return assignmentService.addAssignment(assignmentDTO);
     }
 
     /* End of controller methods for Templates */

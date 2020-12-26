@@ -30,7 +30,7 @@ public class ProblemService {
 
 	public List<ProblemDTO> getAllProblems() {
 		List<Problem> problemList = problemRepository.findAll();
-		log.info("Problem list retrieved: {}", problemList.toString());
+		log.info("Problem list retrieved");
 		return mapper.toDTOList(problemList);
 	}
 
@@ -60,7 +60,7 @@ public class ProblemService {
 
 	public List<ProblemDTO> deleteProblems(List<ProblemDTO> problems) {
 		problemRepository.deleteAll(mapper.toEntityList(problems));
-		log.info("Problem list deleted: {}", problems.toString());
+		log.info("Problem list deleted");
 		return problems;
 	}
 

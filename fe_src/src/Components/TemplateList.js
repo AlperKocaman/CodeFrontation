@@ -102,7 +102,7 @@ export class TemplateList extends Component {
             this.userItems = res.data;
         });
 
-        this.problemService.getProblems().then(res=>{
+        this.problemService.getProblems("").then(res=>{
             this.problems = res.data;
         });
 
@@ -372,7 +372,7 @@ export class TemplateList extends Component {
                         <Column body={this.actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
-                <Dialog visible={this.state.templateDialog} style={{ width: '500px' }} header="Template Details" modal className="p-fluid" footer={templateDialogFooter} onHide={this.hideDialog}>
+                <Dialog visible={this.state.templateDialog} style={{ width: '500px'}} header="Template Details" modal className="p-fluid" footer={templateDialogFooter} onHide={this.hideDialog}>
                     <div className="p-field">
                         <label htmlFor="name">Template Name</label>
                         <InputText id="name" value={this.state.template.name} onChange={(e) => this.onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.template.name })} />

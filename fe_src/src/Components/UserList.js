@@ -18,6 +18,10 @@ import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import uuid from 'uuid-random';
 import {Dropdown} from "primereact/dropdown";
+import AssignmentService from "../service/AssignmentService";
+import {MultiSelect} from "primereact/multiselect";
+import TemplateService from "../service/TemplateService";
+import ProblemService from "../service/ProblemService";
 
 export class UserList extends Component {
 
@@ -45,12 +49,21 @@ export class UserList extends Component {
             user: this.emptyUser,
             selectedUsers: null,
             submitted: false,
-            globalFilter: null
+            globalFilter: null,
+            assignmentDialog: false,
+            selectedProblem: [],
+            selectedTemplate: []
         };
 
+
+        this.templates = [];
+        this.problems = [];
         this.roleItems = [];
 
         this.userService = new UserService();
+        this.assignmentService = new AssignmentService();
+        this.templateService = new TemplateService();
+        this.problemService = new ProblemService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
         this.statusBodyTemplate = this.statusBodyTemplate.bind(this);
@@ -71,6 +84,10 @@ export class UserList extends Component {
         this.onInputNumberChange = this.onInputNumberChange.bind(this);
         this.hideDeleteUserDialog = this.hideDeleteUserDialog.bind(this);
         this.hideDeleteUsersDialog = this.hideDeleteUsersDialog.bind(this);
+        this.hideAssignmentDialog = this.hideAssignmentDialog.bind(this);
+        this.openAssignmentDialog = this.openAssignmentDialog.bind(this);
+        this.assignProblemAndTemplate = this.assignProblemAndTemplate.bind(this);
+        this.assignProblem = this.assignProblem.bind(this);
     }
 
     componentDidMount() {
@@ -81,6 +98,14 @@ export class UserList extends Component {
         this.userService.getRoles().then(res => {
             console.log(res);
             this.roleItems = res.data;
+        });
+
+        this.problemService.getProblems("").then(res=>{
+            this.problems = res.data;
+        });
+
+        this.templateService.getTemplates().then(res=>{
+            this.templates = res.data;
         });
 
 
@@ -101,6 +126,12 @@ export class UserList extends Component {
         });
     }
 
+    hideAssignmentDialog() {
+        this.setState({
+            assignmentDialog: false
+        });
+    }
+
     hideDeleteUserDialog() {
         this.setState({ deleteUserDialog: false });
     }
@@ -110,7 +141,6 @@ export class UserList extends Component {
     }
 
     saveUser() {
-
 
         if (this.state.user.username.trim()) {
             let dataObj = this.state.user;
@@ -203,6 +233,58 @@ export class UserList extends Component {
         });
     }
 
+    openAssignmentDialog(user){
+        this.setState({
+            user: { ...user },
+            assignmentDialog: true
+        });
+    }
+
+    assignProblemAndTemplate() {
+        var isProblemOrTemplateExists = false;
+        var problem;
+        var template;
+        if(this.state.selectedProblem && this.state.selectedProblem.length !== 0) {
+            isProblemOrTemplateExists= true;
+            for(problem of this.state.selectedProblem){
+                this.assignProblem(problem);
+            }
+        }
+        if(this.state.selectedTemplate  && this.state.selectedTemplate.length !== 0){
+            isProblemOrTemplateExists = true;
+            for(template of this.state.selectedTemplate){
+                for(problem of template.templateProblems){
+                    this.assignProblem(problem);
+                }
+            }
+        }
+        if(isProblemOrTemplateExists){
+            this.toast.show({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Selected template/s and problem/s were assigned to user ' + this.state.user.firstName + ' ' + this.state.user.lastName,
+                life: 3000
+            });
+        } else {
+            this.toast.show({
+                severity: 'fail',
+                summary: 'Unsuccessful',
+                detail: 'No template or problem were selected',
+                life: 3000
+            });
+        }
+        this.setState({
+            assignmentDialog: false
+        });
+    }
+
+    assignProblem(problem) {
+        this.assignmentService.assignTemplateAndProblem(this.state.user, problem).then(data => {
+        }).catch(error => {
+            console.error('There was an error while assigning problems!', error);
+        });
+    }
+
     findIndexById(id) {
         let index = -1;
         for (let i = 0; i < this.state.users.length; i++) {
@@ -273,7 +355,7 @@ export class UserList extends Component {
 
     onClickUsername = (event) => {
         console.log('onClickUsername : ' + event.target.text);
-        window.location.assign('problems/' + event.target.text);
+        window.location.assign('/admin/problems/' + event.target.text);
     };
 
     onRoleChange(e) {
@@ -283,11 +365,22 @@ export class UserList extends Component {
         this.setState({ user });
     }
 
+    onTemplateChange(e) {
+        this.setState({ selectedTemplate: e.value });
+    }
+
+    onProblemChange(e) {
+        this.setState({ selectedProblem: e.value });
+    }
+
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => this.editUser(rowData)} />
+                <Button icon="pi pi-user-edit" className="p-button-rounded p-button-info" onClick={() => this.editUser(rowData)} />
+                &nbsp;
                 <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => this.confirmDeleteUser(rowData)} />
+                &nbsp;
+                <Button icon="pi pi-tag" className="p-button-rounded p-button-success" onClick={() => this.openAssignmentDialog(rowData)}/>
             </React.Fragment>
         );
     }
@@ -318,6 +411,12 @@ export class UserList extends Component {
             <React.Fragment>
                 <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteUsersDialog} />
                 <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSelectedUsers} />
+            </React.Fragment>
+        );
+        const assignmentDialogFooter = (
+            <React.Fragment>
+                <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={this.hideAssignmentDialog} />
+                <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={this.assignProblemAndTemplate} />
             </React.Fragment>
         );
 
@@ -404,6 +503,21 @@ export class UserList extends Component {
                     <div className="confirmation-content">
                         <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem'}} />
                         {this.state.user && <span>Are you sure you want to delete the selected users?</span>}
+                    </div>
+                </Dialog>
+
+                <Dialog visible={this.state.assignmentDialog} style={{ width: '500px' }} header="Assign Problems to Selected User" modal footer={assignmentDialogFooter} onHide={this.hideAssignmentDialog}>
+                    <div className="p-field">
+                        <label htmlFor="templates">Templates : </label>
+                        <br/>
+                        <MultiSelect value={this.state.selectedTemplate} options={this.templates} onChange={(e) => this.onTemplateChange(e)}
+                                     optionLabel="name" placeholder="Select a Template" display="chip" />
+                    </div>
+                    <div className="p-field">
+                        <label htmlFor="problems">Problems : </label>
+                        <br/>
+                        <MultiSelect value={this.state.selectedProblem} options={this.problems} onChange={(e) => this.onProblemChange(e)}
+                                     optionLabel="name" placeholder="Select a Problem" display="chip" />
                     </div>
                 </Dialog>
             </div>

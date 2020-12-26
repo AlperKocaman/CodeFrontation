@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -43,9 +44,14 @@ public class SubmissionService {
     }
 
 
-    public SubmissionDTO addSubmission(SubmissionDTO submissionDTO) {
+    public SubmissionDTO addSubmission(SubmissionDTO submissionDTO) throws Exception {
         Submission submission = mapper.toSubmissionEntity(submissionDTO);
-        submission.setAssignment(entityManager.getReference(Assignment.class, submissionDTO.getAssignmentId()));
+        Optional<Assignment> assignment = assignmentRepository.getAssignmentByUsernameAndProblemCode(submissionDTO.getUsername(),
+                submissionDTO.getProblemCode());
+        if(!assignment.isPresent()){
+            throw new Exception();
+        }
+        submission.setAssignment(assignment.get());
         Submission entity = submissionRepository.save(submission);
         log.info("Submission created: {}", entity.toString());
 
