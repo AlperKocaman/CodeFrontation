@@ -53,17 +53,17 @@ export class CommentList extends Component {
   componentDidMount() {
     debugger;
     console.log(this.props.username)
-    if (this.props.username && !this.props.problemName) {
+    if (this.props.username && !this.props.problemCode) {
       this.commentService.getComments(this.props.username).then(res => {
         if (res.data  != null){
-          this.setState({ comment: res.data });
+          this.setState({ comments: res.data });
       }
       });
     }
-    else if (this.props.problemName && this.props.username) {
+    else if (this.props.problemCode && this.props.username) {
       this.commentService.getCommentsByUsernameAndProblemCode(this.props.username, this.props.problemCode).then(res => {
         if (res.data  != null){
-          this.setState({ comment: res.data });
+          this.setState({ comments: res.data });
       }
         
       })
@@ -71,7 +71,7 @@ export class CommentList extends Component {
     else {
       this.commentService.getComments().then(res => {
         if (res.data  != null){
-          this.setState({ comment: res.data });
+          this.setState({ comments: res.data });
       }
       });
     }
@@ -132,8 +132,9 @@ export class CommentList extends Component {
             header={header}>
 
             <Column field="username" header="User Name" sortable></Column>
+            <Column field="problemCode" header="Problem Code" sortable></Column>
             <Column field="problemName" header="Problem Name" sortable></Column>
-            <Column field="id" header="Submission ID" sortable></Column>
+            <Column field="submissionId" header="Submission ID" sortable></Column>
             <Column field="targetRole" header="Target Role"sortable></Column>
             <Column field="targetProject" header="Target Project"sortable></Column>
             <Column field="commenterUserName" header="Commenter" sortable></Column>

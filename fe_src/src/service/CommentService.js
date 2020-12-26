@@ -37,6 +37,12 @@ export default class CommentService{
         const method = 'GET';
         const response = await this.requestToServer(url, method, {});
         return response;
+    }  
+    async getCommentsBySubmissionId(submissionId) {
+        const url = "http://localhost:8080/main/commentsBySubmissionId/" +submissionId;
+        const method = 'GET';
+        const response = await this.requestToServer(url, method, {});
+        return response;
     }
 
     async getComments() {

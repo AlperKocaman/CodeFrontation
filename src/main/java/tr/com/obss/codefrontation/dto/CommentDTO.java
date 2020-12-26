@@ -15,6 +15,8 @@ public class CommentDTO {
 
     private String username;
 
+    private String problemCode;
+
     private String problemName;
 
     private String targetRole;
@@ -25,7 +27,7 @@ public class CommentDTO {
 
     private String comment;
 
-    private String rating;
+    private Integer rating;
 
     private Date createdDate;
 

@@ -28,7 +28,7 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
     @Query("SELECT c FROM Comment c" )
     List<Comment> getAllComments();
 
-
+    List<Comment> getCommentsBySubmission_Id(UUID submissionId);
 
 //    @Query(nativeQuery = true, value = "SELECT * FROM comments_submission WHERE comments_submission.submission_id =" +
 //        "            (SELECT id FROM assignments WHERE assignments.user_id =" +
