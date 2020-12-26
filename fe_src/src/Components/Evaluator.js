@@ -63,6 +63,9 @@ export class Evaluator extends Component {
     }
 
     componentDidMount = async () => {
+        if(this.props.uri!='/'){
+            window.location.assign('/');
+        }
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
             this.setState({'authenticateUser': user});

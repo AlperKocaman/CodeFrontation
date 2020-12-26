@@ -14,7 +14,7 @@ import CommentList from "./CommentList";
 function Pages() {
     return (
         <Router>
-            <Evaluator path="/"/>
+            <Evaluator default path="/"/>
             <Compiler path="compiler"/>
             <Dashboard path="admin"/>
             <Problem path="admin/problems/problemKey/:problemCode"/>

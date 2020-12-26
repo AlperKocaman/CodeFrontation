@@ -108,7 +108,7 @@ export class TemplateList extends Component {
             this.userItems = res.data;
         });
 
-        this.problemService.getProblems().then(res=>{
+        this.problemService.getProblems('').then(res=>{
             this.problems = res.data;
         });
 
