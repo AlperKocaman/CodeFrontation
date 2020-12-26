@@ -7,21 +7,33 @@ import Pages from "./Components/Pages";
 import { navigate } from '@reach/router';
 
 class App extends Component {
-    state = {
-        user: null
-    };
-    check=false;
-    componentDidMount = async () => {
-        auth.onAuthStateChanged(async userAuth => {
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: null,
+            checkUser:false
+        };
+    }
+
+    componentDidMount = async () => {   //FIXME : auth methodu constructor'a taşınabilir
+        auth.onAuthStateChanged(async  userAuth =>  {
             const user = await generateUserDocument(userAuth);
-            this.setState({ user });
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    console.log("idTokennnnn: "+idToken);
+                });
+            }
+
+            const checkUser = true;
+            this.setState({ user, checkUser });
         });
     };
+
     render() {
         let { user } = this.state;
-        user=true;  //FIXME login mekanizmasını kaldırmak için konuldu
+        let { checkUser } = this.state;
         return (
-            <div>
+            <div className={checkUser ? '' : 'hidden'}>
                 <div className={user ? '' : 'hidden'}>
                 <span className="p-buttonset" >
                     <div style = {{marginBottom : '0.5%',  backgroundColor: '#2196F3'}} >
@@ -30,7 +42,8 @@ class App extends Component {
                     <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Users" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/users') } } />
                     <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Comments" className="p-button-raised  p-text-bold" onClick = { () => {navigate('/admin/comments') } } />
                     <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Templates" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/templates') } } />
-                    </div>       
+                    <Button style = {{fontSize: '20px', textcolor:'red', marginLeft:'700px'}} label="Sign out" className="p-button-raised  p-text-bold" onClick = { () => {auth.signOut() } } />
+                    </div>
                 </span>
 
                     <Pages/>

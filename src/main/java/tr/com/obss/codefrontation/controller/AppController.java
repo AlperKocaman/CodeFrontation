@@ -98,6 +98,11 @@ public class AppController {
         return userService.updateUser(user);
     }
 
+    @PostMapping("/comments")
+    public CommentDTO addComment (@RequestBody CommentDTO commentDTO) throws Exception {
+        return commentService.addSubmissionComment(commentDTO);
+    }
+
    @GetMapping("/comments")
     public List<CommentDTO> getSubmissionCommentList() {
         List<CommentDTO> list =  commentService.getAllSubmissionComments();
@@ -109,10 +114,11 @@ public class AppController {
         return commentService.getCommentsByUsername(username);
     }
 
-    @GetMapping("/comments/{username}/{problemCode}")
-    public List<CommentDTO> getCommentListByUserNameAndProblemCode(
-            @PathVariable String username, @PathVariable String problemCode) {
-        return commentService.getCommentsByUsernameAndProblemCode(username, problemCode);
+
+    @GetMapping("/commentsBySubmissionId/{submissionId}")
+    public List<CommentDTO> getCommentListBySubmissionId(
+            @PathVariable UUID submissionId) {
+        return commentService.getCommentsBySubmissionId(submissionId);
     }
     
     /* End of controller methods for Users */

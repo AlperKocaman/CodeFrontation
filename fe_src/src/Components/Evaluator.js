@@ -19,6 +19,7 @@ import 'brace/theme/chrome';
 import 'brace/theme/tomorrow_night';
 import 'brace/theme/monokai';
 import CompilerService from "../service/CompilerService";
+import {auth, generateUserDocument} from "./Firebase";
 
 export class Evaluator extends Component {
    
@@ -53,11 +54,28 @@ export class Evaluator extends Component {
         this.state = {
             themeName:'dracula',
             modeName:'java',
-            consoleOutput:'output...'
+            consoleOutput:'output...',
+            authenticateUser: null,
+            token: ''
         };
 
         this.codeString='';
 
+    }
+
+    componentDidMount = async () => {
+        // if(this.props.uri!='/'){
+        //     window.location.assign('/');
+        // }
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    this.setState({'token': idToken });
+                });
+            }
+            this.setState({'authenticateUser': user});
+        });
     }
 
     onChange(newValue) {
@@ -86,6 +104,7 @@ export class Evaluator extends Component {
         let data = { "body": requestData, "language":lang, "assignmentId":assignmentId
           , "problemCode":problemCode, "username":username, "point": 0, "time": 0, "memory": 0};
 
+
         let fileName = username + "-" + problemCode;
         if(lang === this.languages.java){
             let codeStr = requestData;
@@ -102,14 +121,14 @@ export class Evaluator extends Component {
             "fileNames":[fileName] }
 
         var submissionId = "94798e71-11c2-4abd-bdaa-59c7e6172417";
-        this.compilerService.addSubmit(data).then(res => {
+        this.compilerService.addSubmit(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
             if(result){
-                this.compilerService.registerSonar(sonarRegistryData).then(res => {
+                this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
                     data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
                         ... data };
-                    this.compilerService.updateSubmissionWithSonarData(data, submissionId);
+                    this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token);
                 });
             }
             setTimeout(this.getSubmitResult, 3000, result.id);
@@ -118,7 +137,7 @@ export class Evaluator extends Component {
 
 
     getSubmitResult= (submissionId)  => {
-        this.compilerService.getSubmit(submissionId).then(res => {
+        this.compilerService.getSubmit(submissionId, this.state.token).then(res => {
             let testCaseList= res.data.testCaseList;
             let response="";
             if(testCaseList==undefined){
@@ -147,7 +166,7 @@ export class Evaluator extends Component {
         var data = { "body": requestData, "language":lang, "assignmentId":assignmentId
             , "problemCode":problemCode, "username":username };
 
-        this.compilerService.testRun(data).then(res => {
+        this.compilerService.testRun(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
             setTimeout(this.getTestRunResult, 3000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
@@ -155,7 +174,7 @@ export class Evaluator extends Component {
     };
 
     getTestRunResult = (submissionId)  => {
-        this.compilerService.getTestRun(submissionId).then(res => {
+        this.compilerService.getTestRun(submissionId, this.state.token).then(res => {
             let testRunCaseList= res.data.testRunCaseList;
             let response="";
             if(testRunCaseList==undefined){

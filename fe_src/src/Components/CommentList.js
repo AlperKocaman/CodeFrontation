@@ -16,6 +16,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './CommentList.css';
 import uuid from 'uuid-random';
+import {auth, generateUserDocument} from "./Firebase";
 
 export class CommentList extends Component {
 
@@ -40,7 +41,9 @@ export class CommentList extends Component {
       comments: [],
       commentDialog: false,
       comment: this.emptyComment,
-      globalFilter: null
+      globalFilter: null,
+      authenticateUser: null,
+      token: ''
     };
 
     this.commentService = new CommentService();
@@ -50,31 +53,40 @@ export class CommentList extends Component {
     this.onInputNumberChange = this.onInputNumberChange.bind(this);
   }
 
-  componentDidMount() {
-    debugger;
-    console.log(this.props.username)
-    if (this.props.username && !this.props.problemName) {
-      this.commentService.getComments(this.props.username).then(res => {
-        if (res.data  != null){
-          this.setState({ comment: res.data });
+  componentDidMount = async () => {
+    auth.onAuthStateChanged( userAuth => {
+      const user = generateUserDocument(userAuth);
+      if (userAuth) {
+        userAuth.getIdToken().then(idToken => {
+          this.setState({'token': idToken });
+          console.log(this.props.username)
+          if (this.props.username && !this.props.problemCode) {
+            this.commentService.getComments(this.props.username,idToken).then(res => {
+              if (res.data  != null){
+                this.setState({ comments: res.data });
+              }
+            });
+          }
+          else if (this.props.problemCode && this.props.username) {
+            this.commentService.getCommentsByUsernameAndProblemCode(this.props.username, this.props.problemCode,idToken).then(res => {
+              if (res.data  != null){
+                this.setState({ comments: res.data });
+              }
+
+            })
+          }
+          else {
+            this.commentService.getComments(idToken).then(res => {
+              if (res.data  != null){
+                this.setState({ comments: res.data });
+              }
+            });
+          }
+        });
       }
-      });
-    }
-    else if (this.props.problemName && this.props.username) {
-      this.commentService.getCommentsByUsernameAndProblemCode(this.props.username, this.props.problemCode).then(res => {
-        if (res.data  != null){
-          this.setState({ comment: res.data });
-      }
-        
-      })
-    }
-    else {
-      this.commentService.getComments().then(res => {
-        if (res.data  != null){
-          this.setState({ comment: res.data });
-      }
-      });
-    }
+      this.setState({'authenticateUser': user });
+    });
+
   }
 
   exportCSV() {
@@ -132,8 +144,9 @@ export class CommentList extends Component {
             header={header}>
 
             <Column field="username" header="User Name" sortable></Column>
+            <Column field="problemCode" header="Problem Code" sortable></Column>
             <Column field="problemName" header="Problem Name" sortable></Column>
-            <Column field="id" header="Submission ID" sortable></Column>
+            <Column field="submissionId" header="Submission ID" sortable></Column>
             <Column field="targetRole" header="Target Role"sortable></Column>
             <Column field="targetProject" header="Target Project"sortable></Column>
             <Column field="commenterUserName" header="Commenter" sortable></Column>

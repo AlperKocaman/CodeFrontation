@@ -1,6 +1,7 @@
 package tr.com.obss.codefrontation.service;
 
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
@@ -31,6 +32,10 @@ public class CommentService {
 
     public List<CommentDTO> getCommentsByUsername(String username) {
         return mapper.toCommentDTOList(repository.getAllCommentss(username));
+    }
+
+    public List<CommentDTO> getCommentsBySubmissionId(UUID submissionId) {
+        return mapper.toCommentDTOList(repository.getCommentsBySubmission_Id(submissionId));
     }
 
     public List<CommentDTO> getCommentsByUsernameAndProblemCode(String username, String problemCode) {

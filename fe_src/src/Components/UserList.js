@@ -4,7 +4,9 @@ import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
 import './indexTable.css';
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import './UserList.css';
+import {auth, generateUserDocument} from "./Firebase";
 import classNames from 'classnames';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -22,6 +24,7 @@ import AssignmentService from "../service/AssignmentService";
 import {MultiSelect} from "primereact/multiselect";
 import TemplateService from "../service/TemplateService";
 import ProblemService from "../service/ProblemService";
+
 
 export class UserList extends Component {
 
@@ -52,7 +55,9 @@ export class UserList extends Component {
             globalFilter: null,
             assignmentDialog: false,
             selectedProblem: [],
-            selectedTemplate: []
+            selectedTemplate: [],
+            authenticateUser: null,
+            token: ''
         };
 
 
@@ -90,23 +95,34 @@ export class UserList extends Component {
         this.assignProblem = this.assignProblem.bind(this);
     }
 
-    componentDidMount() {
-        this.userService.getUsers().then(res => {
-            this.setState({users: res.data});
+    componentDidMount = async () => {
+        auth.onAuthStateChanged( userAuth => {
+            const user =  generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken => {
+                    this.setState({'token': idToken });
+                    this.userService.getUsers(idToken).then(res => {
+                        this.setState({users: res.data});
+                    });
+
+                    this.userService.getRoles(idToken).then(res => {
+                        console.log(res);
+                        this.roleItems = res.data;
+                    });
+                    this.problemService.getProblems("", idToken).then(res=>{
+                        this.problems = res.data;
+                    });
+
+                    this.templateService.getTemplates(idToken).then(res=>{
+                        this.templates = res.data;
+                    });
+                });
+            }
+            this.setState({'authenticateUser': user });
         });
 
-        this.userService.getRoles().then(res => {
-            console.log(res);
-            this.roleItems = res.data;
-        });
 
-        this.problemService.getProblems("").then(res=>{
-            this.problems = res.data;
-        });
 
-        this.templateService.getTemplates().then(res=>{
-            this.templates = res.data;
-        });
 
 
     }
@@ -147,7 +163,7 @@ export class UserList extends Component {
             dataObj.targetRole = dataObj.roleName;
             delete dataObj.rolename;
             if (this.state.user.id) {
-                this.userService.updateUser(this.state.user).then(data => {
+                this.userService.updateUser(this.state.user,this.state.token).then(data => {
                     const index = this.findIndexById(this.state.user.id);
                     let state = { submitted: true };
                     let users = [...this.state.users];
@@ -166,7 +182,7 @@ export class UserList extends Component {
                 });
             }
             else {
-                this.userService.addUser(this.state.user).then(data => {
+                this.userService.addUser(this.state.user,this.state.token).then(data => {
                     let state = { submitted: true };
                     let users = [...this.state.users];
                     let user = {...this.state.user};
@@ -192,7 +208,7 @@ export class UserList extends Component {
     }
 
     deleteUser() {
-        this.userService.deleteUser(this.state.user).then(data => {
+        this.userService.deleteUser(this.state.user,this.state.token).then(data => {
             let users = this.state.users.filter(val => val.id !== this.state.user.id);
             this.setState({
                 users,
@@ -206,7 +222,7 @@ export class UserList extends Component {
     }
 
     deleteSelectedUsers() {
-        this.userService.deleteUsers(this.state.selectedUsers).then(data => {
+        this.userService.deleteUsers(this.state.selectedUsers,this.state.token).then(data => {
             let users = this.state.users.filter(val => !this.state.selectedUsers.includes(val));
             this.setState({
                 users,
@@ -279,7 +295,7 @@ export class UserList extends Component {
     }
 
     assignProblem(problem) {
-        this.assignmentService.assignTemplateAndProblem(this.state.user, problem).then(data => {
+        this.assignmentService.assignTemplateAndProblem(this.state.user, problem, this.state.token).then(data => {
         }).catch(error => {
             console.error('There was an error while assigning problems!', error);
         });

@@ -15,6 +15,7 @@ import './AddProblem.css';
 import uuid from 'uuid-random';
 import {MultiSelect} from "primereact/multiselect";
 import {InputTextarea} from "primereact/inputtextarea";
+import {auth, generateUserDocument} from "./Firebase";
 
 export class AddProblem extends Component {
 
@@ -85,7 +86,9 @@ export class AddProblem extends Component {
             selectedLanguages: null,
             selectedDifficulty: null,
             selectedCategory: null,
-            globalFilter: null
+            globalFilter: null,
+            authenticateUser: null,
+            token: ''
         };
 
         this.problemService = new ProblemService();
@@ -96,12 +99,22 @@ export class AddProblem extends Component {
         this.onInputNumberChange = this.onInputNumberChange.bind(this);
     }
 
-    componentDidMount() {
-        if(this.props.problemCode && this.state.problem.name.valueOf() === ""){
-            this.problemService.getProblem(this.props.problemCode).then(res => {
-                this.setState({problem: res.data});
-            });
-        }
+    componentDidMount = async () => {
+        auth.onAuthStateChanged(async userAuth => {
+            const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    this.setState({'token': idToken });
+                    if(this.props.problemCode && this.state.problem.name.valueOf() === ""){
+                        this.problemService.getProblem(this.props.problemCode, idToken).then(res => {
+                            this.setState({problem: res.data});
+                        });
+                    }
+                });
+            }
+            this.setState({'authenticateUser': user });
+        });
+
     }
 
     saveProblem() {
@@ -145,7 +158,7 @@ export class AddProblem extends Component {
             this.state.problem.category = this.state.problem.category.toString();
 
             if (this.state.problem.id) {
-                this.problemService.updateProblem(this.state.problem).then(data => {
+                this.problemService.updateProblem(this.state.problem, this.state.token).then(data => {
                     this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Updated', life: 3000 });
                     this.returnBackToProblemList();
                 }).catch(error => {
@@ -153,7 +166,7 @@ export class AddProblem extends Component {
                 });
             }
             else {
-                this.problemService.addProblem(this.state.problem).then(data => {
+                this.problemService.addProblem(this.state.problem, this.state.token).then(data => {
                     this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Created', life: 3000 });
                     this.returnBackToProblemList();
                 }).catch(error => {

@@ -1,18 +1,39 @@
-import React, { useContext, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { Link } from "@reach/router";
 import { auth, signInWithGoogle, generateUserDocument } from "./Firebase";
+import UserService from "../service/UserService";
 
 const SignUp = () => {
+  let userService = new UserService();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState(null);
+
+  //useEffect(() => {
+  //  // code to run on component mount
+  //}, [])
 
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();
     try{
       const {user} = await auth.createUserWithEmailAndPassword(email, password);
-      await generateUserDocument(user, {displayName});
+      let userInfo= await generateUserDocument(user, {firstname,lastname,username});
+      let req={
+        username: userInfo.username,
+        firstName: userInfo.firstname,
+        lastName: userInfo.lastname,
+        email: userInfo.email,
+        isAdmin: false,
+      }
+
+      userService.addUser(req).then(data => {
+        console.log("user signup success") ;
+      }).catch(error => {
+        console.error('There was an error!', error);
+      });
     }
     catch(error){
       setError('Error Signing up with email and password');
@@ -20,20 +41,26 @@ const SignUp = () => {
       
     setEmail("");
     setPassword("");
-    setDisplayName("");
+    setFirstname("");
+    setLastname("");
+    setUsername("");
   };
 
   const onChangeHandler = event => {
-    const { name, value } = event.currentTarget;
+    const {name, value} = event.currentTarget;
 
     if (name === "userEmail") {
       setEmail(value);
     } else if (name === "userPassword") {
       setPassword(value);
-    } else if (name === "displayName") {
-      setDisplayName(value);
+    } else if (name === "firstname") {
+      setFirstname(value);
+    } else if (name === "lastname") {
+      setLastname(value);
+    } else if (name === "username") {
+      setUsername(value);
     }
-  };
+  }
 
   return (
     <div className="mt-8">
@@ -45,17 +72,41 @@ const SignUp = () => {
           </div>
         )}
         <form className="">
-          <label htmlFor="displayName" className="block">
-            Display Name:
+          <label htmlFor="username" className="block">
+            Username:
+          </label>
+          <input
+              type="text"
+              className="my-1 p-1 w-full "
+              name="username"
+              value={username}
+              placeholder="E.g: testUser"
+              id="username"
+              onChange={event => onChangeHandler(event)}
+          />
+          <label htmlFor="firstname" className="block">
+            First Name:
           </label>
           <input
             type="text"
             className="my-1 p-1 w-full "
-            name="displayName"
-            value={displayName}
-            placeholder="E.g: test"
-            id="displayName"
+            name="firstname"
+            value={firstname}
+            placeholder="E.g: Ali"
+            id="firstname"
             onChange={event => onChangeHandler(event)}
+          />
+          <label htmlFor="lastname" className="block">
+            Last Name:
+          </label>
+          <input
+              type="text"
+              className="my-1 p-1 w-full "
+              name="lastname"
+              value={lastname}
+              placeholder="E.g: Dogan"
+              id="lastname"
+              onChange={event => onChangeHandler(event)}
           />
           <label htmlFor="userEmail" className="block">
             Email:
@@ -90,7 +141,7 @@ const SignUp = () => {
             Sign up
           </button>
         </form>
-        <p className="text-center my-3">or</p>
+        {/*<p className="text-center my-3">or</p>
         <button
           onClick={() => {
             try {
@@ -102,7 +153,7 @@ const SignUp = () => {
           className="bg-red-500 hover:bg-red-600 w-full py-2 text-white"
         >
           Sign In with Google
-        </button>
+        </button>*/}
         <p className="text-center my-3">
           Already have an account?{" "}
           <Link to="/" className="text-blue-500 hover:text-blue-600">

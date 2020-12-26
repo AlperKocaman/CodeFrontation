@@ -8,7 +8,7 @@ function Authentication() {
 
         <Router>
           <SignUp path="signUp" />
-          <SignIn path="/" />
+          <SignIn default path="/" />
           <PasswordReset path = "passwordReset" />
         </Router>
 

@@ -8,16 +8,20 @@ import React, { Component } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import SubmissionService from '../service/SubmissionService';
+import CommentService from '../service/CommentService';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { InputNumber } from 'primereact/inputnumber';
 import './SubmissionList.css';
 import uuid from 'uuid-random';
 import { Fieldset } from 'primereact/fieldset';
-
+import {auth, generateUserDocument} from "./Firebase";
+import classNames from 'classnames';
 
 export class SubmissionList extends Component {
 
@@ -32,7 +36,24 @@ export class SubmissionList extends Component {
     point: '',
     status: '',
     result: '',
-    sonarUrl: ''
+    sonarUrl: '',
+    comments: null
+  };
+
+  emptyComment = {
+    id: '',
+    submissionId: '',
+    commenterUserId: '',
+    username: '',
+    problemCode: '',
+    problemName: '',
+    targetRole: '',
+    targetProject: '',
+    commenterUserName: '',
+    comment: '',
+    rating: 0,
+    createdDate: '',
+    updatedDate: ''
   };
 
   constructor(props) {
@@ -48,30 +69,31 @@ export class SubmissionList extends Component {
       submitted: false,
       globalFilter: null,
       sonarDialog: false,
-      commentDialog: false,
-      comment: null,
+      showCommentDialog: false,
+      addCommentDialog: false,
+      comment: this.emptyComment,
+      comments: [],
       sonarComplexityResults: [],
       sonarDuplicationResults: [],
       sonarMaintainabilityResults: [],
       sonarReliabilityResults: [],
       sonarSecurityResults: [],
-      sonarSizeResults: []
+      sonarSizeResults: [],
+      authenticateUser: null,
+      token: ''
     };
 
     this.submissionService = new SubmissionService();
+    this.commentService = new CommentService();
     this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
-    this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
 
     this.linkable = this.linkable.bind(this);
-    this.openNew = this.openNew.bind(this);
-    this.hideDialog = this.hideDialog.bind(this);
     this.editSubmission = this.editSubmission.bind(this);
     this.confirmDeleteSubmission = this.confirmDeleteSubmission.bind(this);
     this.deleteSubmission = this.deleteSubmission.bind(this);
     this.exportCSV = this.exportCSV.bind(this);
     this.confirmDeleteSelected = this.confirmDeleteSelected.bind(this);
     this.deleteSelectedSubmissions = this.deleteSelectedSubmissions.bind(this);
-    this.onInputChange = this.onInputChange.bind(this);
     this.onInputNumberChange = this.onInputNumberChange.bind(this);
     this.hideDeleteSubmissionDialog = this.hideDeleteSubmissionDialog.bind(this);
     this.hideDeleteSubmissionsDialog = this.hideDeleteSubmissionsDialog.bind(this);
@@ -79,36 +101,58 @@ export class SubmissionList extends Component {
     this.hideSonarDialog = this.hideSonarDialog.bind(this);
   }
 
-  componentDidMount() {
-    if (this.props.username && !this.props.problemCode) {
-      this.submissionService.getSubmissions(this.props.username).then(res => {
-        this.setState({ submissions: res.data });
-      });
-    }
-    else if (this.props.problemCode && this.props.username) {
-      this.submissionService.getSubmissionsByUsernameAndProblemCode(this.props.username, this.props.problemCode).then(res => {
-        this.setState({ submissions: res.data });
-      })
-    }
-    else {
-      this.submissionService.getSubmissions('').then(res => {
-        this.setState({ submissions: res.data });
-      });
-    }
-  }
-
-  openNew() {
-    this.setState({
-      submission: this.emptySubmission,
-      submitted: false,
-      submissionDialog: true
+  componentDidMount = async () => {
+    auth.onAuthStateChanged(async userAuth => {
+      const user = await generateUserDocument(userAuth);
+      if (userAuth) {
+        userAuth.getIdToken().then(idToken =>  {
+          this.setState({'token': idToken });
+          if (this.props.username && !this.props.problemCode) {
+            this.submissionService.getSubmissions(this.props.username, idToken).then(res => {
+              this.setState({ submissions: res.data });
+            });
+          }
+          else if (this.props.problemCode && this.props.username) {
+            this.submissionService.getSubmissionsByUsernameAndProblemCode(this.props.username, this.props.problemCode, idToken).then(res => {
+              this.setState({ submissions: res.data });
+            })
+          }
+          else {
+            this.submissionService.getSubmissions('', idToken).then(res => {
+              this.setState({ submissions: res.data });
+            });
+          }
+        });
+      }
+      this.setState({'authenticateUser': user });
     });
+
   }
 
-  hideDialog() {
+  saveComment = () => {
+    if (this.state.comment.username.trim()) {
+      this.commentService.addComment(this.state.comment, this.state.token).then(data => {
+        let state = { submitted: true };
+        let comment = { ...this.state.comment };
+        comment.id = data.id;
+        state = {
+          ...state,
+          addCommentDialog: false,
+          comment: this.emptyComment
+        };
+        this.setState(state);
+        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Comment Created', life: 3000 });
+      }).catch(error => {
+        console.error('There was an error!', error);
+      });
+
+    }
+  }
+
+  hideFooterDialog = () => {
     this.setState({
       submitted: false,
-      submissionDialog: false
+      addCommentDialog: false
     });
   }
 
@@ -122,7 +166,7 @@ export class SubmissionList extends Component {
 
 
   deleteSubmission() {
-    this.submissionService.deleteSubmission(this.state.submission).then(data => {
+    this.submissionService.deleteSubmission(this.state.submission, this.state.token).then(data => {
       let submissions = this.state.submissions.filter(val => val.id !== this.state.submission.id);
       this.setState({
         submissions,
@@ -136,7 +180,7 @@ export class SubmissionList extends Component {
   }
 
   deleteSelectedSubmissions() {
-    this.submissionService.deleteSubmissions(this.state.selectedSubmissions).then(data => {
+    this.submissionService.deleteSubmissions(this.state.selectedSubmissions, this.state.token).then(data => {
       let submissions = this.state.submissions.filter(val => !this.state.selectedSubmissions.includes(val));
       this.setState({
         submissions,
@@ -163,18 +207,6 @@ export class SubmissionList extends Component {
     });
   }
 
-  findIndexById(id) {
-    let index = -1;
-    for (let i = 0; i < this.state.submissions.length; i++) {
-      if (this.state.submissions[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  }
-
   createId() {
     return uuid();
   }
@@ -187,20 +219,19 @@ export class SubmissionList extends Component {
     this.setState({ deleteSubmissionsDialog: true });
   }
 
-  onInputChange(e, name) {
+  onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || '';
-    let submission = { ...this.state.submission };
-    submission[`${name}`] = val;
-
-    this.setState({ submission });
+    let comment = { ...this.state.comment };
+    comment[`${name}`] = val;
+    this.setState({ comment });
   }
 
   onInputNumberChange(e, name) {
     const val = e.value || 0;
-    let submission = { ...this.state.submission };
-    submission[`${name}`] = val;
+    let comment = { ...this.state.comment };
+    comment[`${name}`] = val;
 
-    this.setState({ submission });
+    this.setState({ comment });
   }
 
   linkable(rowData) {
@@ -226,15 +257,6 @@ export class SubmissionList extends Component {
     )
   }
 
-  actionBodyTemplate(rowData) {
-    return (
-      <React.Fragment>
-        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => this.editSubmission(rowData)} />
-        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => this.confirmDeleteSubmission(rowData)} />
-      </React.Fragment>
-    );
-  }
-
   addSonarInspectButton(rowData) {
     return (
       <Button type="button" icon="pi pi-chart-bar" className="p-button-rounded p-button-text" onClick={() => this.openSonarDialog(rowData)} />
@@ -242,7 +264,7 @@ export class SubmissionList extends Component {
   }
 
   openSonarDialog(submission) {
-    this.submissionService.getSonarMetrics(submission).then(res =>
+    this.submissionService.getSonarMetrics(submission, this.state.token).then(res =>
       this.setState({
         submission: { ...submission },
         sonarComplexityResults: res[0].data.component.measures,
@@ -264,25 +286,52 @@ export class SubmissionList extends Component {
   }
 
   commentBodyTemplate = (rowData) => {
-    if (!rowData.comment) {
-      return (
-        <Button type="button" icon="pi pi-plus-circle" className="p-button-rounded p-button-success p-button-text" onClick={() => this.openCommentDialog(rowData.comment)} />
-      );
-    } else {
-      return (
-        <Button type="button" icon="pi pi-comment" className="p-button-rounded p-button-text" onClick={() => this.openCommentDialog(rowData.comment)} />
-      );
+    return (
+      <div>
+        <Button type="button" icon="pi pi-plus-circle" className="p-button-rounded p-button-success p-button-text" onClick={() => this.openAddCommentDialog(rowData)} />
+        <Button type="button" icon="pi pi-comment" className="p-button-rounded p-button-text" onClick={() => this.openShowCommentDialog(rowData)} />
+      </div>
+    );
+  }
+
+  openAddCommentDialog = (submission) => {
+
+    this.state.comment = {
+      submissionId: submission.id,
+      //FIXME: State user bilgisi ile degistir
+      commenterUserId: "c4ccbe05-ce6d-405e-901d-ed8a11f2fb96",
+      username: submission.username,
+      problemCode: submission.problemCode,
+      problemName: submission.name,
+      targetRole: 'Associate Consultant',
+      targetProject: 'IHTAR',
+      //FIXME: State user bilgisi ile degistir
+      commenterUserName: 'Some Reviwer',
+      createdDate: new Date(),
+      updatedDate: new Date()
     }
 
-  }
-
-  openCommentDialog = (comment) => {
-    this.setState({ commentDialog: true, comment: comment })
-  }
-
-  hideCommentDialog = () => {
     this.setState({
-      commentDialog: false
+      addCommentDialog: true
+    });
+  }
+
+  openShowCommentDialog = (submission) => {
+    this.commentService.getCommentsBySubmissionId(submission.id, this.state.token).then(res => {
+      this.setState(Object.assign({}, { showCommentDialog: true }, { comments: res.data }))
+    });
+  }
+
+  hideAddCommentDialog = () => {
+    this.setState({
+      addCommentDialog: false,
+      comment: this.emptyComment
+    });
+  }
+
+  hideShowCommentDialog = () => {
+    this.setState({
+      showCommentDialog: false
     });
   }
 
@@ -297,16 +346,10 @@ export class SubmissionList extends Component {
       </div>
     );
 
-    const deleteSubmissionDialogFooter = (
+    const commentDialogFooter = (
       <React.Fragment>
-        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteSubmissionDialog} />
-        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSubmission} />
-      </React.Fragment>
-    );
-    const deleteSubmissionsDialogFooter = (
-      <React.Fragment>
-        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteSubmissionsDialog} />
-        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSelectedSubmissions} />
+        <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={this.hideAddCommentDialog} />
+        <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={this.saveComment} />
       </React.Fragment>
     );
 
@@ -327,7 +370,6 @@ export class SubmissionList extends Component {
             <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
             <Column field="problemCode" header="Problem Code" sortable></Column>
             <Column field="name" header="Name" sortable></Column>
-
             <Column field="username" body={this.linkable} header="User" sortable></Column>
             <Column field="language" header="Language" sortable></Column>
             <Column field="time" header="Time" sortable></Column>
@@ -338,7 +380,6 @@ export class SubmissionList extends Component {
             <Column field={this.addSonarInspectButton} header="Sonar"></Column>
             <Column field="comment" header="Comment" body={this.commentBodyTemplate} ></Column>
 
-            <Column body={this.actionBodyTemplate}></Column>
           </DataTable>
         </div>
 
@@ -389,22 +430,34 @@ export class SubmissionList extends Component {
                         <a style={{ cursor: 'pointer', textDecoration: 'underline' }} href={this.state.submission.sonarUrl}> SonarQube page of this submission !</a></p>
         </Dialog>
 
-        <Dialog header="Comment" visible={this.state.commentDialog} maximizable modal style={{ width: '30vw' }} onHide={this.hideCommentDialog}>
-          <div>{ }</div>
+        <Dialog header="Comments" visible={this.state.showCommentDialog} maximizable modal style={{ width: '35vw' }} onHide={this.hideShowCommentDialog}>
+          {this.state.comments.map((a, index) => {
+            return (
+              <div className="card">
+                <Fieldset legend={`Comment: ${index+1}`} toggleable>
+                  <div style = {{fontWeight: 'bold'}}>{a.commenterUserName}</div>
+                  <div><span>Comment: </span>{a.comment}</div>
+                  <div><span>Rating: </span>{a.rating} / 10</div>
+                </Fieldset>
+              </div>
+
+            )
+          })}
         </Dialog>
-
-
-        <Dialog visible={this.state.deleteSubmissionDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSubmissionDialogFooter} onHide={this.hideDeleteSubmissionDialog}>
-          <div className="confirmation-content">
-            <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
-            {this.state.submission && <span>Are you sure you want to delete <b>{this.state.submission.id}</b>?</span>}
-          </div>
-        </Dialog>
-
-        <Dialog visible={this.state.deleteSubmissionsDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSubmissionsDialogFooter} onHide={this.hideDeleteSubmissionsDialog}>
-          <div className="confirmation-content">
-            <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
-            {this.state.submission && <span>Are you sure you want to delete the selected submissions?</span>}
+        <Dialog visible={this.state.addCommentDialog} style={{ width: '45vw' }} header="Add Comment" modal className="p-fluid" footer={commentDialogFooter} onHide={this.hideAddCommentDialog}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div className="p-field">
+              <label htmlFor="comment">Comment</label>
+              <InputTextarea id="comment" rows={4} cols={25} value={this.state.comment.comment} onChange={(e) => this.onInputChange(e, 'comment')} autoResize
+                required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.comment.comment })} />
+              {this.state.submitted && !this.state.comment.comment && <small className="p-invalid">Comment is required.</small>}
+            </div>
+            <div className="p-field">
+              <label htmlFor="rating">Rating</label>
+              <InputNumber id="minmax-rating" value={this.state.comment.rating} onValueChange={(e) => this.onInputChange(e, 'rating')} mode="decimal" showButtons min={0} max={10}
+                required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.comment.rating })} />
+              {this.state.submitted && !this.state.comment.rating && <small className="p-invalid">Rating is required.</small>}
+            </div>
           </div>
         </Dialog>
       </div>

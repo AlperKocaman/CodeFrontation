@@ -121,7 +121,9 @@ public class ProblemService {
 			}
 			input.append(line);
 		}
-		problemTestCaseDto.setInput(input.toString());
+		if(problemTestCaseDto != null){
+			problemTestCaseDto.setInput(input.toString());
+		}
 		scannerInput.close();
 
 		lineIndex = 0;
@@ -139,7 +141,9 @@ public class ProblemService {
 			}
 			output.append(line);
 		}
-		problemTestCaseDto.setOutput(output.toString());
+		if(problemTestCaseDto != null){
+			problemTestCaseDto.setOutput(output.toString());
+		}
 		scannerOutput.close();
 
 		lineIndex = 0;
@@ -157,7 +161,9 @@ public class ProblemService {
 			}
 			pointStrBuilder.append(line);
 		}
-		problemTestCaseDto.setPoint(Double.valueOf(pointStrBuilder.toString()));
+		if(problemTestCaseDto != null){
+			problemTestCaseDto.setPoint(Double.valueOf(pointStrBuilder.toString()));
+		}
 		scannerPoint.close();
 
 		problemEveluationDto.setName(problemDTO.getName());
