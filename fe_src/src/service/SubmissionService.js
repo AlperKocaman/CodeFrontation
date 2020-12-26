@@ -12,19 +12,22 @@ export default class SubmissionService {
     SIZE_METRICS = "comment_lines,comment_lines_density,ncloc,functions";
     LAST_URL_PARAMETER = "&component=";
 
-    async requestToServer(url = '', method = '', data = {}) {
+    async requestToServer(url = '',method='', data = {},token='') {
+        const config = {
+            headers: { Authorization: 'Bearer '+token }
+        };
         try {
-            if (method == 'POST') {
-                const response = await axios.post(url, data);
+            if (method=='POST'){
+                const response = await axios.post(url, data, config);
                 return response;
-            } else if (method == 'GET') {
-                const response = await axios.get(url);
+            }else if (method=='GET'){
+                const response = await axios.get(url, config);
                 return response;
-            } else if (method == 'PUT') {
-                const response = await axios.put(url, data);
+            }else if (method=='PUT'){
+                const response = await axios.put(url, data, config);
                 return response;
-            } else if (method == 'DELETE') {
-                const response = await axios.delete(url, data);
+            }else if (method=='DELETE'){
+                const response = await axios.delete(url, data, config);
                 return response;
             }
         } catch (error) {
@@ -32,52 +35,52 @@ export default class SubmissionService {
         }
     }
 
-    async getSubmissions(username) {
+    async getSubmissions(username, token) {
         const url = "http://localhost:8080/main/submissions/" + username;
         const method = 'GET';
-        const response = await this.requestToServer(url, method, {});
+        const response = await this.requestToServer(url, method, {}, token);
         return response;
     }
-    async getSubmissionsByUsernameAndProblemCode(username, problemCode) {
+    async getSubmissionsByUsernameAndProblemCode(username, problemCode, token) {
         const url = "http://localhost:8080/main/submissions/" + username + "/" + problemCode;
         const method = 'GET';
-        const response = await this.requestToServer(url, method, {});
+        const response = await this.requestToServer(url, method, {}, token);
         return response;
     }
 
-    async deleteSubmissions(submissions) {
+    async deleteSubmissions(submissions, token) {
         const url = "http://localhost:8080/main/submissions/delete-submissions";
         const method = 'POST';
-        const response = await this.requestToServer(url, method, submissions);
+        const response = await this.requestToServer(url, method, submissions, token);
         return response;
     }
 
-    async deleteSubmission(submission) {
+    async deleteSubmission(submission, token) {
         const url = "http://localhost:8080/main/submissions/" + submission.id;
         const method = 'DELETE';
-        const response = await this.requestToServer(url, method, {});
+        const response = await this.requestToServer(url, method, {}, token);
         return response;
     }
 
-    async addSubmission(submission) {
+    async addSubmission(submission, token) {
         const url = "http://localhost:8080/main/submission";
         const method = 'POST';
-        const response = await this.requestToServer(url, method, submission);
+        const response = await this.requestToServer(url, method, submission, token);
         return response;
     }
 
-    async updateSubmission(submission) {
+    async updateSubmission(submission, token) {
         const url = "http://localhost:8080/main/submissions/" + submission.id;
         const method = 'PUT';
-        const response = await this.requestToServer(url, method, submission);
+        const response = await this.requestToServer(url, method, submission, token);
         return response;
     }
 
-    extractSonarKeyFromUrl(sonarUrl) {
+    extractSonarKeyFromUrl(sonarUrl, token) {
         return sonarUrl.substring(35);
     }
 
-    async getSonarMetrics(submission) {
+    async getSonarMetrics(submission, token) {
         let response = [];
         const complexityMetricsUrl = this.BACKEND_BASE_URL + this.FIRST_URL_PARAMETER + this.COMPLEXITY_METRICS + this.LAST_URL_PARAMETER +
             this.extractSonarKeyFromUrl(submission.sonarUrl);
@@ -93,12 +96,12 @@ export default class SubmissionService {
             this.extractSonarKeyFromUrl(submission.sonarUrl);
         const method = 'GET';
 
-        response.push(await this.requestToServer(complexityMetricsUrl, method, submission));
-        response.push(await this.requestToServer(duplicationMetricsUrl, method, submission));
-        response.push(await this.requestToServer(maintainabilityMetricsUrl, method, submission));
-        response.push(await this.requestToServer(reliabilityMetricsUrl, method, submission));
-        response.push(await this.requestToServer(securityMetricsUrl, method, submission));
-        response.push(await this.requestToServer(sizeMetricsUrl, method, submission));
+        response.push(await this.requestToServer(complexityMetricsUrl, method, submission, token));
+        response.push(await this.requestToServer(duplicationMetricsUrl, method, submission, token));
+        response.push(await this.requestToServer(maintainabilityMetricsUrl, method, submission, token));
+        response.push(await this.requestToServer(reliabilityMetricsUrl, method, submission, token));
+        response.push(await this.requestToServer(securityMetricsUrl, method, submission, token));
+        response.push(await this.requestToServer(sizeMetricsUrl, method, submission, token));
         return response;
     }
 

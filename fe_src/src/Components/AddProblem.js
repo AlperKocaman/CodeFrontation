@@ -87,7 +87,8 @@ export class AddProblem extends Component {
             selectedDifficulty: null,
             selectedCategory: null,
             globalFilter: null,
-            authenticateUser: null
+            authenticateUser: null,
+            token: ''
         };
 
         this.problemService = new ProblemService();
@@ -101,13 +102,19 @@ export class AddProblem extends Component {
     componentDidMount = async () => {
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    this.setState({'token': idToken });
+                    if(this.props.problemCode && this.state.problem.name.valueOf() === ""){
+                        this.problemService.getProblem(this.props.problemCode, idToken).then(res => {
+                            this.setState({problem: res.data});
+                        });
+                    }
+                });
+            }
             this.setState({'authenticateUser': user });
         });
-        if(this.props.problemCode && this.state.problem.name.valueOf() === ""){
-            this.problemService.getProblem(this.props.problemCode).then(res => {
-                this.setState({problem: res.data});
-            });
-        }
+
     }
 
     saveProblem() {
@@ -151,7 +158,7 @@ export class AddProblem extends Component {
             this.state.problem.category = this.state.problem.category.toString();
 
             if (this.state.problem.id) {
-                this.problemService.updateProblem(this.state.problem).then(data => {
+                this.problemService.updateProblem(this.state.problem, this.state.token).then(data => {
                     this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Updated', life: 3000 });
                     this.returnBackToProblemList();
                 }).catch(error => {
@@ -159,7 +166,7 @@ export class AddProblem extends Component {
                 });
             }
             else {
-                this.problemService.addProblem(this.state.problem).then(data => {
+                this.problemService.addProblem(this.state.problem, this.state.token).then(data => {
                     this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Created', life: 3000 });
                     this.returnBackToProblemList();
                 }).catch(error => {

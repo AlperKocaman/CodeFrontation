@@ -48,6 +48,7 @@ export class UserList extends Component {
             submitted: false,
             globalFilter: null,
             authenticateUser: null,
+            token: '',
             hasInvalidInput: true
         };
 
@@ -76,19 +77,23 @@ export class UserList extends Component {
     }
 
     componentDidMount = async () => {
-        auth.onAuthStateChanged(async userAuth => {
-            const user = await generateUserDocument(userAuth);
-            this.setState({ 'authenticateUser': user });
-        });
-        this.userService.getUsers().then(res => {
-            this.setState({ users: res.data });
-        });
+        auth.onAuthStateChanged( userAuth => {
+            const user =  generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken => {
+                    this.setState({'token': idToken });
+                    this.userService.getUsers(idToken).then(res => {
+                        this.setState({users: res.data});
+                    });
 
-        this.userService.getRoles().then(res => {
-            console.log(res);
-            this.roleItems = res.data;
+                    this.userService.getRoles(idToken).then(res => {
+                        console.log(res);
+                        this.roleItems = res.data;
+                    });
+                });
+            }
+            this.setState({'authenticateUser': user });
         });
-
 
     }
 
@@ -117,40 +122,39 @@ export class UserList extends Component {
 
     saveUser() {
         this.setState({ submitted: true });
-         if (!this.state.hasInvalidInput) {
-            if (this.state.user.username.trim()) {
-                let dataObj = this.state.user;
-                dataObj.targetRole = dataObj.roleName;
-                delete dataObj.rolename;
-                this.state.user = dataObj;
-                if (this.state.user.id) {
-                    this.userService.updateUser(this.state.user).then(data => {
-                        const index = this.findIndexById(this.state.user.id);
-                        let state = { submitted: true };
-                        let users = [...this.state.users];
-                        let user = { ...this.state.user };
-                        users[index] = user;
-
-                        state = {
-                            ...state,
-                            users,
-                            userDialog: false,
-                            user: this.emptyUser,
-                            hasInvalidInput: false
-                        };
-                        this.setState(state);
-                        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
-                    }).catch(error => {
-                        console.error('There was an error!', error);
-                    });
-                }
-                else {
-                    this.userService.addUser(this.state.user).then(data => {
-                        let state = { submitted: true };
-                        let users = [...this.state.users];
-                        let user = { ...this.state.user };
-                        user.id = data.data.id;
-                        users.push(user);
+        if (!this.state.hasInvalidInput) {
+        if (this.state.user.username.trim()) {
+            let dataObj = this.state.user;
+            dataObj.targetRole = dataObj.roleName;
+            delete dataObj.rolename;
+            this.state.user = dataObj;
+            if (this.state.user.id) {
+                this.userService.updateUser(this.state.user,this.state.token).then(data => {
+                    const index = this.findIndexById(this.state.user.id);
+                    let state = { submitted: true };
+                    let users = [...this.state.users];
+                    let user = {...this.state.user};
+                    users[index] = user;
+                    state = {
+                        ...state,
+                        users,
+                        userDialog: false,
+                        user: this.emptyUser,
+                        hasInvalidInput: false
+                    };
+                    this.setState(state);
+                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
+                }).catch(error => {
+                    console.error('There was an error!', error);
+                });
+            }
+            else {
+                this.userService.addUser(this.state.user,this.state.token).then(data => {
+                    let state = { submitted: true };
+                    let users = [...this.state.users];
+                    let user = {...this.state.user};
+                    user.id = data.data.id;
+                    users.push(user);
 
                         state = {
                             ...state,
@@ -171,10 +175,11 @@ export class UserList extends Component {
             this.toast.show({ severity: 'error', summary: 'Error', detail: 'Invalid input values', sticky: true });
         }
 
+
     }
 
     deleteUser() {
-        this.userService.deleteUser(this.state.user).then(data => {
+        this.userService.deleteUser(this.state.user,this.state.token).then(data => {
             let users = this.state.users.filter(val => val.id !== this.state.user.id);
             this.setState({
                 users,
@@ -188,7 +193,7 @@ export class UserList extends Component {
     }
 
     deleteSelectedUsers() {
-        this.userService.deleteUsers(this.state.selectedUsers).then(data => {
+        this.userService.deleteUsers(this.state.selectedUsers,this.state.token).then(data => {
             let users = this.state.users.filter(val => !this.state.selectedUsers.includes(val));
             this.setState({
                 users,
@@ -241,7 +246,7 @@ export class UserList extends Component {
 
     onInputChange(e, name) {
         const val = (e.target && e.target.value) || '';
-        let user = { ...this.state.user };
+        let user = {...this.state.user};
         user[`${name}`] = val;
         if (val === '' || val === null || val === undefined || val === NaN) {
             this.setState({ hasInvalidInput: true })
@@ -251,7 +256,7 @@ export class UserList extends Component {
         this.setState({ user });
     }
 
-  
+
     leftToolbarTemplate() {
         return (
             <React.Fragment>
@@ -285,7 +290,7 @@ export class UserList extends Component {
     };
 
     onRoleChange(e) {
-        let user = { ...this.state.user };
+        let user = {...this.state.user};
         user[`targetRole`] = e.value;
         user[`roleName`] = e.value ? e.value.name : '';
         this.setState({ user });

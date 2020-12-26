@@ -55,7 +55,8 @@ export class ProblemList extends Component {
             selectedProblems: null,
             submitted: false,
             globalFilter: null,
-            authenticateUser: null
+            authenticateUser: null,
+            token: ''
         };
 
 
@@ -84,12 +85,18 @@ export class ProblemList extends Component {
     componentDidMount = async () => {
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    this.setState({'token': idToken });
+                    this.problemService.getProblems(this.props.username ? this.props.username : '',idToken).then(res => {
+                        this.setState({problems: res.data});
+                    });
+                });
+            }
             this.setState({'authenticateUser': user });
         });
 
-        this.problemService.getProblems(this.props.username ? this.props.username : '').then(res => {
-            this.setState({problems: res.data});
-        });
+
     }
 
     openNew() {
@@ -106,7 +113,7 @@ export class ProblemList extends Component {
     }
 
     deleteProblem() {
-        this.problemService.deleteProblem(this.state.problem).then(data => {
+        this.problemService.deleteProblem(this.state.problem, this.state.token).then(data => {
             let problems = this.state.problems.filter(val => val.id !== this.state.problem.id);
             this.setState({
                 problems,
@@ -120,7 +127,7 @@ export class ProblemList extends Component {
     }
 
     deleteSelectedProblems() {
-        this.problemService.deleteProblems(this.state.selectedProblems).then(data => {
+        this.problemService.deleteProblems(this.state.selectedProblems, this.state.token).then(data => {
             let problems = this.state.problems.filter(val => !this.state.selectedProblems.includes(val));
             this.setState({
                 problems,

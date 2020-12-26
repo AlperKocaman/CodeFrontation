@@ -16,8 +16,14 @@ class App extends Component {
     }
 
     componentDidMount = async () => {   //FIXME : auth methodu constructor'a taşınabilir
-        auth.onAuthStateChanged(async userAuth => {
+        auth.onAuthStateChanged(async  userAuth =>  {
             const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    console.log("idTokennnnn: "+idToken);
+                });
+            }
+
             const checkUser = true;
             this.setState({ user, checkUser });
         });

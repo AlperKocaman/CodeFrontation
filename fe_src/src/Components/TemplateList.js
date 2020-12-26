@@ -53,7 +53,8 @@ export class TemplateList extends Component {
             submitted: false,
             globalFilter: null,
             templatesForDatatable:[],
-            authenticateUser: null
+            authenticateUser: null,
+            token: ''
         };
 
         this.roleItems = [];
@@ -87,30 +88,36 @@ export class TemplateList extends Component {
     componentDidMount = async () => {
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    this.setState({'token': idToken });
+                    this.templateService.getTemplates(idToken).then(res => {
+                        let temp = res.data;
+                        temp.forEach((item,i)=>{
+                            item.roleName=item.role?item.role.name:'';
+                            item.problemNames=item.templateProblems?item.templateProblems.map((ee)=>ee.name):[];
+                        });
+                        this.setState({templates:temp});
+                    });
+
+                    this.templateService.getRoles(idToken).then(res => {
+                        console.log(res);
+                        this.roleItems = res.data;
+                    });
+
+                    this.userService.getUsers(idToken).then(res => {
+                        console.log(res);
+                        this.userItems = res.data;
+                    });
+
+                    this.problemService.getProblems('',idToken).then(res=>{
+                        this.problems = res.data;
+                    });
+                });
+            }
             this.setState({'authenticateUser': user });
         });
-        this.templateService.getTemplates().then(res => {
-            let temp = res.data;
-            temp.forEach((item,i)=>{
-                item.roleName=item.role?item.role.name:'';
-                item.problemNames=item.templateProblems?item.templateProblems.map((ee)=>ee.name):[];
-            });
-            this.setState({templates:temp});
-        });
-        
-        this.templateService.getRoles().then(res => {
-            console.log(res);
-            this.roleItems = res.data;
-        });
 
-        this.userService.getUsers().then(res => {
-            console.log(res);
-            this.userItems = res.data;
-        });
-
-        this.problemService.getProblems('').then(res=>{
-            this.problems = res.data;
-        });
 
     }
 
@@ -141,7 +148,7 @@ export class TemplateList extends Component {
         if (this.state.template.name.trim()) {
 
             if (this.state.template.id) {
-                this.templateService.updateTemplate(this.state.template).then(data => {
+                this.templateService.updateTemplate(this.state.template, this.state.token).then(data => {
                     const index = this.findIndexById(this.state.template.id);
                     let state = { submitted: true };
                     let templates = [...this.state.templates];
@@ -160,7 +167,7 @@ export class TemplateList extends Component {
                 });
             }
             else {
-                this.templateService.addTemplate(this.state.template).then(data => {
+                this.templateService.addTemplate(this.state.template, this.state.token).then(data => {
                     let state = { submitted: true };
                     let templates = [...this.state.templates];
                     let template = {...this.state.template};
@@ -186,7 +193,7 @@ export class TemplateList extends Component {
     }
 
     deleteTemplate() {
-        this.templateService.deleteTemplate(this.state.template).then(data => {
+        this.templateService.deleteTemplate(this.state.template,  this.state.token).then(data => {
             let templates = this.state.templates.filter(val => val.id !== this.state.template.id);
             this.setState({
                 templates,
@@ -200,7 +207,7 @@ export class TemplateList extends Component {
     }
 
     deleteSelectedTemplates() {
-        this.templateService.deleteTemplates(this.state.selectedTemplates).then(data => {
+        this.templateService.deleteTemplates(this.state.selectedTemplates,  this.state.token).then(data => {
             let templates = this.state.templates.filter(val => !this.state.selectedTemplates.includes(val));
             this.setState({
                 templates,

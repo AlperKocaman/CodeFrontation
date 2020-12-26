@@ -54,11 +54,17 @@ export class Problem extends Component {
     componentDidMount = async () => {
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
+            if (userAuth) {
+                userAuth.getIdToken().then(idToken =>  {
+                    this.setState({'token': idToken });
+                    this.problemService.getProblem(this.props.problemCode ? this.props.problemCode : '', idToken).then(res => {
+                        this.setState({problem: res.data});
+                    });
+                });
+            }
             this.setState({'authenticateUser': user });
         });
-        this.problemService.getProblem(this.props.problemCode ? this.props.problemCode : '').then(res => {
-            this.setState({problem: res.data});
-        });
+
     }
 
 
