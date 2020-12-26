@@ -6,7 +6,7 @@ spring:
   application:
     name: CodeFrontation
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://db:5432/postgres
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -64,25 +64,25 @@ security:
     - /favicon.ico
     - /session/login
     - /public/*
-    #- /main/*
-    #- /main/users/*
-    #- /main/problems/problemKey/*
-    #- /problems/addProblem/*
-    #- /main/problems/*
-    #- /main/problems/username/*
-    #- /main/templates/*
-    #- /main/submissions/*
-    #- /main/submissions/username/*
-    #- /main/comments/*
-    #- /main/comments/username/*
-    #- /main/commentsBySubmissionId/*
-    #- /main
-    #- /judge
-    #- /judge/*
-    #- /judge/submit/*
-    #- /judge/testRun/*
-    #- /registerSonar
-    #- /getSonarMetrics/*
+    - /main/*
+    - /main/users/*
+    - /main/problems/problemKey/*
+    - /problems/addProblem/*
+    - /main/problems/*
+    - /main/problems/username/*
+    - /main/templates/*
+    - /main/submissions/*
+    - /main/submissions/username/*
+    - /main/comments/*
+    - /main/comments/username/*
+    - /main/commentsBySubmissionId/*
+    - /main
+    - /judge
+    - /judge/*
+    - /judge/submit/*
+    - /judge/testRun/*
+    - /registerSonar
+    - /getSonarMetrics/*
   exposed-headers:
     - X-Xsrf-Token
 

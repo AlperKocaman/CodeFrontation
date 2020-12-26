@@ -1,0 +1,9 @@
+FROM python:3.7
+WORKDIR /judge
+COPY ./python_src/judge-server /judge
+RUN pip install --upgrade pip
+RUN pip install dmoj
+RUN pip install -e .
+#RUN pip3 install -r requirements.txt
+ENV PORT 8080
+ENTRYPOINT ["python","main.py"]
