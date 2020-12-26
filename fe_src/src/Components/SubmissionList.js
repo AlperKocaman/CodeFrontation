@@ -100,6 +100,7 @@ export class SubmissionList extends Component {
     this.hideDeleteSubmissionDialog = this.hideDeleteSubmissionDialog.bind(this);
     this.hideDeleteSubmissionsDialog = this.hideDeleteSubmissionsDialog.bind(this);
     this.addSonarInspectButton = this.addSonarInspectButton.bind(this);
+    this.addRedirectToUserSubmissions = this.addRedirectToUserSubmissions.bind(this);
     this.hideSonarDialog = this.hideSonarDialog.bind(this);
   }
 
@@ -266,7 +267,24 @@ export class SubmissionList extends Component {
     );
   }
 
-  openSonarDialog(submission) {
+  addRedirectToUserSubmissions(rowData) {
+    if (!this.props.username) {
+      return(
+          <Button type="button" icon="pi pi-user-plus" className="p-button-rounded p-button-text" onClick={() => this.onClickUserSubmissions(rowData)} />
+       );
+    }
+  }
+
+  onClickUserSubmissions (rowData) {
+    window.location.assign('/admin/submissions/' + rowData.username);
+  }
+
+  onClickUserComments  (rowData) {
+    window.location.assign('/admin/comments/' + rowData.username);
+  }
+
+
+        openSonarDialog(submission) {
     this.submissionService.getSonarMetrics(submission, this.state.token).then(res =>
       this.setState({
         submission: { ...submission },
@@ -293,6 +311,7 @@ export class SubmissionList extends Component {
       <div>
         <Button type="button" icon="pi pi-plus-circle" className="p-button-rounded p-button-success p-button-text" onClick={() => this.openAddCommentDialog(rowData)} />
         <Button type="button" icon="pi pi-comment" className="p-button-rounded p-button-text" onClick={() => this.openShowCommentDialog(rowData)} />
+        <Button type="button" icon="pi pi-tags" className="p-button-rounded p-button-text" onClick={() => this.onClickUserComments(rowData)} />
       </div>
     );
   }
@@ -383,6 +402,7 @@ export class SubmissionList extends Component {
             <Column field="status" header="Status" sortable></Column>
             <Column field="result" header="Result" sortable></Column>
             <Column field={this.addSonarInspectButton} header="Sonar"></Column>
+            <Column field={this.addRedirectToUserSubmissions} header="User's Submissions"></Column>
             <Column field="comment" header="Comment" body={this.commentBodyTemplate} ></Column>
 
           </DataTable>

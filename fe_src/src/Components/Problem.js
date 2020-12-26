@@ -106,7 +106,6 @@ export class Problem extends Component {
     }
 
     render() {
-
         return (
             <div id="content" className="content">
                 <pre>
@@ -162,9 +161,14 @@ export class Problem extends Component {
                         <p>{this.state.problem.explanation}</p>
                     </div>
                 </pre>
-                <div className="evaluator">
-                    <Evaluator/>
-                </div>
+                { this.state.problem.code &&
+                    <div className="evaluator">
+                        <Evaluator
+                            problemCode={this.state.problem.code}
+                        />
+                    </div>
+                }
+                
             </div>
         )
     }

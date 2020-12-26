@@ -12,10 +12,19 @@ public class SonarConstants {
 	public static final String METRICS_REQUEST = "measures/component?metricKeys=" +
 			"complexity,cognitive_complexity," + // complexity metrics
 			"duplicated_blocks,duplicated_files,duplicated_lines,duplicated_lines_density," + // duplication metrics
-			"code_smells,sqale_index," + // maintainability metrics
+			"code_smells,sqale_rating," + // maintainability metrics
 			"bugs,reliability_rating,reliability_remediation_effort," + // reliability metrics
 			"vulnerabilities,security_rating,security_remediation_effort,security_hotspots,security_review_rating," + // security metrics
 			"comment_lines,comment_lines_density,ncloc,functions" + // size metrics
+			"&component=";
+
+	public static final String METRICS_USED_IN_POINT_CALCULATION_REQUEST = "measures/component?metricKeys=" +
+			"complexity,cognitive_complexity," + // complexity metrics
+			"duplicated_lines_density," + // duplication metrics
+			"sqale_rating," + // maintainability metrics
+			"reliability_rating," + // reliability metrics
+			"security_rating," + // security metrics
+			"comment_lines" + // size metrics
 			"&component=";
 
 	public static final String ISSUES_REQUEST = "issues/search?facets=types&componentKeys=";

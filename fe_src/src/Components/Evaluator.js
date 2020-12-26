@@ -20,6 +20,7 @@ import 'brace/theme/tomorrow_night';
 import 'brace/theme/monokai';
 import CompilerService from "../service/CompilerService";
 import {auth, generateUserDocument} from "./Firebase";
+import AssignmentService from '../service/AssignmentService';
 
 export class Evaluator extends Component {
    
@@ -39,6 +40,7 @@ export class Evaluator extends Component {
         this.getSubmitResult = this.getSubmitResult.bind(this);
 
         this.compilerService = new CompilerService();
+        this.assignmentService = new AssignmentService();
 
         //react type language enum
         this.languages={
@@ -56,7 +58,8 @@ export class Evaluator extends Component {
             modeName:'java',
             consoleOutput:'output...',
             authenticateUser: null,
-            token: ''
+            token: '',
+            problemCode:''
         };
 
         this.codeString='';
@@ -64,9 +67,10 @@ export class Evaluator extends Component {
     }
 
     componentDidMount = async () => {
-        if(this.props.uri!='/'){
-            window.location.assign('/');
-        }
+        // if(this.props.uri!='/'){
+        //     window.location.assign('/');
+        // }
+        this.setState({problemCode:this.props.problemCode});
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
             if (userAuth) {
@@ -92,21 +96,47 @@ export class Evaluator extends Component {
     };
 
     submitCode = () => {
-        const assignmentId="2331b35b-0778-4810-b7ad-828527d74def";
-        const problemCode="aplusb";
-        const username="mduzgun";     //FIXME dinamikleştir
-        this.sendCode("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        const username=this.state.authenticateUser.username;     //FIXME dinamikleştir
+        const problemCode=this.state.problemCode;
 
+        this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,this.state.token).then(res => {
+            const assignmentId=res.data.id;
+            this.sendCode("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        });
     }
 
     sendCode = (requestData,lang,assignmentId,problemCode,username) => {
 
         let data = { "body": requestData, "language":lang, "assignmentId":assignmentId
-          , "problemCode":problemCode, "username":username };
+          , "problemCode":problemCode, "username":username, "point": 0, "time": 0, "memory": 0};
 
+
+        let fileName = username + "-" + problemCode;
+        if(lang === this.languages.java){
+            let codeStr = requestData;
+            let classStrIndex = codeStr.indexOf("class");
+            let whiteSpaceStrIndex = codeStr.indexOf(" ", classStrIndex+6);
+            fileName = codeStr.substring(classStrIndex+6,whiteSpaceStrIndex);
+        }
+
+        let sonarRegistryData = {
+            "id": username + "-" + problemCode,
+            "programmingLanguage":lang,
+            "numberOfSubmittedFile":1,
+            "codes":[requestData],
+            "fileNames":[fileName] }
+
+        var submissionId = "94798e71-11c2-4abd-bdaa-59c7e6172417";
         this.compilerService.addSubmit(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
+            if(result){
+                this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
+                    data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
+                        ... data };
+                    this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token);
+                });
+            }
             setTimeout(this.getSubmitResult, 3000, result.id);
         });
     }
@@ -131,10 +161,12 @@ export class Evaluator extends Component {
     }
 
     testCode = () => {
-        const assignmentId="2331b35b-0778-4810-b7ad-828527d74def";
-        const problemCode="aplusb";
-        const username="mduzgun";     //FIXME dinamikleştir
-        this.sendCodeForRun("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        const username=this.state.authenticateUser.username;     //FIXME dinamikleştir
+        const problemCode=this.state.problemCode;
+        this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,this.state.token).then(res => {
+            const assignmentId=res.data.id;
+            this.sendCodeForRun("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
+        });
     }
 
     sendCodeForRun = (requestData,lang,assignmentId,problemCode,username) => {
@@ -145,7 +177,7 @@ export class Evaluator extends Component {
         this.compilerService.testRun(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
-            setTimeout(this.getTestRunResult, 3000, result.id);
+            setTimeout(this.getTestRunResult, 3000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
         });
     };
 

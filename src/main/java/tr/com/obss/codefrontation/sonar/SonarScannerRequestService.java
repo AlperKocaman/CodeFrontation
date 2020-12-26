@@ -5,8 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.stereotype.Service;
+import tr.com.obss.codefrontation.service.SubmissionService;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -14,7 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Service
 public class SonarScannerRequestService {
+
+	SubmissionService submissionService;
 
 	// if we need to map Json responses to POJO object,  we need this object mapper(currently we don't need it).
 	// private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -99,6 +105,14 @@ public class SonarScannerRequestService {
 		return sendRequestAndGetResponse(request);
 	}
 
+	private static JSONObject getMetricsUsedByPointCalculation(String id){
+		Request request = new Request.Builder()
+				.url(SonarConstants.BACKEND_BASE_URL + SonarConstants.METRICS_USED_IN_POINT_CALCULATION_REQUEST + id)
+				.method("GET", null)
+				.build();
+		return sendRequestAndGetResponse(request);
+	}
+
 	/**
 	 * This method will get the results about:
 	 * 		How many bugs/code smell/vulnerability does the project have and where are them?
@@ -140,5 +154,57 @@ public class SonarScannerRequestService {
 		jsonResponses.add(getMetrics(id));
 		jsonResponses.add(getIssues(id));
 		return jsonResponses;
+	}
+
+	public static double calculateSonarPointBySubmission(String id) throws JSONException {
+		double sonarPoints = 0;
+		double value = 0;
+		JSONObject metrics = getMetricsUsedByPointCalculation(id);
+		JSONArray metricsArray = metrics.getJSONObject("component").getJSONArray("measures");
+		for(int i=0; i<metricsArray.length() ; i++) {
+			value = metricsArray.getJSONObject(i).getDouble("value");
+			switch (metricsArray.getJSONObject(i).getString("metric")){
+				case "complexity":
+					if(value<15){
+						sonarPoints += 5;
+					} else if(value > 99) {
+					} else {
+						sonarPoints += (100-(1.0/0.85)*(value-15))*0.05;
+					}
+					break;
+				case "cognitive_complexity":
+					if(value<15){
+						sonarPoints += 5;
+					} else if(value > 99) {
+					} else {
+						sonarPoints += (100-(1.0/0.85)*(value-15))*0.05;
+					}
+					break;
+				case "duplicated_lines_density":
+					if(value>15){
+						sonarPoints += 0;
+					} else {
+						sonarPoints += 5.0-value*(1.0/3.0);
+					}
+					break;
+				case "sqale_rating":
+					sonarPoints += 7.2-1.2*value;
+					break;
+				case "reliability_rating":
+					sonarPoints += 8.4-1.4*value;
+					break;
+				case "security_rating":
+					sonarPoints += 1.25-0.25*value;
+					break;
+				case "comment_lines":
+					if(value > 0){
+						sonarPoints += 1;
+					}
+					break;
+				default:
+					sonarPoints +=0;
+			}
+		}
+		return sonarPoints;
 	}
 }

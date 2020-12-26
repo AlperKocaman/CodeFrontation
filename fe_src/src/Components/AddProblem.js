@@ -34,7 +34,7 @@ export class AddProblem extends Component {
         sampleInputs:'',
         sampleOutputs:'',
         explanation:'',
-        point: 0,
+        point: '',
         description: '',
         timeLimit: 0,
         memoryLimit: 0,
@@ -290,7 +290,7 @@ export class AddProblem extends Component {
                             <br/>
                             <label htmlFor="timeLimit" className="p-d-block">Time Limit</label>
                             <InputText id="timeLimit" value={this.state.problem.timeLimit} aria-describedby="time-help" onChange={(e) => this.onInputChange(e, 'timeLimit')} required autoFocus />
-                            <small id="time-help" className="p-d-block">Time limit of the problem in minutes</small>
+                            <small id="time-help" className="p-d-block">Time limit of the problem in seconds.</small>
                             {this.state.submitted && !this.state.problem.timeLimit && <small className="p-invalid">Problem time limit is required.</small>}
                             <br/>
                         </div>
@@ -298,7 +298,7 @@ export class AddProblem extends Component {
                             <br/>
                             <label htmlFor="memoryLimit" className="p-d-block">Memory Limit</label>
                             <InputText id="memoryLimit" value={this.state.problem.memoryLimit} aria-describedby="memory-help" onChange={(e) => this.onInputChange(e, 'memoryLimit')} required autoFocus />
-                            <small id="memory-help" className="p-d-block">Memory limit of the problem in megabytes</small>
+                            <small id="memory-help" className="p-d-block">Memory limit of the problem in megabytes.</small>
                             {this.state.submitted && !this.state.problem.memoryLimit && <small className="p-invalid">Problem memory limit is required.</small>}
                             <br/>
                         </div>
@@ -351,6 +351,11 @@ export class AddProblem extends Component {
                             <InputTextarea value={this.state.problem.outputs} onChange={(e) => this.onInputChange(e, 'outputs')}
                                            required autoFocus rows={10} cols={95} autoResize
                                            placeholder="Please provide the outputs of the problem that will be expected from program here!"/>
+                        </div>
+                        <div className="p-field">
+                            <InputTextarea value={this.state.problem.point} onChange={(e) => this.onInputChange(e, 'point')}
+                                           required autoFocus rows={10} cols={95} autoResize
+                                           placeholder="Please provide the points of the problem that will be expected from program here!"/>
                         </div>
                     </div>
                     <br/><br/><br/>

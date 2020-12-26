@@ -43,7 +43,7 @@ public class Problem {
 	private String sampleOutputs;
 	@Column(columnDefinition="TEXT")
 	private String explanation;
-	private int point;
+	private String point;
 	private long timeLimit;
 	private long memoryLimit;
 	private String allowedLanguages;
