@@ -2,8 +2,9 @@
 
 http://localhost:8080/main ==> Code Frontation 2020
 
-##JUDGE SERVER PYTHON PART
+## JUDGE SERVER PYTHON PART
 
+apt install python3-dev python3-pip build-essential libseccomp-dev
 $ cd python_src/judge-server
 $ pip install -e .
 

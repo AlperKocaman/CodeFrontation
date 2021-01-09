@@ -52,8 +52,16 @@ only_executors: Set[str] = set()
 exclude_executors: Set[str] = set()
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+parent_path=os.path.abspath(os.path.join(ROOT_DIR, os.pardir))
+problem_path = os.path.join(parent_path, 'problems')
 config_path = os.path.join(ROOT_DIR, 'judge.yml')
-
+config_content=None
+with open(config_path) as config_file:
+    config_content=yaml.load(config_file, Loader=yaml.FullLoader)
+if config_content['problem_storage_root'][0]!=problem_path:
+    config_content['problem_storage_root'][0]=problem_path
+    with open(config_path, 'w') as file:
+        documents = yaml.dump(config_content, file)
 
 def load_env(cli=False, testsuite=False):  # pragma: no cover
     global problem_dirs, only_executors, exclude_executors, log_file, server_host, server_port, no_ansi, no_ansi_emu, skip_self_test, env, startup_warnings, no_watchdog, problem_regex, case_regex, api_listen, secure, no_cert_check, cert_store, problem_watches, cli_history_file, cli_command

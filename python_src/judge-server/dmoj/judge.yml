@@ -1,71 +1,61 @@
-# This is the same ID you specified in the judge admin panel
 id: ExampleJudge
-# The key this judge will use to authenticate with the site server, generated from the admin panel
-key: "4qQG!RG9WYAbIwMq2M!:L$/~zgLErzU,o|waRd:x{4jkKRpjD}ddU>M,I%hXK{Q,9o0;d}q+p^/<j]Yl#S+/9o8j+KFPxqP}w;k{"
-# Where to look for problems on the local filesystem.
-# This directory /not/ scanned recursively, and any directory containing an init.yml file is assumed to
-# be a problem directory.
+key: 4qQG!RG9WYAbIwMq2M!:L$/~zgLErzU,o|waRd:x{4jkKRpjD}ddU>M,I%hXK{Q,9o0;d}q+p^/<j]Yl#S+/9o8j+KFPxqP}w;k{
 problem_storage_root:
-
-  - <PROJECT_BASE_PATH>/python_src/judge-server/problems
-# All configuration for language executors
-# If you're unsure of what values a language needs, your best bet is to consult the source of the executor:
-# <https://github.com/DMOJ/judge/tree/master/dmoj/executors>
+- /home/mehmet/cf/python_src/judge-server/problems
 runtime:
-  ccl: /opt/ccl/lx86cl
-  sed: /bin/sed
   awk: /usr/bin/awk
-  gnatmake: /usr/bin/gnatmake
+  ccl: /opt/ccl/lx86cl
   chicken-csc: /usr/bin/csc
-  dart: /opt/dart-sdk/bin/dart
-  tclsh: /usr/bin/tclsh
-  cobc: /usr/bin/cobc
-  erl: /usr/bin/erl
-  erlc: /usr/bin/erlc
-  tprolog: /opt/turing/tprolog/tprolog
-  tprologc: /opt/turing/tprolog/tprologc
-  turing_dir: /opt/turing/tprolog
-  node: /usr/bin/node
-  lua: /usr/bin/lua
-  ocaml: /usr/bin/ocamlopt
-  pypy: /opt/pypy/bin/pypy
-  pypydir: /opt/pypy/
-  pypy3: /opt/pypy3/bin/pypy
-  pypy3dir: /opt/pypy3/
-  ghc: /usr/bin/ghc
-  go: /usr/bin/go
-  fsharpc: /usr/bin/fsharpc
-  mono-csc: /usr/bin/mono-csc
-  mono-vbnc: /usr/bin/vbnc
-  mono: /usr/bin/mono
-  dmd: /usr/bin/dmd
-  fpc: /opt/fpc-2.6.4/bin/fpc
   clang: /usr/bin/clang
   clang++: /usr/bin/clang++
-  gcc: /usr/bin/gcc
+  cobc: /usr/bin/cobc
+  dart: /opt/dart-sdk/bin/dart
+  dmd: /usr/bin/dmd
+  erl: /usr/bin/erl
+  erlc: /usr/bin/erlc
+  fpc: /opt/fpc-2.6.4/bin/fpc
+  fsharpc: /usr/bin/fsharpc
   g++: /usr/bin/g++
   g++11: /usr/bin/g++
   g++14: /opt/gcc-5.1.0/bin/g++
+  gcc: /usr/bin/gcc
   gfortran: /usr/bin/gfortran
-  nasm: /usr/bin/nasm
+  ghc: /usr/bin/ghc
+  gnatmake: /usr/bin/gnatmake
+  gnustep-config: /usr/bin/gnustep-config
+  go: /usr/bin/go
+  gobjc: /usr/bin/gcc
+  java: /opt/jdk/jdk1.8.0_251/bin/java
+  java8: /opt/jdk/jdk1.8.0_251/bin/java
+  javac: /opt/jdk/jdk1.8.0_251/bin/javac
+  javac8: /opt/jdk/jdk1.8.0_251/bin/javac
   ld: /usr/bin/ld
+  lua: /usr/bin/lua
+  mono: /usr/bin/mono
+  mono-csc: /usr/bin/mono-csc
+  mono-vbnc: /usr/bin/vbnc
+  nasm: /usr/bin/nasm
+  node: /usr/bin/node
+  ocaml: /usr/bin/ocamlopt
+  perl: /usr/bin/perl
+  php: /usr/bin/php
+  phpconfdir: /etc/php5/
+  pypy: /opt/pypy/bin/pypy
+  pypy3: /opt/pypy3/bin/pypy
+  pypy3dir: /opt/pypy3/
+  pypydir: /opt/pypy/
   python: /opt/python27/bin/python2.7
   python2dir: /opt/python27/
   python3: /usr/bin/python3.7
   python3dir: /opt/python34/
-  java: /opt/jdk/jdk1.8.0_251/bin/java
-  javac: /opt/jdk/jdk1.8.0_251/bin/javac
-  java8: /opt/jdk/jdk1.8.0_251/bin/java
-  javac8: /opt/jdk/jdk1.8.0_251/bin/javac
-  # Custom V8 build to facilitate online judging: https://github.com/DMOJ/v8dmoj
-  v8dmoj: /home/judge/judge/executors/v8dmoj
-  php: /usr/bin/php
-  phpconfdir: /etc/php5/
-  perl: /usr/bin/perl
+  racket: /opt/racket/bin/racket
+  racket-lib: /opt/racket/lib
+  raco: /opt/racket/bin/raco
   ruby19: /usr/bin/ruby1.9.1
   ruby21: /usr/bin/ruby
-  racket: /opt/racket/bin/racket
-  raco: /opt/racket/bin/raco
-  racket-lib: /opt/racket/lib
-  gnustep-config: /usr/bin/gnustep-config
-  gobjc: /usr/bin/gcc
+  sed: /bin/sed
+  tclsh: /usr/bin/tclsh
+  tprolog: /opt/turing/tprolog/tprolog
+  tprologc: /opt/turing/tprolog/tprologc
+  turing_dir: /opt/turing/tprolog
+  v8dmoj: /home/judge/judge/executors/v8dmoj
