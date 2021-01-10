@@ -271,7 +271,7 @@ export class Evaluator extends Component {
                             enableSnippets: true,
                             showLineNumbers: false,
                             tabSize: 2,
-                            fontSize:10,
+                            fontSize:16,
                             spellcheck:false,
                             readOnly:true
                         }}
