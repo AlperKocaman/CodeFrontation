@@ -136,7 +136,7 @@ export class Evaluator extends Component {
                 //    this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token);
                 //});
             }
-            setTimeout(this.getSubmitResult, 3000, result.id);
+            setTimeout(this.getSubmitResult, 5000, result.id);
         });
     }
 
@@ -145,15 +145,24 @@ export class Evaluator extends Component {
         this.compilerService.getSubmit(submissionId, this.state.token).then(res => {
             let testCaseList= res.data.testCaseList;
             let response="";
+            let checkError= false;
             if(testCaseList==undefined){
                 this.setState({consoleOutput:"Error is occurred !!!"});
             }else{
                 testCaseList.forEach(caseObj => {
                     console.log(caseObj)
-                    response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
+                    let output=caseObj.output;
+                    if(output.startsWith("Compile Error")){
+                        checkError= true;
+                        response+= output;
+                    }else{
+                        response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
+                    }
                 });
-                let submission= res.data.submission;
-                response+= "Total Result ==> time= "+submission.time+", memory= "+submission.memory+", point= "+submission.point+"\n"
+                if(!checkError){
+                    let submission= res.data.submission;
+                    response+= "Total Result ==> time= "+submission.time+", memory= "+submission.memory+", point= "+submission.point+"\n"
+                }
                 this.setState({consoleOutput:response});
             }
         });
@@ -176,7 +185,7 @@ export class Evaluator extends Component {
         this.compilerService.testRun(data, this.state.token).then(res => {
             let result=res.data;
             console.log(result);
-            setTimeout(this.getTestRunResult, 3000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
+            setTimeout(this.getTestRunResult, 5000, result.id); // FIXME : timeout bilgisi problem time limitten alınabilir
         });
     };
 
@@ -189,16 +198,17 @@ export class Evaluator extends Component {
             }else{
                 testRunCaseList.forEach(caseObj => {
                     console.log(caseObj);
-                    if (caseObj.point==100){
-                        response+= "Test Cases are passed succesfully";
-                    }else{
-                        response+= "Test Cases are not passed succesfully";
+                    let output=caseObj.output;
+                    if(output.startsWith("Compile Error")){
+                        response+= output;
+                    }else {
+                        if (caseObj.point == 100) {
+                            response += "Test Cases are passed successfully";
+                        } else {
+                            response += "Test Cases are not passed successfully";
+                        }
                     }
-                    //response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
                 });
-                let testRun= res.data.testRun;
-                //response+= "Total Result ==> time= "+testRun.time+", memory= "+testRun.memory+", point= "+testRun.point+"\n"
-
                 this.setState({consoleOutput:response});
             }
         });
