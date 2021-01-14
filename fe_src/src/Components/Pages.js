@@ -13,7 +13,7 @@ import CommentList from "./CommentList";
 function Pages() {
     return (
         <Router>
-            <Evaluator default path="/"/>
+            <Dashboard default path="/"/>
             <Dashboard path="admin"/>
             <Problem path="admin/problems/problemKey/:problemCode"/>
             <ProblemList path="admin/problems"/>

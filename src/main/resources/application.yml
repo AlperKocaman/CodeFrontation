@@ -21,57 +21,57 @@ spring:
 dmoj:
   problems-path: src/main/resources/problems
 
-#security:
-#  firebase-props:
-#    database-url: https://codefrontation.firebaseio.com #${FIREBASE_DATABASE}
-#    enable-strict-server-session: true #${ENABLE_SERVER_SESSION}
-#    enable-check-session-revoked: false
-#    enable-logout-everywhere: false
-#    session-expiry-in-days: 5
-#  cookie-props:
-#    max-age-in-minutes: 7200
-#    http-only: true
-#    secure: true
-#    domain: #${CORS_DOMAIN}
-#    path: /
-#  allow-credentials: true
-#  allowed-origins:
-#    #- https://${CORS_DOMAIN}
-#    - http://localhost:3000
-#  allowed-methods:
-#    - GET
-#    - POST
-#    - PUT
-#    - PATCH
-#    - DELETE
-#    - OPTIONS
-#  allowed-headers:
-#    - Authorization
-#    - Origin
-#    - Content-Type
-#    - Accept
-#    - Accept-Encoding
-#    - Accept-Language
-#    - Access-Control-Allow-Origin
-#    - Access-Control-Allow-Headers
-#    - Access-Control-Request-Method
-#    - X-Requested-With
-#    - X-Auth-Token
-#    - X-Xsrf-Token
-#    - Cache-Control
-#    - Id-Token
-#  allowed-public-apis:
-#    - /favicon.ico
-#    - /session/login
-#    - /public/*
-#    - /main/users/*
-#
-#  exposed-headers:
-#    - X-Xsrf-Token
+security:
+  firebase-props:
+    database-url: https://codefrontation.firebaseio.com #${FIREBASE_DATABASE}
+    enable-strict-server-session: true #${ENABLE_SERVER_SESSION}
+    enable-check-session-revoked: false
+    enable-logout-everywhere: false
+    session-expiry-in-days: 5
+  cookie-props:
+    max-age-in-minutes: 7200
+    http-only: true
+    secure: true
+    domain: #${CORS_DOMAIN}
+    path: /
+  allow-credentials: true
+  allowed-origins:
+    #- https://${CORS_DOMAIN}
+    - http://localhost:3000
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - OPTIONS
+  allowed-headers:
+    - Authorization
+    - Origin
+    - Content-Type
+    - Accept
+    - Accept-Encoding
+    - Accept-Language
+    - Access-Control-Allow-Origin
+    - Access-Control-Allow-Headers
+    - Access-Control-Request-Method
+    - X-Requested-With
+    - X-Auth-Token
+    - X-Xsrf-Token
+    - Cache-Control
+    - Id-Token
+  allowed-public-apis:
+    - /favicon.ico
+    - /session/login
+    - /public/*
+    - /main/users/*
+
+  exposed-headers:
+    - X-Xsrf-Token
 
 logging:
   level:
-    #org:
-    #  springframework:
-    #    security: DEBUG
+    org:
+      springframework:
+        security: DEBUG
     root: INFO
