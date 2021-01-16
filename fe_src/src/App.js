@@ -42,7 +42,7 @@ class App extends Component {
                     <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Users" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/users') } } />
                     <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Comments" className="p-button-raised  p-text-bold" onClick = { () => {navigate('/admin/comments') } } />
                     <Button style = {{fontSize: '20px', textcolor:'#2196F3'}} label="Templates" className="p-button-raised  p-text-bold" onClick = { () => { navigate('/admin/templates') } } />
-                    <Button style = {{fontSize: '20px', textcolor:'red', float: "right"}} label="Sign out" className="p-button-raised  p-text-bold" onClick = { () => {auth.signOut() } } />
+                    <Button style = {{fontSize: '20px', textcolor:'red', float: "right"}} label="Sign out" className="p-button-raised  p-text-bold" onClick = { () => {auth.signOut(); navigate('/') } } />
                     </div>
                 </span>
 

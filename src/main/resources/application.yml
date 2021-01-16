@@ -64,14 +64,14 @@ security:
     - /favicon.ico
     - /session/login
     - /public/*
-    - /main/users/*
+    - /main/user
 
   exposed-headers:
     - X-Xsrf-Token
 
 logging:
   level:
-    org:
-      springframework:
-        security: DEBUG
+    #org:
+    #  springframework:
+    #    security: DEBUG
     root: INFO
