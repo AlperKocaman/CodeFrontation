@@ -7,13 +7,13 @@ import UserList from "./UserList";
 import TemplateList from "./TemplateList";
 import Problem from "./Problem";
 import AddProblem from "./AddProblem";
-import Evaluator from "./Evaluator";
 import CommentList from "./CommentList";
 
 function Pages() {
+    const NotFound = () => window.location.assign('/');
     return (
         <Router>
-            <Dashboard default path="/"/>
+            <Dashboard path="/"/>
             <Dashboard path="admin"/>
             <Problem path="admin/problems/problemKey/:problemCode"/>
             <ProblemList path="admin/problems"/>
@@ -28,6 +28,7 @@ function Pages() {
             <CommentList path="admin/comments"/>
             <CommentList path="admin/comments/:username/"/>
             <CommentList path="admin/comments/:username/:problemCode"/>
+            <NotFound default />
         </Router>
 
     );

@@ -4,14 +4,14 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import PasswordReset from "./PasswordReset";
 function Authentication() {
+  const NotFound = () => window.location.assign('/');
   return (
-
         <Router>
           <SignUp path="/signUp" />
-          <SignIn default path="/" />
+          <SignIn path="/" />
           <PasswordReset path = "passwordReset" />
+          <NotFound default />
         </Router>
-
   );
 }
 
