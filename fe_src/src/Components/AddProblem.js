@@ -345,17 +345,44 @@ export class AddProblem extends Component {
                         <div className="p-field">
                             <InputTextarea value={this.state.problem.inputs} onChange={(e) => this.onInputChange(e, 'inputs')}
                                            required autoFocus rows={10} cols={95} autoResize
-                                           placeholder="Please provide the inputs of the problem that will be used in evaluation here!"/>
+                                           placeholder="Please provide the inputs of the problem in a special format. &#13;&#10;Example:&#13;&#10;
+                                           [INPUT1]&#13;&#10;
+                                           <input1>&#13;&#10;
+                                           <input2>&#13;&#10;
+                                           ...&#13;&#10;
+                                           [INPUT2]&#13;&#10;
+                                           <input1>&#13;&#10;
+                                           <input2>&#13;&#10;
+                                           ...
+                                           "/>
                         </div>
                         <div className="p-field">
                             <InputTextarea value={this.state.problem.outputs} onChange={(e) => this.onInputChange(e, 'outputs')}
                                            required autoFocus rows={10} cols={95} autoResize
-                                           placeholder="Please provide the outputs of the problem that will be expected from program here!"/>
+                                           placeholder="Please provide the outputs of the problem in a special format. &#13;&#10;Example:&#13;&#10;
+                                           [OUTPUT1]&#13;&#10;
+                                           <output1>&#13;&#10;
+                                           <output2>&#13;&#10;
+                                           ...&#13;&#10;
+                                           [OUTPUT2]&#13;&#10;
+                                           <output1>&#13;&#10;
+                                           <output2>&#13;&#10;
+                                           ...
+                                           "/>
                         </div>
                         <div className="p-field">
                             <InputTextarea value={this.state.problem.point} onChange={(e) => this.onInputChange(e, 'point')}
                                            required autoFocus rows={10} cols={95} autoResize
-                                           placeholder="Please provide the points of the problem that will be expected from program here!"/>
+                                           placeholder="Please provide the points of the problem in a special format. &#13;&#10;Example:&#13;&#10;
+                                           [POINT1]&#13;&#10;
+                                           <point1>&#13;&#10;
+                                           <point2>&#13;&#10;
+                                           ...&#13;&#10;
+                                           [POINT2]&#13;&#10;
+                                           <point1>&#13;&#10;
+                                           <point2>&#13;&#10;
+                                           ...
+                                           "/>
                         </div>
                     </div>
                     <br/><br/><br/>

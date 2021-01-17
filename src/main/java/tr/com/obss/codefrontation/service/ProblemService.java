@@ -119,7 +119,7 @@ public class ProblemService {
 				problemTestCaseDtos.add(problemTestCaseDto);
 				continue;
 			}
-			input.append(line);
+			input.append(line + "\n");
 		}
 		if(problemTestCaseDto != null){
 			problemTestCaseDto.setInput(input.toString());
@@ -139,7 +139,7 @@ public class ProblemService {
 				problemTestCaseDto = problemTestCaseDtos.get(lineIndex-1);
 				continue;
 			}
-			output.append(line);
+			output.append(line + "\n");
 		}
 		if(problemTestCaseDto != null){
 			problemTestCaseDto.setOutput(output.toString());
@@ -159,7 +159,7 @@ public class ProblemService {
 				problemTestCaseDto = problemTestCaseDtos.get(lineIndex-1);
 				continue;
 			}
-			pointStrBuilder.append(line);
+			pointStrBuilder.append(line + "\n");
 		}
 		if(problemTestCaseDto != null){
 			problemTestCaseDto.setPoint(Double.valueOf(pointStrBuilder.toString()));
