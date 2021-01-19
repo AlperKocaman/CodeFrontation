@@ -10,6 +10,7 @@ import './Problem.css';
 import uuid from 'uuid-random';
 import Evaluator from "./Evaluator";
 import {auth, generateUserDocument} from "./Firebase";
+import AssignmentService from "../service/AssignmentService";
 
 export class Problem extends Component {
 
@@ -42,10 +43,12 @@ export class Problem extends Component {
             problem: this.emptyProblem,
             submitted: false,
             globalFilter: null,
+            assignmentId: null,
             authenticateUser: null
         };
 
         this.problemService = new ProblemService();
+        this.assignmentService = new AssignmentService();
         this.exportCSV = this.exportCSV.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.onInputNumberChange = this.onInputNumberChange.bind(this);
@@ -59,6 +62,13 @@ export class Problem extends Component {
                     this.setState({'token': idToken });
                     this.problemService.getProblem(this.props.problemCode ? this.props.problemCode : '', idToken).then(res => {
                         this.setState({problem: res.data});
+                    });
+                    const username=user.username;     //FIXME dinamikleştir
+                    const problemCode=this.props.problemCode;
+                    this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,idToken).then(res => {
+                        if(res && res.data && res.data.id){
+                            this.setState({assignmentId: res.data.id});
+                        }
                     });
                 });
             }
@@ -161,10 +171,10 @@ export class Problem extends Component {
                         <p>{this.state.problem.explanation}</p>
                     </div>
                 </pre>
-                { this.state.problem.code &&
+                { this.state.problem.code && this.state.assignmentId &&
                     <div className="evaluator">
                         <Evaluator
-                            problemCode={this.state.problem.code}
+                            problemCode={this.state.problem.code} assignmentId ={this.state.assignmentId}
                         />
                     </div>
                 }

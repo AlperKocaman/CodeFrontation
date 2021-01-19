@@ -67,10 +67,8 @@ export class Evaluator extends Component {
     }
 
     componentDidMount = async () => {
-        // if(this.props.uri!='/'){
-        //     window.location.assign('/');
-        // }
         this.setState({problemCode:this.props.problemCode});
+        this.setState({assignmentId:this.props.assignmentId});
         auth.onAuthStateChanged(async userAuth => {
             const user = await generateUserDocument(userAuth);
             if (userAuth) {
@@ -98,11 +96,8 @@ export class Evaluator extends Component {
     submitCode = () => {
         const username=this.state.authenticateUser.username;     //FIXME dinamikleştir
         const problemCode=this.state.problemCode;
-
-        this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,this.state.token).then(res => {
-            const assignmentId=res.data.id;
-            this.sendCode("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
-        });
+        const assignmentId=this.state.assignmentId;
+        this.sendCode("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
     }
 
     sendCode = (requestData,lang,assignmentId,problemCode,username) => {
@@ -171,10 +166,8 @@ export class Evaluator extends Component {
     testCode = () => {
         const username=this.state.authenticateUser.username;     //FIXME dinamikleştir
         const problemCode=this.state.problemCode;
-        this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,this.state.token).then(res => {
-            const assignmentId=res.data.id;
-            this.sendCodeForRun("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
-        });
+        const assignmentId=this.state.assignmentId;
+        this.sendCodeForRun("" + this.codeString,this.languages[''+this.state.modeName],assignmentId,problemCode,username);
     }
 
     sendCodeForRun = (requestData,lang,assignmentId,problemCode,username) => {

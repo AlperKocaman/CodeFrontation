@@ -16,21 +16,18 @@ const SignUp = () => {
 
         event.preventDefault();
         try {
-            const {user} = await auth.createUserWithEmailAndPassword(email, password);
-            let userInfo = await generateUserDocument(user, {firstname, lastname, username});
             let req = {
-                username: userInfo.username,
-                firstName: userInfo.firstname,
-                lastName: userInfo.lastname,
-                email: userInfo.email,
+                username: username,
+                firstName: firstname,
+                lastName: lastname,
+                email: email,
                 isAdmin: false,
             }
+            await userService.addUser(req);
+            console.log("user signup success");
+            const {user} = await auth.createUserWithEmailAndPassword(email, password);
+            let userInfo = await generateUserDocument(user, {firstname, lastname, username});
 
-            userService.addUser(req).then(data => {
-                console.log("user signup success");
-            }).catch(error => {
-                console.error('There was an error!', error);
-            });
         } catch (error) {
             setError('Error Signing up with email and password');
         }
