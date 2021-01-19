@@ -23,6 +23,9 @@ const SignUp = () => {
                 email: email,
                 isAdmin: false,
             }
+            if(username == "admin"){
+                req.isAdmin = true;
+            }
             await userService.addUser(req);
             console.log("user signup success");
             const {user} = await auth.createUserWithEmailAndPassword(email, password);
