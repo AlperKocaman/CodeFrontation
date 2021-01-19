@@ -144,20 +144,21 @@ export class Evaluator extends Component {
             if(testCaseList==undefined){
                 this.setState({consoleOutput:"Error is occurred !!!"});
             }else{
-                testCaseList.forEach(caseObj => {
-                    console.log(caseObj)
-                    let output=caseObj.output;
-                    if(output.startsWith("Compile Error")){
-                        checkError= true;
-                        response+= output;
-                    }else{
-                        response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
-                    }
-                });
-                if(!checkError){
-                    let submission= res.data.submission;
-                    response+= "Total Result ==> time= "+submission.time+", memory= "+submission.memory+", point= "+submission.point+"\n"
-                }
+                //testCaseList.forEach(caseObj => {
+                //    console.log(caseObj)
+                //    let output=caseObj.output;
+                //    if(output.startsWith("Compile Error")){
+                //        checkError= true;
+                //        response+= output;
+                //    }else{
+                //        response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
+                //    }
+                //});
+                //if(!checkError){
+                //    let submission= res.data.submission;
+                //    response+= "Total Result ==> time= "+submission.time+", memory= "+submission.memory+", point= "+submission.point+"\n"
+                //}
+                response += "Your code is submitted successfully";
                 this.setState({consoleOutput:response});
             }
         });

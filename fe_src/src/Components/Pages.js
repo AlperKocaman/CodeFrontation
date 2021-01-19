@@ -11,7 +11,7 @@ function Pages(props) {
     return (
         <Router>
             <Problem path="/admin/problems/problemKey/:problemCode"/>
-            <ProblemList path={problemListPath}/>
+            <ProblemList path="/admin/problems/:username"/>
             <NotFound default />
         </Router>
 
