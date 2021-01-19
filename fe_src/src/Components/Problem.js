@@ -44,6 +44,7 @@ export class Problem extends Component {
             submitted: false,
             globalFilter: null,
             assignmentId: null,
+            isAdmin: false,
             authenticateUser: null
         };
 
@@ -67,7 +68,7 @@ export class Problem extends Component {
                     const problemCode=this.props.problemCode;
                     this.assignmentService.getAssignmentByUsernameAndProblemCode(username,problemCode,idToken).then(res => {
                         if(res && res.data && res.data.id){
-                            this.setState({assignmentId: res.data.id});
+                            this.setState({assignmentId: res.data.id, isAdmin:res.data.user.isAdmin});
                         }
                     });
                 });
@@ -171,7 +172,7 @@ export class Problem extends Component {
                         <p>{this.state.problem.explanation}</p>
                     </div>
                 </pre>
-                { this.state.problem.code && this.state.assignmentId &&
+                { this.state.problem.code && this.state.assignmentId && !this.state.isAdmin &&
                     <div className="evaluator">
                         <Evaluator
                             problemCode={this.state.problem.code} assignmentId ={this.state.assignmentId}
