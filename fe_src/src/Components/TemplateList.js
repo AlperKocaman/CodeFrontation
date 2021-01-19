@@ -320,7 +320,7 @@ export class TemplateList extends Component {
 
     onClickTemplateCode = (event) => {
         console.log('onClickTemplateCode : ' + event.target.text);
-        window.location.assign('templates/' + event.target.text);
+        window.location.assign('/templates/' + event.target.text);
     };
 
     actionBodyTemplate(rowData) {
