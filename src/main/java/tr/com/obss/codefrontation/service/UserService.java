@@ -44,7 +44,6 @@ public class UserService {
         log.info("UserList retrieved: {}", entity.toString());
 
         return dto;
-
     }
 
     public UserDTO getUser(UUID id) throws Exception {

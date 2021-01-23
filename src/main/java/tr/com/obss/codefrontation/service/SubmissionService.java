@@ -2,28 +2,20 @@ package tr.com.obss.codefrontation.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Request;
-import okhttp3.Response;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.TestCaseDTO;
 import tr.com.obss.codefrontation.entity.Assignment;
 import tr.com.obss.codefrontation.entity.Submission;
-import tr.com.obss.codefrontation.entity.TestCase;
 import tr.com.obss.codefrontation.enums.Status;
 import tr.com.obss.codefrontation.mapper.Mapper;
 import tr.com.obss.codefrontation.repository.AssignmentRepository;
 import tr.com.obss.codefrontation.repository.SubmissionRepository;
-import tr.com.obss.codefrontation.sonar.SonarConstants;
 import tr.com.obss.codefrontation.sonar.SonarScannerRequestService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
-import java.io.IOException;
-import java.net.ConnectException;
 import java.util.List;
 import java.util.Optional;
 
