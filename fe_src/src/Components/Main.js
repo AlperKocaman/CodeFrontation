@@ -23,11 +23,9 @@ class Main extends Component {
             let user = await generateUserDocument(userAuth);
             if (userAuth) {
                 userAuth.getIdToken().then(idToken =>  {
-                    debugger;
                     console.log("idTokennnnn: "+idToken);
                     const username=user.username;
                     this.userService.getUserByUsername(username, idToken).then(res => {
-                     debugger;
                      if(res && res.data ) {
                          this.setState({isAdmin: res.data.isAdmin});
                      }else{

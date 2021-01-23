@@ -9,12 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import tr.com.obss.codefrontation.service.SubmissionService;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -95,9 +94,10 @@ public class SonarScannerRequestService {
 	 * 		Functions (functions) -> Number of functions.
 	 *
 	 * 		measures/component?metricKeys=comment_lines,comment_lines_density,ncloc,functions&component={id}
+	 * @return
 	 */
 
-	private static JSONObject getMetrics(String id){
+	public static String getMetrics(String id){
 		Request request = new Request.Builder()
 				.url(SonarConstants.BACKEND_BASE_URL + SonarConstants.METRICS_REQUEST + id)
 				.method("GET", null)
@@ -105,7 +105,15 @@ public class SonarScannerRequestService {
 		return sendRequestAndGetResponse(request);
 	}
 
-	private static JSONObject getMetricsUsedByPointCalculation(String id){
+	public static String getGroupOfMetricsByUrl(String requestURL){
+		Request request = new Request.Builder()
+				.url(requestURL)
+				.method("GET", null)
+				.build();
+		return sendRequestAndGetResponse(request);
+	}
+
+	private static String getMetricsUsedByPointCalculation(String id){
 		Request request = new Request.Builder()
 				.url(SonarConstants.BACKEND_BASE_URL + SonarConstants.METRICS_USED_IN_POINT_CALCULATION_REQUEST + id)
 				.method("GET", null)
@@ -121,7 +129,7 @@ public class SonarScannerRequestService {
 	 * @param id
 	 * @return response in JSON Format
 	 */
-	private static JSONObject getIssues(String id){
+	private static String getIssues(String id){
 		Request request = new Request.Builder()
 				.url(SonarConstants.BACKEND_BASE_URL + SonarConstants.ISSUES_REQUEST + id)
 				.method("GET", null)
@@ -129,11 +137,11 @@ public class SonarScannerRequestService {
 		return sendRequestAndGetResponse(request);
 	}
 
-	private static JSONObject sendRequestAndGetResponse(Request request) {
+	private static String sendRequestAndGetResponse(Request request) {
 		try {
 			Response response = client.newCall(request).execute();
 			if (response.code() == 200) {
-				return new JSONObject(response.body().string());
+				return response.peekBody(2048).string();
 			}
 			log.warn("Response code is not HTTP.OK(200), Json object response is null!");
 			return null;
@@ -143,24 +151,15 @@ public class SonarScannerRequestService {
 		} catch (IOException e) {
 			log.warn("IOException thrown, Json object response is null!");
 			return null;
-		} catch (JSONException e) {
-			log.warn("JSON Exception thrown, Json object cannot be created from response!");
-			return null;
 		}
-	}
-
-	public static List<JSONObject> makeBulkRequests(String id) {
-		List<JSONObject> jsonResponses = new ArrayList<>();
-		jsonResponses.add(getMetrics(id));
-		jsonResponses.add(getIssues(id));
-		return jsonResponses;
 	}
 
 	public static double calculateSonarPointBySubmission(String id) throws JSONException {
 		double sonarPoints = 0;
 		double value = 0;
-		JSONObject metrics = getMetricsUsedByPointCalculation(id);
-		JSONArray metricsArray = metrics.getJSONObject("component").getJSONArray("measures");
+		String metrics = getMetricsUsedByPointCalculation(id);
+		JSONObject metricsInJsonFormat = new JSONObject(metrics);
+		JSONArray metricsArray = metricsInJsonFormat.getJSONObject("component").getJSONArray("measures");
 		for(int i=0; i<metricsArray.length() ; i++) {
 			value = metricsArray.getJSONObject(i).getDouble("value");
 			switch (metricsArray.getJSONObject(i).getString("metric")){
