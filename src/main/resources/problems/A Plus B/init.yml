@@ -1,6 +1,0 @@
----
-archive: "A Plus B.zip"
-test_cases:
-- in: "A Plus B.1.in"
-  out: "A Plus B.1.out"
-  points: 100.0
