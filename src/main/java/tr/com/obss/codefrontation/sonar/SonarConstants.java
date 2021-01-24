@@ -27,6 +27,15 @@ public class SonarConstants {
 			"comment_lines" + // size metrics
 			"&component=";
 
+	public static final String FIRST_URL_PARAMETER = "measures/component?metricKeys=";
+	public static final String COMPLEXITY_METRICS = "complexity,cognitive_complexity";
+	public static final String DUPLICATION_METRICS = "duplicated_blocks,duplicated_files,duplicated_lines,duplicated_lines_density";
+	public static final String MAINTAINABILITY_METRICS = "code_smells,sqale_index";
+	public static final String RELIABILITY_METRICS = "bugs,reliability_rating,reliability_remediation_effort";
+	public static final String SECURITY_METRICS = "vulnerabilities,security_rating,security_remediation_effort,security_hotspots,security_review_rating";
+	public static final String SIZE_METRICS = "comment_lines,comment_lines_density,ncloc,functions";
+	public static final String LAST_URL_PARAMETER = "&component=";
+
 	public static final String ISSUES_REQUEST = "issues/search?facets=types&componentKeys=";
 
 	public static final String JAVA_COMPILE_COMMAND =  "cd %s/ && javac *.java && mkdir target && mv *.class target && cd ../../" ;

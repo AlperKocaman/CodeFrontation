@@ -7,7 +7,6 @@ import tr.com.obss.codefrontation.dto.SubmissionDTO;
 import tr.com.obss.codefrontation.dto.TestCaseDTO;
 import tr.com.obss.codefrontation.entity.Assignment;
 import tr.com.obss.codefrontation.entity.Submission;
-import tr.com.obss.codefrontation.entity.TestCase;
 import tr.com.obss.codefrontation.enums.Status;
 import tr.com.obss.codefrontation.mapper.Mapper;
 import tr.com.obss.codefrontation.repository.AssignmentRepository;
