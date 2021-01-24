@@ -77,6 +77,7 @@ public class ProblemService {
 
 	public ProblemDTO addProblem(ProblemDTO problemDTO) {
 		Problem problem = mapper.toProblemEntity(problemDTO);
+		createTestNewProblemForDMOJ(problemDTO);
 		createNewProblemForDMOJ(problemDTO);
 		Problem entity = problemRepository.save(problem);
 		log.info("Problem created: {}", problem.toString());
@@ -87,6 +88,7 @@ public class ProblemService {
 	public ProblemDTO updateProblem(ProblemDTO problemDTO) throws Exception{
 		Problem origEntity = problemRepository.findById(problemDTO.getId()).orElseThrow(Exception::new);
 		mapper.updateEntity(problemDTO, origEntity);
+		createTestNewProblemForDMOJ(problemDTO);
 		createNewProblemForDMOJ(problemDTO);
 		problemRepository.save(origEntity);
 		log.info("Problem updated: {}", origEntity.toString());
@@ -107,11 +109,13 @@ public class ProblemService {
 		Scanner scannerPoint = new Scanner(points);
 		int lineIndex = 0;
 		StringBuilder input = new StringBuilder();
+		int noOfInput= 0;
 		while (scannerInput.hasNextLine()) {
 			String line = scannerInput.nextLine();
 			if(line.startsWith("[INPUT")){
 				if(lineIndex != 0){
-					problemTestCaseDto.setInput(input.toString());
+					problemTestCaseDto.setInput(noOfInput+ "\n"+ input.toString());
+					noOfInput=0;
 					input = new StringBuilder();
 				}
 				lineIndex ++ ;
@@ -119,10 +123,12 @@ public class ProblemService {
 				problemTestCaseDtos.add(problemTestCaseDto);
 				continue;
 			}
+			if(line.length()!=0)
+				noOfInput++;
 			input.append(line + "\n");
 		}
 		if(problemTestCaseDto != null){
-			problemTestCaseDto.setInput(input.toString());
+			problemTestCaseDto.setInput(noOfInput+ "\n"+ input.toString());
 		}
 		scannerInput.close();
 
@@ -166,10 +172,103 @@ public class ProblemService {
 		}
 		scannerPoint.close();
 
-		problemEveluationDto.setName(problemDTO.getName());
+		problemEveluationDto.setName(problemDTO.getCode());
 		problemEveluationDto.setTestCases(problemTestCaseDtos);
 		dmojProblemService.createNewProblem(problemEveluationDto);
 	}
+
+
+	private void createTestNewProblemForDMOJ(ProblemDTO problemDTO){
+		ProblemEveluationDto problemEveluationDto = new ProblemEveluationDto();
+		String inputs = problemDTO.getInputs();
+		String outputs = problemDTO.getOutputs();
+		String points = problemDTO.getPoint();
+
+		List<ProblemTestCaseDto> problemTestCaseDtos = new ArrayList<>();
+		ProblemTestCaseDto problemTestCaseDto = null;
+		Scanner scannerInput = new Scanner(inputs);
+		Scanner scannerOutput = new Scanner(outputs);
+		Scanner scannerPoint = new Scanner(points);
+		int lineIndex = 0;
+		StringBuilder input = new StringBuilder();
+		int noOfInput= 0;
+		while (scannerInput.hasNextLine()) {
+			String line = scannerInput.nextLine();
+			if(line.startsWith("[INPUT")){
+				if(lineIndex != 0){
+					break;
+					//problemTestCaseDto.setInput(noOfInput+ "\n"+ input.toString());
+					//noOfInput=0;
+					//input = new StringBuilder();
+				}
+				lineIndex ++ ;
+				problemTestCaseDto = new ProblemTestCaseDto();
+				problemTestCaseDtos.add(problemTestCaseDto);
+				continue;
+			}
+			if(line.length()!=0)
+				noOfInput++;
+			input.append(line + "\n");
+		}
+		if(problemTestCaseDto != null){
+			problemTestCaseDto.setInput(noOfInput+ "\n"+ input.toString());
+		}
+		scannerInput.close();
+
+		lineIndex = 0;
+		StringBuilder output = new StringBuilder();
+		while (scannerOutput.hasNextLine()) {
+			String line = scannerOutput.nextLine();
+			if(line.startsWith("[OUTPUT")){
+				if(lineIndex != 0){
+					break;
+					//problemTestCaseDto.setOutput(output.toString());
+					//output = new StringBuilder();
+				}
+				lineIndex ++ ;
+				problemTestCaseDto = problemTestCaseDtos.get(lineIndex-1);
+				continue;
+			}
+			output.append(line + "\n");
+		}
+		if(problemTestCaseDto != null){
+			problemTestCaseDto.setOutput(output.toString());
+		}
+		scannerOutput.close();
+
+		lineIndex = 0;
+		StringBuilder pointStrBuilder = new StringBuilder();
+		boolean checkPoint=true;
+		while (scannerPoint.hasNextLine()) {
+			String line = scannerPoint.nextLine();
+			if(line.startsWith("[POINT")){
+				if(lineIndex != 0){
+					break;
+					//problemTestCaseDto.setPoint(Double.valueOf(pointStrBuilder.toString()));
+					//pointStrBuilder= new StringBuilder();
+				}
+				lineIndex ++ ;
+				problemTestCaseDto = problemTestCaseDtos.get(lineIndex-1);
+				continue;
+			}
+			if(line.length()!=0 && checkPoint){
+				line="100"; //FIXME
+				checkPoint=false;
+			}
+			pointStrBuilder.append(line + "\n");
+		}
+		if(problemTestCaseDto != null){
+			problemTestCaseDto.setPoint(Double.valueOf(pointStrBuilder.toString()));
+		}
+		scannerPoint.close();
+
+		problemEveluationDto.setName("test_"+problemDTO.getCode());
+		problemEveluationDto.setTestCases(problemTestCaseDtos);
+		dmojProblemService.createNewProblem(problemEveluationDto);
+	}
+
+
+
 
 
 	public ProblemDTO getProblemsDetailsByProblemCode(String problemCode) {

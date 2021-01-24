@@ -159,16 +159,25 @@ export class AddProblem extends Component {
 
             if (this.state.problem.id) {
                 this.problemService.updateProblem(this.state.problem, this.state.token).then(data => {
-                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Updated', life: 3000 });
-                    this.returnBackToProblemList();
+                    this.problemService.dmojUpdateProblemList(this.state.token).then(data => {
+                        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Updated', life: 3000 });
+                        this.returnBackToProblemList();
+                    }).catch(error => {
+                        console.error('There was an error while adding problem!', error);
+                    });
                 }).catch(error => {
                     console.error('There was an error while updating problem!', error);
                 });
             }
             else {
                 this.problemService.addProblem(this.state.problem, this.state.token).then(data => {
-                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Created', life: 3000 });
-                    this.returnBackToProblemList();
+
+                    this.problemService.dmojUpdateProblemList(this.state.token).then(data => {
+                        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Problem Created', life: 3000 });
+                        this.returnBackToProblemList();
+                    }).catch(error => {
+                        console.error('There was an error while adding problem!', error);
+                    });
                 }).catch(error => {
                     console.error('There was an error while adding problem!', error);
                 });

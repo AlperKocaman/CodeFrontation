@@ -66,4 +66,11 @@ export default class ProblemService {
         const response = await this.requestToServer(url, method, problem, token);
         return response;
     }
+
+    async dmojUpdateProblemList(token){
+        const url="http://localhost:8081/update/problems";
+        const method='POST';
+        const response = await this.requestToServer(url, method, {}, token);
+        return response;
+    }
 }

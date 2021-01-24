@@ -104,7 +104,13 @@ public class WebSocketController {
                                                 casePoints = (Long) caseObj.get("points");
                                             }
 
-                                            Long caseTotalPoints = (Long) caseObj.get("total-points");
+                                            Long caseTotalPoints = Long.valueOf(0);
+                                            try {
+                                                Double caseTotalPointsD = (Double) caseObj.get("total-points");
+                                                caseTotalPoints = (new Double(caseTotalPointsD)).longValue();
+                                            } catch (Exception e) {
+                                                caseTotalPoints = (Long) caseObj.get("total-points");
+                                            }
                                             Long caseMemory = (Long) caseObj.get("memory");
                                             String caseOutput = (String) caseObj.get("output");
                                             String caseExtendedFeedback = (String) caseObj.get("extended-feedback");
@@ -145,7 +151,13 @@ public class WebSocketController {
                                             } catch (Exception e) {
                                                 casePoints = (Long) caseObj.get("points");
                                             }
-                                            Long caseTotalPoints = (Long) caseObj.get("total-points");
+                                            Long caseTotalPoints = Long.valueOf(0);
+                                            try {
+                                                Double caseTotalPointsD = (Double) caseObj.get("total-points");
+                                                caseTotalPoints = (new Double(caseTotalPointsD)).longValue();
+                                            } catch (Exception e) {
+                                                caseTotalPoints = (Long) caseObj.get("total-points");
+                                            }
                                             Long caseMemory = (Long) caseObj.get("memory");
                                             String caseOutput = (String) caseObj.get("output");
                                             String caseExtendedFeedback = (String) caseObj.get("extended-feedback");

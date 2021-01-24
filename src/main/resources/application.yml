@@ -19,7 +19,7 @@ spring:
       ddl-auto: update
 
 dmoj:
-  problems-path: src/main/resources/problems
+  problems-path: python_src/judge-server/problems
 
 security:
   firebase-props:
