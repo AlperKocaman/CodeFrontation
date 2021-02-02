@@ -2,6 +2,7 @@
 package tr.com.obss.codefrontation.sonar;
 
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,7 +20,7 @@ import java.net.ConnectException;
 @Service
 public class SonarScannerRequestService {
 
-	SubmissionService submissionService;
+	private static final String credential = Credentials.basic("admin", "admin123");
 
 	// if we need to map Json responses to POJO object,  we need this object mapper(currently we don't need it).
 	// private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -101,6 +102,7 @@ public class SonarScannerRequestService {
 		Request request = new Request.Builder()
 				.url(SonarConstants.BACKEND_BASE_URL + SonarConstants.METRICS_REQUEST + id)
 				.method("GET", null)
+				.addHeader("Authorization", credential)
 				.build();
 		return sendRequestAndGetResponse(request);
 	}
@@ -109,6 +111,7 @@ public class SonarScannerRequestService {
 		Request request = new Request.Builder()
 				.url(requestURL)
 				.method("GET", null)
+				.addHeader("Authorization", credential)
 				.build();
 		return sendRequestAndGetResponse(request);
 	}
@@ -117,6 +120,7 @@ public class SonarScannerRequestService {
 		Request request = new Request.Builder()
 				.url(SonarConstants.BACKEND_BASE_URL + SonarConstants.METRICS_USED_IN_POINT_CALCULATION_REQUEST + id)
 				.method("GET", null)
+				.addHeader("Authorization", credential)
 				.build();
 		return sendRequestAndGetResponse(request);
 	}
@@ -133,6 +137,7 @@ public class SonarScannerRequestService {
 		Request request = new Request.Builder()
 				.url(SonarConstants.BACKEND_BASE_URL + SonarConstants.ISSUES_REQUEST + id)
 				.method("GET", null)
+				.addHeader("Authorization", credential)
 				.build();
 		return sendRequestAndGetResponse(request);
 	}

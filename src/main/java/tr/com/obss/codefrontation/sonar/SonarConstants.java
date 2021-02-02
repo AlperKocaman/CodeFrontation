@@ -3,7 +3,7 @@ package tr.com.obss.codefrontation.sonar;
 public class SonarConstants {
 
 	// TODO: Change this line according to the sonar scanner path before execution
-	public static final String SONAR_SCANNER_PATH = "/home/alper269707/sonar-scanner-4.5.0.2216-linux/bin/sonar-scanner ";
+	public static final String SONAR_SCANNER_PATH = "/home/cf/sonarqube/sonar-scanner-4.5.0.2216-linux/bin/sonar-scanner";
 	public static final String SONAR_PROJECT_KEY_PARAMETER = "-Dsonar.projectKey=%s ";
 	public static final String SONAR_PROJECT_BASE_DIRECTORY_PARAMETER = "-Dsonar.projectBaseDir=%s ";
 

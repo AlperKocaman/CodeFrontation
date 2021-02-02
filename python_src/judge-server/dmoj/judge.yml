@@ -1,7 +1,8 @@
 id: ExampleJudge
 key: 4qQG!RG9WYAbIwMq2M!:L$/~zgLErzU,o|waRd:x{4jkKRpjD}ddU>M,I%hXK{Q,9o0;d}q+p^/<j]Yl#S+/9o8j+KFPxqP}w;k{
 problem_storage_root:
-- /home/mehmet/cf/python_src/judge-server/problems
+  # Cloud'daki yeri verildi.
+- /home/cf/code-frontation-backend/python_src/judge-server/problems
 runtime:
   awk: /usr/bin/awk
   ccl: /opt/ccl/lx86cl

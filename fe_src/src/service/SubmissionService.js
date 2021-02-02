@@ -67,7 +67,7 @@ export default class SubmissionService {
     }
 
     extractSonarKeyFromUrl(sonarUrl) {
-        return sonarUrl.substring(30);
+        return sonarUrl.substring(35);
     }
 
     async getSonarMetrics(submission, token) {
