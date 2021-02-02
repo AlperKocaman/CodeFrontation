@@ -36,7 +36,7 @@ export class UserList extends Component {
         lastName: null,
         email: '',
         isAdmin: null,
-        targetRole: '',
+        targetRole: null,
         roleName: '',
         targetProject: '',
         skills: ''
@@ -60,7 +60,8 @@ export class UserList extends Component {
             authenticateUser: null,
             token: '',
             hasInvalidInput: true,
-            isAdmin: false
+            isAdmin: false,
+            targetRole: null
         };
 
 
@@ -113,9 +114,6 @@ export class UserList extends Component {
                         console.log(res);
                         this.roleItems = res.data;
                     });
-                    this.problemService.getProblems("", idToken).then(res=>{
-                        this.problems = res.data;
-                    });
 
                     this.templateService.getTemplates(idToken).then(res=>{
                         this.templates = res.data;
@@ -159,10 +157,7 @@ export class UserList extends Component {
         this.setState({ submitted: true });
         if (!this.state.hasInvalidInput) {
             if (this.state.user.username.trim()) {
-                let dataObj = this.state.user;
-                dataObj.targetRole = dataObj.roleName;
-                delete dataObj.rolename;
-                this.state.user = dataObj;
+
                 if (this.state.user.id) {
                     this.userService.updateUser(this.state.user,this.state.token).then(data => {
                         const index = this.findIndexById(this.state.user.id);
@@ -383,11 +378,12 @@ export class UserList extends Component {
         window.location.assign('/admin/problems/' + event.target.text);
     };
 
-    onRoleChange(e) {
+     onRoleChange = (e) => {
         let user = {...this.state.user};
-        user[`targetRole`] = e.value;
-        user[`roleName`] = e.value ? e.value.name : '';
-        this.setState({ user });
+        user['targetRole'] = e.target.value.name;
+        // user['roleName'] = e.target.value ? e.target.value.name : '';
+        this.setState( {targetRole: e.value});
+        this.setState({user} );
     }
 
     onTemplateChange(e) {
@@ -502,7 +498,7 @@ export class UserList extends Component {
                     </div>
                     <div className="p-field">
                         <label htmlFor="targetRole">Target Role</label>
-                        <Dropdown optionLabel="name" optionValue = "value" value={this.state.user.targetRole} options={this.roleItems} disabled = {this.state.isAdmin === 'true' ? true : false} onChange={(e) => this.onRoleChange(e)} placeholder="Select a Role" />
+                        <Dropdown optionLabel="name" value={this.state.targetRole} options={this.roleItems} disabled = {this.state.isAdmin === 'true' ? true : false} onChange={(e) => this.onRoleChange(e)} placeholder="Select a Role" />
                         {this.state.submitted && !this.state.user.targetRole && <small className="p-invalid">Target Role is required.</small>}
                     </div>
                     <div className="p-field">
