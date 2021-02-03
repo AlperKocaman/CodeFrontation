@@ -118,6 +118,9 @@ export class UserList extends Component {
                     this.templateService.getTemplates(idToken).then(res=>{
                         this.templates = res.data;
                     });
+                    this.problemService.getProblems("", idToken).then(res=>{
+                        this.problems = res.data;
+                    });
                 });
             }
             this.setState({'authenticateUser': user });

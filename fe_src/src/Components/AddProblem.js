@@ -307,7 +307,7 @@ export class AddProblem extends Component {
                             <br/>
                             <label htmlFor="memoryLimit" className="p-d-block">Memory Limit</label>
                             <InputText id="memoryLimit" value={this.state.problem.memoryLimit} aria-describedby="memory-help" onChange={(e) => this.onInputChange(e, 'memoryLimit')} required autoFocus />
-                            <small id="memory-help" className="p-d-block">Memory limit of the problem in megabytes.</small>
+                            <small id="memory-help" className="p-d-block">Memory limit of the problem in bytes.</small>
                             {this.state.submitted && !this.state.problem.memoryLimit && <small className="p-invalid">Problem memory limit is required.</small>}
                             <br/>
                         </div>
