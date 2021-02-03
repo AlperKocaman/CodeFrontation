@@ -16,6 +16,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import './UserList.css';
 import {auth, generateUserDocument} from "./Firebase";
+import UserService from "../service/UserService";
 
 export class ProblemList extends Component {
 
@@ -54,11 +55,12 @@ export class ProblemList extends Component {
             submitted: false,
             globalFilter: null,
             authenticateUser: null,
-            token: ''
+            token: '',
+            isAdmin: false
         };
 
 
-
+        this.userService = new UserService();
         this.problemService = new ProblemService();
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.rightToolbarTemplate = this.rightToolbarTemplate.bind(this);
@@ -89,8 +91,13 @@ export class ProblemList extends Component {
                     this.problemService.getProblems(this.props.username ? this.props.username : '',idToken).then(res => {
                         this.setState({problems: res.data});
                     });
+                    this.userService.getUserByUsername(user.username, idToken).then(res => {
+                        if (res && res.data) {
+                            this.setState({isAdmin: res.data.isAdmin});
+                        }
+                    });
                 });
-            }
+            };
             this.setState({'authenticateUser': user });
         });
 
@@ -176,21 +183,28 @@ export class ProblemList extends Component {
     }
 
     leftToolbarTemplate() {
-        return (
-            <React.Fragment>
-                <Button label="New" icon="pi pi-plus" className="p-button-success p-mr-2" onClick={this.openNew} />
-                <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={this.confirmDeleteSelected} disabled={!this.state.selectedProblems || !this.state.selectedProblems.length} />
-            </React.Fragment>
-        )
+        if(this.state.isAdmin) {
+            return (
+                <React.Fragment>
+                    <Button label="New" icon="pi pi-plus" className="p-button-success p-mr-2" onClick={this.openNew}/>
+                    <Button label="Delete" icon="pi pi-trash" className="p-button-danger"
+                            onClick={this.confirmDeleteSelected}
+                            disabled={!this.state.selectedProblems || !this.state.selectedProblems.length}/>
+                </React.Fragment>
+            )
+        }
     }
 
     rightToolbarTemplate() {
-        return (
-            <React.Fragment>
-                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} label="Import" chooseLabel="Import" className="p-mr-2 p-d-inline-block" />
-                <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={this.exportCSV} />
-            </React.Fragment>
-        )
+        if(this.state.isAdmin) {
+            return (
+                <React.Fragment>
+                    <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} label="Import" chooseLabel="Import"
+                                className="p-mr-2 p-d-inline-block"/>
+                    <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={this.exportCSV}/>
+                </React.Fragment>
+            )
+        }
     }
 
     linkable(rowData) {
@@ -203,12 +217,16 @@ export class ProblemList extends Component {
     };
 
     actionBodyTemplate(rowData) {
-        return (
-            <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => this.editProblem(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => this.confirmDeleteProblem(rowData)} />
-            </React.Fragment>
-        );
+        if(this.state.isAdmin) {
+            return (
+                <React.Fragment>
+                    <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2"
+                            onClick={() => this.editProblem(rowData)}/>
+                    <Button icon="pi pi-trash" className="p-button-rounded p-button-warning"
+                            onClick={() => this.confirmDeleteProblem(rowData)}/>
+                </React.Fragment>
+            );
+        }
     }
 
     render() {
