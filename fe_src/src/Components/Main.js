@@ -23,7 +23,6 @@ class Main extends Component {
             let user = await generateUserDocument(userAuth);
             if (userAuth) {
                 userAuth.getIdToken().then(idToken =>  {
-                    console.log("idTokennnnn: "+idToken);
                     const username=user.username;
                     this.userService.getUserByUsername(username, idToken).then(res => {
                      if(res && res.data ) {

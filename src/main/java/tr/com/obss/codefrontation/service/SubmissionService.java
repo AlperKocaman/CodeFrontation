@@ -83,7 +83,7 @@ public class SubmissionService {
                 }
             }
         }
-        submissionDTO.setPoint((long) (sonarPoints+testCasePoints));
+        submissionDTO.setPoint((long) (sonarPoints+testCasePoints*0.7));
         submissionDTO.setSonarUrl(submissionDTO.getSonarUrl());
         mapper.updateSubmissionEntity(submissionDTO, origEntity);
         Submission entity = submissionRepository.save(origEntity);
