@@ -125,13 +125,11 @@ export class Evaluator extends Component {
             let result=res.data;
             console.log(result);
             if(result){
-                //FIXME sonar sonrası buranın acılması gerekiyor.
-
-                // this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
-                //    data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
-                //        ... data };
-                //    this.compilerService.updateSubmissionWithSonarData(data, result.id, this.state.token);
-                // });
+                this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
+                   data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
+                       ... data };
+                   this.compilerService.updateSubmissionWithSonarData(data, result.id, this.state.token);
+                });
             }
             setTimeout(this.getSubmitResult, 5000, result.id);
         });
