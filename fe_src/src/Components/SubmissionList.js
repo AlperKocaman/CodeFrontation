@@ -320,7 +320,6 @@ export class SubmissionList extends Component {
 
     this.userService.getUserByUsername(this.state.authenticateUser.username, this.state.token).then(res => {
       this.state.authenticateUser.id = res.data.id;
-    }).then(this.userService.getUserByUsername(submission.username).then(res => {
       this.state.comment = {
         submissionId: submission.id,
         commenterUserId: this.state.authenticateUser.id,
@@ -333,7 +332,7 @@ export class SubmissionList extends Component {
         createdDate: new Date(),
         updatedDate: new Date()
       }
-    }));
+    });
 
     this.setState({
       addCommentDialog: true

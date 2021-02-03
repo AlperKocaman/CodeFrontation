@@ -36,7 +36,7 @@ export class TemplateList extends Component {
         authorName:'',
         templateProblems:[],
         problemIds:[],
-        problemNames:[]
+        problemNames:""
     };
 
     
@@ -95,8 +95,10 @@ export class TemplateList extends Component {
                         let temp = res.data;
                         temp.forEach((item,i)=>{
                             item.roleName=item.role?item.role.name:'';
-                            item.problemNames=item.templateProblems?item.templateProblems.map((ee)=>ee.name):[];
+                            item.problemNames=item.templateProblems?item.templateProblems.map((ee)=> " " + ee.name).toString():"";
+                            item.problemNames=item.templateProblems?item.templateProblems.map((ee)=> " " + ee.name).toString():"";
                         });
+
                         this.setState({templates:temp});
                     });
 
@@ -283,7 +285,7 @@ export class TemplateList extends Component {
         let template = {...this.state.template};
         template[`templateProblems`] = e.value;
         template[`problemIds`] = e.value?e.value.map((item)=>item.id):[];
-        template[`problemNames`] = e.value?e.value.map((item)=>item.name):[];
+        template[`problemNames`] = e.value?e.value.map((item)=>" "+ item.name).toString():"";
         this.setState({ template });
     }
 

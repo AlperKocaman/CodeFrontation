@@ -17,7 +17,7 @@ export default class SubmissionService {
                 const response = await axios.put(url, data, config);
                 return response;
             }else if (method=='DELETE'){
-                const response = await axios.delete(url, data, config);
+                const response = await axios.delete(url, config);
                 return response;
             }
         } catch (error) {

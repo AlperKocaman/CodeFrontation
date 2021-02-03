@@ -125,11 +125,13 @@ export class Evaluator extends Component {
             let result=res.data;
             console.log(result);
             if(result){
-                this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
-                   data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
-                       ... data };
-                   this.compilerService.updateSubmissionWithSonarData(data, result.id, this.state.token);
-                });
+                //FIXME sonar sonrası buranın acılması gerekiyor.
+
+                // this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
+                //    data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
+                //        ... data };
+                //    this.compilerService.updateSubmissionWithSonarData(data, result.id, this.state.token);
+                // });
             }
             setTimeout(this.getSubmitResult, 5000, result.id);
         });
@@ -238,11 +240,8 @@ export class Evaluator extends Component {
                     <div id = "editorButtons" style={{marginTop:'2px',float:'right'}}>
                         <select id="langOption" className="option" onChange={() => this.optionChanged()} style={{marginRight:'2px'}}>
                             <option value="java">Java8</option>
-                            <option value="c_cpp">C/C++</option>
-                            <option value="python">Python</option>
+                            <option value="c_cpp">C</option>
                             <option value="python3">Python3</option>
-                            <option value="javascript">Javascript</option>
-                            <option value="ruby">RUBY</option>
                         </select>
                         <select id="themeOption" className="option" onChange={() => this.optionThemeChanged()} style={{marginRight:'0px'}}>
                             <option value="eclipse">Eclipse</option>

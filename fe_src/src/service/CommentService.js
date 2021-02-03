@@ -17,7 +17,7 @@ export default class CommentService{
                 const response = await axios.put(url, data, config);
                 return response;
             }else if (method=='DELETE'){
-                const response = await axios.delete(url, data, config);
+                const response = await axios.delete(url, config);
                 return response;
             }
         } catch (error) {
@@ -25,7 +25,7 @@ export default class CommentService{
         }
     }
 
-    async getComments(username,token) {
+    async getCommentsByUserName(username,token) {
         const url = "http://localhost:8080/main/comments/" + username;
         const method = 'GET';
         const response = await this.requestToServer(url, method, {},token);

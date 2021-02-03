@@ -59,7 +59,7 @@ export class CommentList extends Component {
           this.setState({'token': idToken });
           console.log(this.props.username)
           if (this.props.username && !this.props.problemCode) {
-            this.commentService.getComments(this.props.username,idToken).then(res => {
+            this.commentService.getCommentsByUserName(this.props.username,idToken).then(res => {
               if (res.data  != null){
                 this.setState({ comments: res.data });
               }
