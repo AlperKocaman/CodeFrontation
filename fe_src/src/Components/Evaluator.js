@@ -105,61 +105,65 @@ export class Evaluator extends Component {
         let data = { "body": requestData, "language":lang, "assignmentId":assignmentId
           , "problemCode":problemCode, "username":username, "point": 0, "time": 0, "memory": 0};
 
-
-        let fileName = username + "-" + problemCode;
-        if(lang === this.languages.java){
-            let codeStr = requestData;
-            let classStrIndex = codeStr.indexOf("class");
-            let whiteSpaceStrIndex = codeStr.indexOf(" ", classStrIndex+6);
-            fileName = codeStr.substring(classStrIndex+6,whiteSpaceStrIndex);
-        }
-
-        let sonarRegistryData = {
-            "id": username + "-" + problemCode,
-            "programmingLanguage":lang,
-            "numberOfSubmittedFile":1,
-            "codes":[requestData],
-            "fileNames":[fileName] }
-
         this.compilerService.addSubmit(data, this.state.token).then(res => {
             let result=res.data;
-            console.log(result);
-            if(result){
-                this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
-                   data = { "id": result.id, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
-                       ... data };
-                   this.compilerService.updateSubmissionWithSonarData(data, result.id, this.state.token);
-                });
-            }
-            setTimeout(this.getSubmitResult, 5000, result.id);
+            let response = "Your submission is being evaluated! Please wait ...";
+            this.setState({consoleOutput:response});
+            setTimeout(this.getSubmitResult, 5000, result.id,requestData,lang,assignmentId,problemCode,username);
         });
     }
 
 
-    getSubmitResult= (submissionId)  => {
+    getSubmitResult= (submissionId,requestData,lang,assignmentId,problemCode,username)  => {
         this.compilerService.getSubmit(submissionId, this.state.token).then(res => {
+            let data = { "body": requestData, "language":lang, "assignmentId":assignmentId
+                , "problemCode":problemCode, "username":username, "point": 0, "time": 0, "memory": 0};
+
+
+            let fileName = username + "-" + problemCode;
+            if(lang === this.languages.java){
+                let codeStr = requestData;
+                let classStrIndex = codeStr.indexOf("class");
+                let whiteSpaceStrIndex = codeStr.indexOf(" ", classStrIndex+6);
+                fileName = codeStr.substring(classStrIndex+6,whiteSpaceStrIndex);
+            }
+
+            let sonarRegistryData = {
+                "id": username + "-" + problemCode,
+                "programmingLanguage":lang,
+                "numberOfSubmittedFile":1,
+                "codes":[requestData],
+                "fileNames":[fileName] }
+
             let testCaseList= res.data.testCaseList;
             let response="";
             let checkError= false;
+            let errorMessage= "";
             if(testCaseList==undefined){
                 this.setState({consoleOutput:"Error is occurred !!!"});
             }else{
-                //testCaseList.forEach(caseObj => {
-                //    console.log(caseObj)
-                //    let output=caseObj.output;
-                //    if(output.startsWith("Compile Error")){
-                //        checkError= true;
-                //        response+= output;
-                //    }else{
-                //        response+= "Test Case "+caseObj.position+" ==> time= "+caseObj.time+", memory= "+caseObj.memory+", point= "+caseObj.point+"\n"
-                //    }
-                //});
-                //if(!checkError){
-                //    let submission= res.data.submission;
-                //    response+= "Total Result ==> time= "+submission.time+", memory= "+submission.memory+", point= "+submission.point+"\n"
-                //}
-                response += "Your code is submitted successfully";
-                this.setState({consoleOutput:response});
+                testCaseList.forEach(caseObj => {
+                    console.log(caseObj)
+                    let output=caseObj.output;
+                    if(output.startsWith("Compile Error")){
+                        checkError= true;
+                        errorMessage= output;
+                    }
+                });
+                if(!checkError){
+                    this.compilerService.registerSonar(sonarRegistryData, this.state.token).then(res => {
+                        data = { "id": submissionId, "sonarUrl": "http://localhost:9000/dashboard?id=" + username + "-" + problemCode,
+                            ... data };
+                        this.compilerService.updateSubmissionWithSonarData(data, submissionId, this.state.token).then(result => {
+                            response = "Your code is submitted successfully";
+                            this.setState({consoleOutput:response});
+                        });
+                    });
+                }else{
+                    response = "Your submission has compile error!\n"+errorMessage;
+                    this.setState({consoleOutput:response});
+                }
+
             }
         });
     }

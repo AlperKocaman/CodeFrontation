@@ -16,6 +16,8 @@ import tr.com.obss.codefrontation.sonar.SonarScannerRequestService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +58,9 @@ public class SubmissionService {
             throw new Exception();
         }
         submission.setAssignment(assignment.get());
+        //SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+        submission.setCreatedDate(date);
         Submission entity = submissionRepository.save(submission);
         log.info("Submission created: {}", entity.toString());
 
@@ -74,18 +79,8 @@ public class SubmissionService {
     public SubmissionDTO updateSubmissionPointWithSonarData(SubmissionDTO submissionDTO) throws Exception {
         Submission origEntity = submissionRepository.findById(submissionDTO.getId()).orElseThrow(Exception::new);
         double sonarPoints = SonarScannerRequestService.calculateSonarPointBySubmission(submissionDTO.getUsername()+ "-" + submissionDTO.getProblemCode());
-        double testCasePoints = 0;
-        List<TestCaseDTO> testCases = testCaseService.getTestCasesBySubmissionId(submissionDTO.getId());
-        if(testCases != null && !testCases.isEmpty()){
-            for(TestCaseDTO testCaseDTO:testCases){
-                if(testCaseDTO.getStatus() == Status.COMPLETED){
-                    testCasePoints +=  testCaseDTO.getPoint();
-                }
-            }
-        }
-        submissionDTO.setPoint((long) (sonarPoints+testCasePoints*0.7));
-        submissionDTO.setSonarUrl(submissionDTO.getSonarUrl());
-        mapper.updateSubmissionEntity(submissionDTO, origEntity);
+        origEntity.setPoint((long) (sonarPoints+origEntity.getPoint()*0.7));
+        origEntity.setSonarUrl(submissionDTO.getSonarUrl());
         Submission entity = submissionRepository.save(origEntity);
         log.info("Submission updated: {}", origEntity.getId());
 

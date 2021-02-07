@@ -71,6 +71,9 @@ public class WebSocketController {
                 while (true) {
                     try {
                         Thread.sleep(100);
+                        if(!server.isConnected()){
+                            throw new Exception();
+                        }
                         while (in.available() > 0) {
                             String str = in.readUTF();
                             if (!str.equals("")) {
@@ -250,15 +253,15 @@ public class WebSocketController {
                                     sendMessage();
 
                                 }
-                                log.info("client says: " + str);
+                                //log.info("client says: " + str);
                             }
                         }
-                    } catch (SocketTimeoutException s) {
-                        log.info("Socket timed out!");
-                        break;
-                    } catch (IOException | InterruptedException e) {
-                        e.printStackTrace();
-                        break;
+                    } catch (Exception s) {
+                        log.error(s.getMessage());
+                        server = serverSocket.accept();
+                        log.info("Just connected to " + server.getRemoteSocketAddress());
+                        in = new DataInputStream(server.getInputStream());
+                        out = new DataOutputStream(server.getOutputStream());
                     }
                 }
             }
@@ -270,14 +273,14 @@ public class WebSocketController {
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(4 * 60 * 1000);
+                        Thread.sleep(1 * 60 * 1000 );
                         sendPing();
-                    } catch (SocketTimeoutException s) {
-                        log.info("Socket timed out!");
-                        break;
-                    } catch (IOException | InterruptedException e) {
-                        e.printStackTrace();
-                        break;
+                    } catch (Exception s) {
+                        log.error(s.getMessage());
+                        server = serverSocket.accept();
+                        log.info("Just connected to " + server.getRemoteSocketAddress());
+                        in = new DataInputStream(server.getInputStream());
+                        out = new DataOutputStream(server.getOutputStream());
                     }
                 }
             }

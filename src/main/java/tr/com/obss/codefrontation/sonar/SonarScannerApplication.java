@@ -35,6 +35,7 @@ public class SonarScannerApplication {
 		sonarParametersBuilder.append(String.format(SonarConstants.SONAR_PROJECT_KEY_PARAMETER, getId()));
 		sonarParametersBuilder.append(String.format(SonarConstants.SONAR_PROJECT_BASE_DIRECTORY_PARAMETER, projectBaseDir));
 		sonarParametersBuilder.append(ProgrammingLanguage.findSonarParameterByProgrammingLanguage(getProgrammingLanguage()));
+		sonarParametersBuilder.append(SonarConstants.SONAR_PROJECT_AUTHORIZATION_PARAMETER);
 		return sonarParametersBuilder.toString();
 	}
 

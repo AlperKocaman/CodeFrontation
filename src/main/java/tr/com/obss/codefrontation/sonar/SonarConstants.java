@@ -6,7 +6,7 @@ public class SonarConstants {
 	public static final String SONAR_SCANNER_PATH = "/home/cf/sonarqube/sonar-scanner-4.5.0.2216-linux/bin/sonar-scanner ";
 	public static final String SONAR_PROJECT_KEY_PARAMETER = "-Dsonar.projectKey=%s ";
 	public static final String SONAR_PROJECT_BASE_DIRECTORY_PARAMETER = "-Dsonar.projectBaseDir=%s ";
-
+	public static final String SONAR_PROJECT_AUTHORIZATION_PARAMETER = " -Dsonar.login=admin -Dsonar.password=admin1 ";
 	public static final String BACKEND_BASE_URL = "http://localhost:9000/api/";
 
 	public static final String METRICS_REQUEST = "measures/component?metricKeys=" +
@@ -38,7 +38,7 @@ public class SonarConstants {
 
 	public static final String ISSUES_REQUEST = "issues/search?facets=types&componentKeys=";
 
-	public static final String JAVA_COMPILE_COMMAND =  "cd %s/ && javac *.java && mkdir target && mv *.class target && cd ../../" ;
+	public static final String JAVA_COMPILE_COMMAND =  "cd %s/ && /opt/jdk/jdk1.8.0_251/bin/javac *.java && mkdir target && mv *.class target && cd ../../" ;
 
 	// TODO : if any lang support will be added and this language is compiled, its compile command should be added here.
 	public static final String CPP_COMPILE_COMMAND = "";

@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 public class SonarUtils {
 	protected static void runProcess(String command) {
 		try {
-//			Process process = Runtime.getRuntime().exec(command);
 			Process process = Runtime.getRuntime().exec(new String[]{ "/bin/bash", "-c", command});
 
 			printLines(command + " stdout:", process.getInputStream());
