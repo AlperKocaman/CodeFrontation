@@ -79,6 +79,8 @@ public class SubmissionService {
     public SubmissionDTO updateSubmissionPointWithSonarData(SubmissionDTO submissionDTO) throws Exception {
         Submission origEntity = submissionRepository.findById(submissionDTO.getId()).orElseThrow(Exception::new);
         double sonarPoints = SonarScannerRequestService.calculateSonarPointBySubmission(submissionDTO.getUsername()+ "-" + submissionDTO.getProblemCode());
+        log.info("calculateSonarPointBySubmission: {}", sonarPoints);
+        log.info("totalpoint: {}", (sonarPoints+origEntity.getPoint()*0.7));
         origEntity.setPoint((long) (sonarPoints+origEntity.getPoint()*0.7));
         origEntity.setSonarUrl(submissionDTO.getSonarUrl());
         Submission entity = submissionRepository.save(origEntity);
